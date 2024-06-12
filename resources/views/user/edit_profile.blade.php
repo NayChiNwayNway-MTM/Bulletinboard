@@ -73,7 +73,7 @@
               @csrf 
               <button class="btn btn-primary col-2" type="reset">Clear</button>
             </form>
-            <div class="col-4"><a href="" class="col-4">Change Password</a></div>
+            <div class="col-4"><a href="{{route('changepassword')}}" class="col-4">Change Password</a></div>
           </div>        
     </div>
   </form>

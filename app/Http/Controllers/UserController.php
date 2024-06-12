@@ -8,7 +8,8 @@ class UserController extends Controller
 {
     //userlist
     public function userlist(){
-        return view('user.index');
+        $users=User::Paginate(5);
+        return view('user.index',compact('users'));
     }
     //user signup
     public function signup(){
@@ -95,6 +96,28 @@ class UserController extends Controller
         dd("ada");
         //TDO::get id ,check validation,and save to database
         //
+    }
+    //change password ui
+    public function change_password(){
+        return view('user.change_password');
+    }
+    //change password and new password is store database
+    public function changed_password(Request $request){
+        $request->validate([
+            'cur-pass'=>'required',
+            'new-pass'=>'required|min:6|confirmed',
+            'new-con-pass'=>'required|min:6|confirmed'
+        ],
+        [
+           'cur-pass.required'=>'Current Password can\'t be blank' ,
+           'new-pass.required'=>'New Password can\'t be blank',
+           'new-con-pass.required'=>'Confirm New Password can\'t be blank',
+           'new-pass.min' => 'New Password must be at least 6 characters.',
+            'new-con-pass.confirmed' => 'New Password and Confirm New Password must match.',
+        ]);
+        
+        //TDO::check cur-pass is locate in database and true store database
+
     }
 
 

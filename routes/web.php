@@ -26,10 +26,15 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::get('/pass','UserController@forgetpassword')->name('forgetpassword');
     Route::post('/restpass','UserController@resetpassword')->name('resetpassword');
     Route::post('/updatepass','UserController@update_password')->name('updatepassword');
+    Route::get('/changepassword','UserController@change_password')->name('changepassword');
+    Route::post('/changepassword','UserController@changed_password')->name('changedpassword');
     //post
     Route::get('/postlist','PostListController@postlist')->name('postlist');
     Route::get('/createpost','PostListController@createpost');
     Route::resource('/post','PostListController');
     Route::post('/post_edit_confirm/{id}','PostListController@post_edit_confirm')->name('post_edit_confirm');
+    Route::get('/postdelete','PostController@postdelete')->name('postdelete');
+    Route::post('/approve/{id}','PostDeleteController@approve')->name('approve');
+    Route::get('/deletepost/{id}','PostDeleteController@delete')->name('deletepost');
    
 });

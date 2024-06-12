@@ -76,4 +76,5 @@ class PostListController extends Controller
         public function update(Request $request,$id){
             echo "Dada";
         }
+       
 }

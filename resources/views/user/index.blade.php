@@ -27,12 +27,30 @@
             <th>Phone</th>
             <th>Date of Birth</th>
             <th>Address</th>
+            <th>Created_date</th>
+            <th>Updated_date</th>
+            <th>Operation</th>
           </tr>
         </thead>
         <tbody>
-
+            @foreach($users as $user)
+            <tr>
+              <td>{{(($users->currentPage()*5)-5)+$loop->iteration}}</td>
+              <td>{{$user->name}}</td>
+              <td>{{$user->email}}</td>
+              <td>{{$user->created_user_id}}</td>
+              <td>{{$user->type}}</td>
+              <td>{{$user->phone}}</td>
+              <td>{{$user->dob}}</td>
+              <td>{{$user->address}}</td>
+              <td>{{$user->created_at}}</td>
+              <td>{{$user->updated_at}}</td>
+              <td><a href="" class="btn btn-danger">Delete</a></td>
+            </tr>
+            @endforeach
         </tbody>
       </table> 
+      {!!$users->links()!!}
 </div>   
 
 </section>
