@@ -39,12 +39,12 @@ class PostListController extends Controller
             [
             'title'=>'required',
             'description'=>'required|max:255'
-
             ],
             [
                'title.required'=>'Title can\'t be blank',
                'description.required'=>'Description can\'t be balnk' 
             ]);
+        //TDO::store database
            return view('post.create_post');
     }
     //post edit 
@@ -73,8 +73,24 @@ class PostListController extends Controller
             //return redirect()->route('postlist')->with('success','Edit post successfully');
             return view('post.post_edit_confirm',compact('post'));
         }
-        public function update(Request $request,$id){
-            echo "Dada";
+        //post updated from database
+        public function update(){
+            //TDO::change updated data to database
+        }
+        //upload_post ui
+        public function upload_post(){
+            return view('post.upload_post');
+        }
+        //upload_post validation
+        public function uploaded_post(Request $request){
+            $request->validate([
+                'csvfile'=>'required'
+            ]);
+
+        }
+        //download_post ui
+        public function download_post(){
+            dd("adaf");
         }
        
 }

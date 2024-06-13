@@ -12,11 +12,15 @@ class PostDeleteController extends Controller
         $postid=PostList::find($id);
         if($postid){
             return response()->json(['success'=>true,'post'=>$postid]);
-        }
-        
+        }       
     }
-    public function delete($id){
-        PostList::destroy($id);
-        return redirect()->route('postlist');
+    public function destroy($id){    
+        $post = PostList::find($id);       
+        if (!$post) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }       
+        $post->delete();       
+        return response()->json(['message' => 'Post deleted successfully'], 200);
     }
+   
 }
