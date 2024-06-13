@@ -1,9 +1,11 @@
-@extends('layouts.master')
+@extends('layouts.nav')
 @section('content')
-<header><h2 class="bg-primary">Change Password?</h2></header>
 <div class="container">
     <form action="{{route('changedpassword')}}" method="post" class="mt-5">
         @csrf 
+        <div class="row">
+          <header><h2 class="bg-primary">Change Password?</h2></header>
+        </div>
         <div class="row d-flex mt-3">
           <div class="col-2 "><label for="" class="form-label float-end">Current Password<span class="text-danger">&#42;</span></label></div>
           <div class="col-8">

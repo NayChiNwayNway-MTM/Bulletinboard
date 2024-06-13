@@ -18,19 +18,19 @@
           <a class="nav-link active" aria-current="page" href="{{route('user')}}">Users</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Posts</a>
+          <a class="nav-link" href="{{route('postlist')}}">Posts</a>
         </li>
       </ul>
       <form class="d-flex">
         <ul class="navbar-nav me-auto mb-lg-0">
-          <li class="pt-2"><a href="{{route('register')}}" >Create User</a></li>
+          <li class="link-offset-2 link-underline link-underline-opacity-0 py-2"><a href="{{route('register')}}" class="link-offset-2 link-underline link-underline-opacity-0 px-3">Create User</a></li>
           <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Admin
+           {{auth()->user()->name}}
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{{route('profile')}}">Profile</a></li>
-            <li><a class="dropdown-item" href="#">Log Out</a></li>
+            <li><a class="dropdown-item" href="{{route('logout')}}">Log Out</a></li>
           </ul>
         </ul>
       </form>
@@ -38,5 +38,5 @@
   </div>
 </nav>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-@yield('content');
-@include('layouts.footer');
+@yield('content')
+@include('layouts.footer')

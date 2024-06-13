@@ -4,7 +4,7 @@
       <div class="row bg bg-primary mb-5 rounded">
         <p class="">Login</p>
       </div>
-      <form action="" method="get">
+      <form action="{{route('userlogin')}}" method="post">
         @csrf
         <div class="row mb-3">
           <label for="" class="col-sm-2 col-form-label">Email Address:<span class="text-danger">&#42;</span></label>

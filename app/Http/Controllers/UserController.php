@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+
+
 class UserController extends Controller
 {
     //userlist
@@ -11,35 +13,7 @@ class UserController extends Controller
         $users=User::Paginate(5);
         return view('user.index',compact('users'));
     }
-    //user signup
-    public function signup(){
-        return view('user.create_account');
-    }
-    //user when signup create account and chek validation
-    public function create(Request $request){
-        $request->validate([
-            'name'=>'required',
-            'email'=>'required|email',
-            'password'=>'required|min:6',
-            'confirm-password'=>'required|same:password'
-        ],
-        [
-            'name.required'=>'Name can\'t be blank',
-            'email.required'=>'Email can\'t be blank',
-            'password.required'=>'Password can\'t be blank'
-            
-        ]);
-        User::create([
-            'name'=>$request->name,
-            'email'=>$request->email,
-            'password'=>$request->password
-        ]);
-        return redirect()->route('postlist');
-    }
-    //user login
-    public function login(){
-        return view('user.login');
-    }
+   
     //user register
     public function register(){
         return view('user.register');

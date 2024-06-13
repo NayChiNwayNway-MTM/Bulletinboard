@@ -1,6 +1,5 @@
-@extends('layouts.master')
+@extends('layouts.nav')
 @section('content')
-
 <div class="container">
   <form action="{{route('registration')}}" method="post" class="border border-primary rounded mt-5" enctype="multipart/form-data">
     @csrf 

@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.nav')
 @section('content')
 <header><h2 class="bg-success">Upload CSV File</h2></header>
 <div class="container">

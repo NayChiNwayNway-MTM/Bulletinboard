@@ -1,9 +1,10 @@
-@extends('layouts.master')
+@extends('layouts.nav')
 @section('content')
-<header><h2 class="bg-success p-2">User List</h2></header>
 <section>
+  <?php echo auth()->user()->id;?>
 <div class="container">
       <form action="" method="post" class="mt-5">
+          <div class="row mb-3"><header><h2 class="bg-success p-2">User List</h2></header></div>
           <div class="row d-flex">
             <div class="col"><label for="" class="form-label float-end">Name:</label></div>
             <div class="col"><input type="text" name="name" class="form-control"></div>
@@ -36,10 +37,14 @@
             @foreach($users as $user)
             <tr>
               <td>{{(($users->currentPage()*5)-5)+$loop->iteration}}</td>
-              <td>{{$user->name}}</td>
+              <td><a href="#" class=" link-underline link-underline-opacity-0">{{$user->name}}</a></td>
               <td>{{$user->email}}</td>
               <td>{{$user->created_user_id}}</td>
-              <td>{{$user->type}}</td>
+              @if($user->type == 1)
+                <td>User</td>              
+              @else
+                <td>Admin</td>             
+              @endif           
               <td>{{$user->phone}}</td>
               <td>{{$user->dob}}</td>
               <td>{{$user->address}}</td>

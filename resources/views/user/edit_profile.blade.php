@@ -1,9 +1,12 @@
 @extends('layouts.master')
 @section('content')
-<header><h2 class="bg-success">Edit Profile</h2></header>
+
 <div class="container">
   <form action="" method="post" class="mt-5" enctype="multipart/form-data">
     @csrf     
+    <div class="row">
+      <header><h2 class="bg-success">Edit Profile</h2></header>
+    </div>
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">Name<span class="text-danger">&#42;</span></label></div>
       <div class="col-8">

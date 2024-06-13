@@ -1,7 +1,8 @@
-@extends('layouts.master')
+@extends('layouts.nav')
 @section('content')
-<header><h2 class="bg-success">Reset Password</h2></header>
+
 <div class="container">
+<header><h2 class="bg-success mt-5">Reset Password</h2></header>
   <form action="{{route('updatepassword')}}" method="post" class="mt-5" enctype="multipart/form-data">
     @csrf 
     <div class="row d-flex mt-3">

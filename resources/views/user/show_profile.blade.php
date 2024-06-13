@@ -1,9 +1,9 @@
-@extends('layouts.master')
+@extends('layouts.nav')
 @section('content')
-<header><h2 class="bg-success p-1">Profile</h2></header>
+
 <div class="container">
-  <div class="row">
-    <form action="{{route('editprofile')}}" method="post">
+    <form action="{{route('editprofile')}}" method="post" class="border border-primary mt-5">
+      <div class="row"><header><h2 class="bg-success">Profile</h2></header></div>
       @csrf 
       <div class="row mt-5">
         <div class="col-4">
@@ -39,7 +39,6 @@
           </div>       
       </div>
     </form>            
-    </div>
   </div>
 </div>
 @endsection

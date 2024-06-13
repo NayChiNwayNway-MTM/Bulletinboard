@@ -1,6 +1,5 @@
 @extends('layouts.master')
 @section('content')
-<?php echo $imagePath;?>
 <div class="container">
   <form action="{{route('register')}}" method="post" class="border border-primary rounded mt-5" enctype="multipart/form-data">
     @csrf 
@@ -15,8 +14,7 @@
             @enderror
           </span>
       </div>
-    </div>
-    
+    </div> 
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">E-Mail Address<span class="text-danger">&#42;</span></label></div>
       <div class="col-8">

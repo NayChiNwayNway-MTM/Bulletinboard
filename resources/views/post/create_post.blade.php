@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.nav')
   @section('content')
 <div class="row bg-primary mb-5"><p>Create Post</p></div>
   <div class="container col-md-6 mt-5">

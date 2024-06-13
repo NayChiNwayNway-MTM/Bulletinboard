@@ -14,13 +14,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['namespace' => 'App\Http\Controllers'], function () {
+    
+    Route::get('/login','AuthController@loginForm')->name('login');
+    Route::post('/user-login','AuthController@login')->name('userlogin');
+    Route::get('/logout','AuthController@logout')->name('logout');
+    Route::get('/signup','AuthController@signup')->name('signup');
+    Route::post('/signup','AuthController@create')->name('signup');
     //user
-    Route::get('/login','UserController@login');
     Route::get('/register','UserController@register')->name('register');
     Route::post('/register','UserController@registration')->name('registration');
-    Route::get('/user','UserController@userlist')->name('user');
-    Route::get('/signup','UserController@signup')->name('signup');
-    Route::post('/signup','UserController@create')->name('signup');
+    Route::get('/user','UserController@userlist')->name('user');   
     Route::get('/profile','UserController@profile')->name('profile');
     Route::post('/editprofile','UserController@editprofile')->name('editprofile');
     Route::get('/pass','UserController@forgetpassword')->name('forgetpassword');
