@@ -21,12 +21,24 @@ return new class extends Migration
             $table->string('phone',20)->nullable();
             $table->string('address',255)->nullable();
             $table->date('dob')->nullable();
-            $table->integer('created_user_id')->nullable();
-            $table->integer('updated_user_id')->nullable();
+            $table->unsignedBigInteger('created_user_id')->nullable();
+            $table->unsignedBigInteger('updated_user_id')->nullable();
             $table->integer('deleted_user_id')->nullable();
             $table->datetime('created_at')->nullable();
             $table->datetime('updated_at')->nullable();
             $table->datetime('deleted_at')->nullable();
+        });
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreign('created_user_id')
+                  ->references('id')
+                  ->on('users')
+                  ->onDelete('cascade');
+        });
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreign('updated_user_id')
+                  ->references('id')
+                  ->on('users')
+                  ->onDelete('cascade');
         });
     }
 

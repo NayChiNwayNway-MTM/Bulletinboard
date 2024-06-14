@@ -5,13 +5,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 
-
 class UserController extends Controller
 {
     //userlist
     public function userlist(){
+        $created_user=User::find(auth()->user()->created_user_id);
+        $all_users=User::select('id', 'name')->get();
+        $created_all_user_id=User::select('created_user_id')->get();
         $users=User::Paginate(5);
-        return view('user.index',compact('users'));
+        $created_all_user_id = User::pluck('created_user_id')->toArray();
+        $names = [];
+        foreach ($created_all_user_id as $index => $created_user_id) {
+            $user = User::select('name')->where('id', $created_user_id)->first();
+            $names[$index] = $user ? $user->name : 'Unknown';
+        }
+        return view('user.index',compact('users'),compact('created_all_user_id','names'));
     }
    
     //user register

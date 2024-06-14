@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('deleted_user_id')->nullable();
             $table->datetime('created_at');
             $table->datetime('updated_at')->nullable();
-            $table->datetime('deleted_at');
+            $table->datetime('deleted_at')->nullable();
         });
         Schema::table('post_lists', function (Blueprint $table) {
             $table->foreign('created_user_id')

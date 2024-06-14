@@ -28,19 +28,22 @@ class AuthController extends Controller
             'password.required'=>'Password can\'t be blank'
             
         ]);
-       //dd(auth()->user()->name);
+       
        $data = User::create([
             'name'=>$request->name,
             'email'=>$request->email,
             'password'=>Hash::make($request->password),
-            'created_user_id'=>auth()->user()->id
+            //'created_user_id'=>auth()->user()->id,
        
         ]);
+        //dd($request->id);
         auth()->login($data);
-        //dd(auth()->user()->name);
-       return redirect()->route('postlist');
+        //dd(auth()->user()->id);
+        if (Auth::check()) {
+            $data->update(['created_user_id' => Auth::user()->id]);
+        }
+        return redirect()->route('postlist');
     }
-   
      //user login ui
      public function loginForm(){
         return view('user.login');

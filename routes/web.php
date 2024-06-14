@@ -31,15 +31,21 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::post('/updatepass','UserController@update_password')->name('updatepassword');
     Route::get('/changepassword','UserController@change_password')->name('changepassword');
     Route::post('/changepassword','UserController@changed_password')->name('changedpassword');
+    //userdelete
+    Route::post('/user/userdelete/{id}','UserDeleteController@delete');
+    Route::post('/user/deleteduser/{id}','UserDeleteController@confirm');
     //post
     Route::get('/postlist','PostListController@postlist')->name('postlist');   
     Route::resource('/post','PostListController');
     Route::post('/post_edit_confirm/{id}','PostListController@post_edit_confirm')->name('post_edit_confirm');
-    Route::get('/postdelete','PostController@postdelete')->name('postdelete');
-    Route::post('/delete/{id}','PostDeleteController@approve')->name('delete');
-    Route::delete('postlist/deletedpost/{id}','PostDeleteController@destroy');
+    Route::get('/postdelete','PostController@postdelete')->name('postdelete'); 
     Route::get('/createpost','PostListController@createpost');
     Route::get('/uploadpost','PostListController@upload_post');
     Route::post('/uploadedpost','PostListController@uploaded_post')->name('uploadedpost');
     Route::get('/downloadpost','PostListController@download_post');
+
+    //postdelete
+    Route::post('/delete/{id}','PostDeleteController@approve')->name('delete');
+    Route::delete('postlist/deletedpost/{id}','PostDeleteController@destroy');
+
 });
