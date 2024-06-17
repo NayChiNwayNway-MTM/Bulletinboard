@@ -54,6 +54,7 @@ class AuthController extends Controller
         Auth::logout();
         return redirect()->route('login');
     }
+    //user login
     public function login(Request $request){
         $request->validate([
             'email'=>'required',

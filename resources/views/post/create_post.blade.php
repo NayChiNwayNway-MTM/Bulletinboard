@@ -4,6 +4,11 @@
   <div class="container col-md-6 mt-5">
     <form action="{{route('post.create')}}" method="get">
       @csrf 
+      @if(Session::has('postcreated'))
+                <div class="alert alert-success" role="alert" id='alert'>
+                    {{Session::get('postcreated')}}
+                </div>
+      @endif
       <div class="row d-flex justify-content-around align-item-center">
         <label for="" class="form-label col-sm-2">Title <span class="text-danger">&#42;</span></label>
         <div class="col-sm-8"><input type="text" class="form-control" name="title"></div>
@@ -45,3 +50,10 @@
     </form>
   </div>
   @endsection
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>    
+    var milliseconds = 3000;
+    setTimeout(function () {
+        document.getElementById('alert').remove();
+    }, milliseconds);
+  </script>

@@ -4,13 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PostList;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 class PostListController extends Controller
 {
     //
+    
     public function postlist(){
         $postlist= PostList::Paginate(5);
-        //dd($postlist);
-        return view('post.postlist',compact('postlist'));
+        $id = auth()->user()->id; 
+        $user=User::all();
+        return view('post.postlist',compact('postlist','user'));
     }
     public function createpost(){
         return view('post.create_post');
@@ -45,7 +51,16 @@ class PostListController extends Controller
                'description.required'=>'Description can\'t be balnk' 
             ]);
         //TDO::store database
-           return view('post.create_post');
+        PostList::create([
+            'title'=>$request->title,
+            'description'=>$request->description,
+            'created_user_id'=>Auth::user()->id,
+            'created_at'=>Carbon::now(),
+            
+        ]);
+        //dd($data);
+        Session::flash('postcreated', 'Post created successfully.');
+        return view('post.create_post');
     }
     //post edit 
     public function edit($id){
