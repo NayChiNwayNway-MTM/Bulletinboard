@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+
+use function PHPSTORM_META\type;
+
 class AuthController extends Controller
 {
     
@@ -62,7 +65,8 @@ class AuthController extends Controller
         ]);
        $credential=$request->except('_token');
         if (Auth::attempt($credential)) {
-            return redirect()->route('postlist');
+          
+                return redirect()->route('postlist');          
         } else {
            return redirect()->to('login');
         }

@@ -13,10 +13,25 @@ class PostListController extends Controller
     //
     
     public function postlist(){
-        $postlist= PostList::Paginate(5);
-        $id = auth()->user()->id; 
-        $user=User::all();
-        return view('post.postlist',compact('postlist','user'));
+
+    if(auth()->user()->type == 1){
+        $postlist = PostList::where('created_user_id', auth()->user()->id )
+                        ->whereNull('deleted_at')
+                        ->paginate(5);
+        $users = User::all();
+        return view('post.postlist', compact('postlist', 'users'));
+    }else{
+        $postlist=PostList::whereNull('deleted_at')->paginate(5);
+        $users = User::all();
+        return view('post.postlist', compact('postlist', 'users'));
+    }
+    
+    //$get_type =auth()->user()->type;
+    //$postlist = PostList::where('created_user_id', auth()->user()->id )
+    //                    ->whereNull('deleted_at')
+    //                    ->paginate(5);
+    //$users = User::all();
+    //return view('post.postlist', compact('postlist', 'users','get_type','admin_post'));
     }
     public function createpost(){
         return view('post.create_post');

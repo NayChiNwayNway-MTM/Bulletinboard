@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Carbon\Carbon;
+
 class UserDeleteController extends Controller
 {
     //
@@ -17,8 +19,8 @@ class UserDeleteController extends Controller
         }      
     }
     public function confirm($id){
-        $user_delete=User::find($id);
-        $user_delete->delete();
+        User::where('id',$id)->update(['deleted_at'=>Carbon::now(),'deleted_user_id'=>auth()->user()->id]);
+       // $user_delete->delete();
         return response()->json(['success'=>"User Successfully Deleted."]);
     }
 }

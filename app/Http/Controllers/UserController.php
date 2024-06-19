@@ -10,13 +10,17 @@ class UserController extends Controller
     //userlist
     public function userlist(){
         $created_user=User::find(auth()->user()->created_user_id);
-        $all_users=User::select('id', 'name')->get();
-        $created_all_user_id=User::select('created_user_id')->get();
-        $users=User::Paginate(5);
-        $created_all_user_id = User::pluck('created_user_id')->toArray();
+        $all_users=User::select('id', 'name')->get()->whereNull('deleted_at');
+
+        $created_all_user_id=User::select('created_user_id')->whereNull('deleted_at')->get();
+        //dd($created_all_user_id);
+        $users=User::whereNull('deleted_at')->Paginate(5);
+        $created_all_user_id = User::whereNull('deleted_at')->pluck('created_user_id')->toArray();
+
         $names = [];
         foreach ($created_all_user_id as $index => $created_user_id) {
-            $user = User::select('name')->where('id', $created_user_id)->first();
+            $user = User::select('name')->where('id', $created_user_id)->whereNull('deleted_at')->first();
+            //dd($users);
             $names[$index] = $user ? $user->name : 'Unknown';
         }
         return view('user.index',compact('users'),compact('created_all_user_id','names'));

@@ -49,6 +49,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/delete/{id}','PostDeleteController@delete')->name('delete');
         Route::delete('postlist/deletedpost/{id}','PostDeleteController@destroy');   
         Route::post('/search/{text}','PostDeleteController@search')->name('search');
+        Route::post('/postdetails/{id}','PostDeleteController@postdetails');
     });
    
 });
