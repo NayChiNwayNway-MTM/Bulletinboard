@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 class UserSeeder extends Seeder
 {
@@ -20,7 +21,7 @@ class UserSeeder extends Seeder
                 [
                     'name'=>"Hla Hla",
                     'email'=>'hla@gmail.com',
-                    'password'=>'123456',
+                    'password'=>Hash::make('123456'),
                     'profile'=>'image.jpg',
                     'type'=>'0',
                     'phone'=>'912784615',
@@ -34,7 +35,7 @@ class UserSeeder extends Seeder
                 [
                     'name'=>"Kyaw Kyaw",
                     'email'=>'kyaw@gmail.com',
-                    'password'=>'123456',
+                    'password'=>Hash::make('123456'),
                     'profile'=>'image.jpg',
                     'type'=>'0',
                     'phone'=>'912784615',
@@ -48,7 +49,7 @@ class UserSeeder extends Seeder
                 [
                     'name'=>"Su Su",
                     'email'=>'susu@gmail.com',
-                    'password'=>'123456',
+                    'password'=>Hash::make('123456'),
                     'profile'=>'image.jpg',
                     'type'=>'0',
                     'phone'=>'912784615',
@@ -62,7 +63,7 @@ class UserSeeder extends Seeder
                 [
                     'name'=>"Kaung Kaung",
                     'email'=>'kaung@gmail.com',
-                    'password'=>'123456',
+                    'password'=>Hash::make('123456'),
                     'profile'=>'image.jpg',
                     'type'=>'0',
                     'phone'=>'912784615',
@@ -75,7 +76,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'name'=>"Naung Naung",
-                    'email'=>'naung@gmail.com',
+                    'email'=>Hash::make('123456'),
                     'password'=>'123456',
                     'profile'=>'image.jpg',
                     'type'=>'0',
@@ -89,7 +90,7 @@ class UserSeeder extends Seeder
                 ],
                 [
                     'name'=>"Tun Tun",
-                    'email'=>'tt@gmail.com',
+                    'email'=>Hash::make('123456'),
                     'password'=>'123456',
                     'profile'=>'image.jpg',
                     'type'=>'0',

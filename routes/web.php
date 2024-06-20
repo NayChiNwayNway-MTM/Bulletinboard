@@ -50,6 +50,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::delete('postlist/deletedpost/{id}','PostDeleteController@destroy');   
         Route::post('/search/{text}','PostDeleteController@search')->name('search');
         Route::post('/postdetails/{id}','PostDeleteController@postdetails');
+
+        //////////////////////
+        Route::get('/posts/export','PostListController@export')->name('posts.export');
+       
     });
    
 });

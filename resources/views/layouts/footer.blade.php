@@ -6,5 +6,6 @@
     Myanmar Co., Ltd. All rights reserved</p>
   </footer>
 </div>
+<script src="{{ asset('/js/common.js') }}"></script>
 </body>
 </html>

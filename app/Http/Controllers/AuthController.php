@@ -29,7 +29,7 @@ class AuthController extends Controller
             'name.required'=>'Name can\'t be blank',
             'email.required'=>'Email can\'t be blank',
             'password.required'=>'Password can\'t be blank'
-            
+           
         ]);
        
        $data = User::create([

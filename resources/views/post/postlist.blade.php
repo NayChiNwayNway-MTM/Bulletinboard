@@ -5,8 +5,12 @@
     <!--start container-->
     <div class="container">
     @if(Session::has('success'))
-                <div class="alert alert-success" role="alert">
+                <div class="alert alert-success" role="alert" id='alert'>
                   {{Session::get('success')}}
+                </div>
+    @elseif(Session::has('postedites'))
+                <div class="alert alert-success" role="alert" id='alert'>
+                  {{Session::get('postedites')}}
                 </div>
     @endif
       <div class="row float-end mb-5">
@@ -34,8 +38,7 @@
               <th>Operation</th>
             </tr>
           </thead>
-          <tbody>
-            
+          <tbody>           
               @foreach($postlist as $list)  
                 
                   <tr id='{{$list->id}}'>
@@ -138,7 +141,7 @@
                       <div class="col-5"><span id="updated_date" class="text-info"></span></div>
                     </div><div class="row mt-4">
                       <div class="col-5"><strong>Updated User:</strong></div>
-                      <div class="col-5"><span id="updated_date" class="text-info"></span></div>
+                      <div class="col-5"><span id="updated_user" class="text-info"></span></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -201,6 +204,7 @@
         });
     });
     //end post delete
+
     $(document).ready(function(){
       var form=$('#form');
       $('#uploadpost').on('click',function(){
@@ -212,7 +216,7 @@
       });
       
       $('#downloadpost').on('click',function(){
-        form.attr('action','{{url("/downloadpost")}}');
+        form.attr('action','{{url("/posts/export")}}');
       });
     });
   //========================================
@@ -340,7 +344,7 @@
             $('#created_date').text(post.created_at)
            $('#created_user').text(response.user[0])
             $('#updated_date').text(post.updated_at)
-            $('#updated_user').text(post.updated_user_id)
+            $('#updated_user').text(response.user)
           }
         })
       })

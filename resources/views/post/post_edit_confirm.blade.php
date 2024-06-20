@@ -20,7 +20,6 @@
         </span>
         </div>
       </div>
-      
       <div class="row d-flex justify-content-around align-item-center mt-5 ">
         <label for="" class="form-label col-4">Description <span class="text-danger">&#42;</span></label>
         <div class="col-8"><textarea name="description" id="" cols="40" rows="3" class="form-control">{{$post->description}}</textarea></div>
@@ -40,7 +39,7 @@
           <label class="form-check-label" for="flexSwitchCheckDefault">Status</label>            
         </div>
         <div class="form-check form-switch col-8">
-          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"@if($post->id == 1) checked @endif>    
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="status" {{ $status == 1 ? 'checked' : 'off' }} >    
         </div>
       </div>
       <div class="row d-flex justify-content-around align-item-center m-5 ">

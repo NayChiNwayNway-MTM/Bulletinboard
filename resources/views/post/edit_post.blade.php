@@ -37,7 +37,7 @@
           <label class="form-check-label" for="flexSwitchCheckDefault">Status</label>            
         </div>
         <div class="form-check form-switch col-8">
-          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"@if($post->status == 1)checked @endif >    
+          <input class="form-check-input" type="checkbox" name='status' role="switch" id="flexSwitchCheckDefault" {{ $post->status == 1 ? 'checked' : 'off' }} >    
         </div>
       </div>
       <div class="row d-flex justify-content-around align-item-center m-5 ">

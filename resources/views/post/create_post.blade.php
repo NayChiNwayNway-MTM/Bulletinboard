@@ -51,9 +51,4 @@
   </div>
   @endsection
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script>    
-    var milliseconds = 3000;
-    setTimeout(function () {
-        document.getElementById('alert').remove();
-    }, milliseconds);
-  </script>
+

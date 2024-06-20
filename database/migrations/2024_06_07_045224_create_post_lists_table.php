@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('post_lists', function (Blueprint $table) {
             $table->id();
-            $table->string('title',255);
+            $table->string('title',255)->unique();
             $table->string('description');
             $table->integer('status');
             $table->unsignedBigInteger('created_user_id');
-            $table->unsignedBigInteger('updated_user_id');
+            $table->unsignedBigInteger('updated_user_id')->nullable();
             $table->integer('deleted_user_id')->nullable();
             $table->datetime('created_at');
             $table->datetime('updated_at')->nullable();
