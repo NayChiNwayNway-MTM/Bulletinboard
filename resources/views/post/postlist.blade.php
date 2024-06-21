@@ -1,6 +1,7 @@
 @extends('layouts.nav')
 @section('content')
-  <header><h1>Post List</h1></header> 
+
+  <header><h1 class="px-5 py-2">Post List</h1></header> 
   <section>
     <!--start container-->
     <div class="container">
@@ -15,15 +16,15 @@
     @endif
       <div class="row float-end mb-5">
           <form action="" method="get" id="form">
-            <div class="d-flex flex-row">           
+            <div class="d-flex flex-row">       
               <lavel class="form-label d-block m-2">KeyWords:</lavel>
                   <div class="col-xs-8  m-2">
                   <input type="text" class="form-control" name="text" id='text'>
                 </div>
-                  <div class="col-xs-4"><button id="searchpost" class="btn btn-success m-2">Search</button></div>
-                <button  id="createpost" class="btn btn-success m-2">Create</button>
-                <button id="uploadpost" class="btn btn-success m-2">Upload</button>
-                <button id="downloadpost" class="btn btn-success m-2">Download</button> 
+                  <div class="col-xs-4"><button id="searchpost" class="btn btn-primary m-2">Search</button></div>
+                <button  id="createpost" class="btn btn-primary m-2">Create</button>
+                <button id="uploadpost" class="btn btn-primary m-2">Upload</button>
+                <button id="downloadpost" class="btn btn-primary m-2">Download</button> 
               </div>                   
           </form>
       </div>
@@ -152,6 +153,7 @@
     </div>
     <!--end post detail modal-->
   </section>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script>
     $.ajaxSetup({

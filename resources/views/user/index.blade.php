@@ -1,9 +1,9 @@
 @extends('layouts.nav')
 @section('content')
 <section>
+<header><h2 class="px-5 py-2">User List</h2></header>
 <div class="container">
-      <form action="" method="post" class="mt-5">
-          <div class="row mb-3"><header><h2 class="bg-success p-2">User List</h2></header></div>
+      <form action="" method="post" class="mt-3">
           <div class="alert" role="alert" id="response">
           </div>
           <div class="row d-flex">

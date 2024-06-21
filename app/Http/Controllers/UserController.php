@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
     //userlist
@@ -26,7 +28,7 @@ class UserController extends Controller
         return view('user.index',compact('users'),compact('created_all_user_id','names'));
     }
    
-    //user register
+    //user register ui
     public function register(){
         return view('user.register');
     }
@@ -45,14 +47,112 @@ class UserController extends Controller
             'email.required'=>'Email can\'t blank',
             'profile.required'=>'Profile can\'t blank'
         ]);
+        
+        session(['type'=>$request->input('type')]);//get type admin or user
+
         $users=$request;
         $imageName=time().'.'.$request->profile->extension();
         $success=$request->profile->move(public_path('uploads'),$imageName);
         $imagePath = 'uploads/' . $imageName;
-        if($success){
-            return view('user.confirm_register',compact('users','imagePath'));
-        }
-        
+        session(['image'=>$imagePath]);
+        $existingemail = User::withTrashed()
+        ->where('email',$request->email)->first();
+            if($existingemail){
+                 if($existingemail->deleted_at){
+                    return view('user.confirm_register',compact('users','imagePath'));
+                }
+                else{
+                    return redirect()->back()->with(['error'=>'The email has already exist.']);
+                }
+            }
+                    
+            else{
+               
+                    return view('user.confirm_register',compact('users','imagePath'));
+            }
+
+    }
+    //register save to database
+    public function saveregister(Request $request){
+        $request->validate([
+            'name'=>'required',
+            'email'=>'required|email',
+            'password'=>'required|min:6',
+            'confirmpass'=>'required|same:password',           
+        ],
+        [
+            'name.required'=>'Name can\'t blank',
+            'email.required'=>'Email can\'t blank',          
+        ]);
+      $image_path = session('image');
+      $type =session('type');
+      if($type == 'user'){
+        $type_value = 1;
+      }
+      else{
+        $type_value =0;
+      }
+     
+        $existingemail = User::withTrashed()
+        ->where('email',$request->email)->first();
+            if($existingemail){
+                 if($existingemail->deleted_at){
+
+                    $existingemail->update([
+                    'name'=>$request->name,
+                    'email'=>$request->email,
+                    'password'=>$request->password,
+                    'profile'=>$image_path,
+                    'phone'=>$request->phone,
+                    'address'=>$request->address,
+                    'dob'=>$request->dob,
+                    'created_user_id'=>auth()->user()->id,
+                    'created_at'=>Carbon::now()
+
+                   ]);
+                   
+                }
+                else{
+                    return redirect()->back()->with(['error'=>'The email has already exist.']);
+                }
+            }
+                    
+            else{
+                if(auth()->user()->type == 0){
+                    User::create([
+                        'name'=>$request->name,
+                        'email'=>$request->email,
+                        'password'=>Hash::make($request->password),
+                        'profile'=>$image_path,
+                        'type'=>$type_value,                      
+                        'phone'=>$request->phone,
+                        'address'=>$request->address,
+                        'dob'=>$request->dob,
+                        'created_user_id'=>auth()->user()->id,
+                        'created_at'=>Carbon::now()
+                    ]);
+                    Session::flash('register','Register Successfully');
+                        return view('user.register');
+                }
+                else{
+                    User::create([
+                        'name'=>$request->name,
+                        'email'=>$request->email,
+                        'password'=>Hash::make($request->password),
+                        'profile'=>$image_path,
+                        'phone'=>$request->phone,
+                        'address'=>$request->address,
+                        'dob'=>$request->dob,
+                        'created_user_id'=>auth()->user()->id,
+                        'created_at'=>Carbon::now()
+    
+                       ]);
+                       Session::flash('register','Register Successfully');
+                        return view('user.register');
+                }
+                
+            }
+
     }
     //show profile info
     public function profile(){

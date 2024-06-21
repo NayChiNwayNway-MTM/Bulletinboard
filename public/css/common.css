@@ -1,0 +1,56 @@
+
+.navbar{
+  background-color: #8f979fe8;
+}
+.upload{
+  width: 60%;
+  margin: 0 auto;
+}
+body {
+  margin: 0;
+  padding-bottom: 50px; /* Footer height */
+  box-sizing: border-box;
+}
+.container {
+
+  padding-bottom: 50px; /* Ensure content above the footer */
+  box-sizing: border-box;
+  position: relative;
+}
+.footer {
+  height: 50px; /* Set footer height */
+  background-color: #8f979fe8; /* Example background color */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 0 20px; /* Add padding if needed */
+  box-sizing: border-box;
+}
+.footer p{
+  color: #000;
+  font-size: 20px;
+  padding: 5px;
+}
+.footer p a{
+  text-decoration: none;
+  color: #000;
+}
+.register{
+  color: #000;
+}
+.dropdown-menu {
+  --bs-dropdown-min-width: 0rem !important;
+  --bs-dropdown-item-padding-x: .5rem;
+}
+.login{
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+ 
+}

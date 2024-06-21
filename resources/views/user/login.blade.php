@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('content')
-    <div class="container col-md-6  mt-5 border border-primary rounded">
+    <div class="container col-md-6 border border-primary rounded login">
       <div class="row bg bg-primary mb-5 rounded">
         <p class="">Login</p>
       </div>
@@ -38,4 +38,5 @@
         </div>
       </form>     
     </div>
+
 @endsection

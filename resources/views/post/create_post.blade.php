@@ -1,8 +1,11 @@
 @extends('layouts.nav')
   @section('content')
-<div class="row bg-primary mb-5"><p>Create Post</p></div>
+
   <div class="container col-md-6 mt-5">
-    <form action="{{route('post.create')}}" method="get">
+    <form action="{{route('post.create')}}" method="get" class="border border-primary rounded ">
+      <div class="row">
+      <div class= "mb-5"><h4 class="text-primary text-center mt-2">Create Post</h4></div>
+      </div>
       @csrf 
       @if(Session::has('postcreated'))
                 <div class="alert alert-success" role="alert" id='alert'>
@@ -49,6 +52,7 @@
       </div>
     </form>
   </div>
+
   @endsection
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 

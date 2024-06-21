@@ -25,6 +25,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         //user
         Route::get('/register','UserController@register')->name('register');
         Route::post('/register','UserController@registration')->name('registration');
+        Route::post('/saveregister','UserController@saveregister')->name('saveregister');
         Route::get('/user','UserController@userlist')->name('user');   
         Route::get('/profile','UserController@profile')->name('profile');
         Route::post('/editprofile','UserController@editprofile')->name('editprofile');
@@ -33,6 +34,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/updatepass','UserController@update_password')->name('updatepassword');
         Route::get('/changepassword','UserController@change_password')->name('changepassword');
         Route::post('/changepassword','UserController@changed_password')->name('changedpassword');
+
         //userdelete
         Route::post('/user/userdelete/{id}','UserDeleteController@delete');
         Route::post('/user/deleteduser/{id}','UserDeleteController@confirm');

@@ -1,7 +1,7 @@
 @extends('layouts.master')
 @section('content')
 <div class="container">
-  <form action="{{route('register')}}" method="post" class="border border-primary rounded mt-5" enctype="multipart/form-data">
+  <form action="{{route('saveregister')}}" method="post" class="border border-primary rounded mt-5" enctype="multipart/form-data">
     @csrf 
     <div class="row"><h2 class="text-center text-primary">Confirm Register</h2></div>
     <div class="row d-flex mt-3">
@@ -53,9 +53,10 @@
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">Type</label></div>
       <div class="col-8">
-        <select name="type" id="" class="form-select" >
-          <option value="{{$users->type}}">Admin</option>
-          <option value="{{$users->type}}">User</option>
+        <select name="type" id="" class="form-select" @if(auth()->user()->type == 1) disabled @endif>
+        <option value="user" {{ old(`type`, session(`type`)) ==`user` ? `selected` : `` }}>User</option>
+        <option value="admin" {{ old(`type`, session(`type`)) == `admin` ? `selected` : `` }}>Admin</option>
+          
         </select>
       </div>
     </div>

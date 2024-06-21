@@ -3,12 +3,18 @@
 <div class="container">
   <form action="{{route('registration')}}" method="post" class="border border-primary rounded mt-5" enctype="multipart/form-data">
     @csrf 
+    @if(Session::has('register'))
+                <div class="alert alert-success" role="alert" id='alert'>
+                    {{Session::get('register')}}
+                </div>
+    @endif
     <div class="row"><h2 class="text-center text-primary">Register</h2></div>
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">Name<span class="text-danger">&#42;</span></label></div>
       <div class="col-8">
         <input type="text" name="name" class="form-control">
           <span class="text-danger ">
+            
             @error('name')
               {{$message}}
             @enderror
@@ -20,6 +26,7 @@
       <div class="col-8">
         <input type="email" name="email" class="form-control">
           <span class="text-danger ">
+          {{session('error')??''}}
             @error('email')
               {{$message}}
             @enderror
@@ -51,9 +58,9 @@
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">Type</label></div>
       <div class="col-8">
-        <select name="type" id="" class="form-select">
-          <option value="admin">Admin</option>
-          <option value="user">User</option>
+        <select name="type" id="" class="form-select" @if(auth()->user()->type == 1) disabled @endif>
+           <option value="user">User</option>
+          <option value="admin">Admin</option>          
         </select>
       </div>
     </div>

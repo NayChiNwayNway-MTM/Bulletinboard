@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 use function PHPSTORM_META\type;
@@ -36,14 +37,19 @@ class AuthController extends Controller
             'name'=>$request->name,
             'email'=>$request->email,
             'password'=>Hash::make($request->password),
-            //'created_user_id'=>auth()->user()->id,
+            'created_user_id'=>1,
+            'updated_user_id'=>1,
+            'created_at'=>Carbon::now(),
+            'updated_at'=>Carbon::now()
+
        
         ]);
         //dd($request->id);
         auth()->login($data);
         //dd(auth()->user()->id);
         if (Auth::check()) {
-            $data->update(['created_user_id' => Auth::user()->id]);
+            $data->update(['created_user_id' => Auth::user()->id,
+                            'updated_user_id'=>Auth::user()->id]);
         }
         return redirect()->route('postlist');
     }

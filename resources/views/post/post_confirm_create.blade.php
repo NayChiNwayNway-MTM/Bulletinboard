@@ -1,10 +1,11 @@
 @extends('layouts.nav')
   @section('content')
 
-<div class="row bg-primary mb-5"><p>Confirm Post</p></div>
+
   <div class="container col-md-6 mt-5">
-    <form action="{{route('post.store')}}" method="post">
+    <form action="{{route('post.store')}}" method="post" class="border border-primary rounded ">
       @csrf 
+      <div class="row mb-5"><h3 class="text-primary text-center">Confirm Post</h3></div>
       <div class="row d-flex justify-content-around align-item-center">
         <label for="" class="form-label col-sm-2">Title <span class="text-danger">&#42;</span></label>
         <div class="col-sm-8">

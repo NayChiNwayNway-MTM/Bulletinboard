@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\PostList;
+use App\Models\Post;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -23,13 +23,13 @@ class PostListController extends Controller
     public function postlist(){
 
     if(auth()->user()->type == 1){
-        $postlist = PostList::where('created_user_id', auth()->user()->id )
+        $postlist = Post::where('created_user_id', auth()->user()->id )
                         ->whereNull('deleted_at')
                         ->paginate(5);
         $users = User::all();
         return view('post.postlist', compact('postlist', 'users'));
     }else{
-        $postlist=PostList::whereNull('deleted_at')->paginate(5);
+        $postlist=Post::whereNull('deleted_at')->paginate(5);
         $users = User::all();
         return view('post.postlist', compact('postlist', 'users'));
     }
@@ -100,7 +100,7 @@ class PostListController extends Controller
         ]);
 
         // Check if a post with the same title exists (including soft deleted ones)
-        $existingPost = PostList::withTrashed()
+        $existingPost = Post::withTrashed()
             ->where('title', $request->title)
             ->first();
 
@@ -124,7 +124,7 @@ class PostListController extends Controller
             }
         } else {
             // Create new post
-            PostList::create([
+            Post::create([
                 'title' => $request->title,
                 'description' => $request->description,
                 'created_user_id' => Auth::user()->id,
@@ -142,7 +142,7 @@ class PostListController extends Controller
     //post edit 
     public function edit($id){
        
-        $post = PostList::find($id);
+        $post = Post::find($id);
         //dd($post);
         return view('post.edit_post',compact('post'));
     }
@@ -172,7 +172,7 @@ class PostListController extends Controller
             $des=$request->description;
             $status = $request->status ? 1 : 0;
             //dd($status);
-            $update =PostList::where('id',$id)->update(['title'=>$title,
+            $update =Post::where('id',$id)->update(['title'=>$title,
                                                         'description'=>$des,
                                                         'status'=>$status,
                                                         'updated_user_id'=>auth()->user()->id,'updated_at'=>Carbon::now()]);
@@ -207,25 +207,53 @@ class PostListController extends Controller
                         return redirect()->back()->with('error', 'CSV must have exactly 3 columns.')->withInput();
                     }
                     $records = Statement::create()->process($csv);
-                    
+                   
                     foreach ($records as $record) {
 
                         if (count($record) !== 3) {
-                            dd("hi");
+                           
                             return redirect()->back()->with('error', 'Each row in the CSV must have exactly 3 columns.')->withInput();
                         }
-                        
-                        PostList::Create([
-                            'title' => $record['title'],
-                            'description' => $record['description'],
-                            'status' => $record['status'],
-                            'created_user_id' => Auth::id(),
-                            'updated_user_id' => Auth::id(),
-                            'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now(),
-                        ]
-                            
-                        );
+                      
+                       $existingPost = Post::withTrashed() //check post deleted
+                       ->where('title',$record['title'])
+                       ->first();
+                       
+                        if ($existingPost) {
+                           //dd($existingPost->deleted_at);
+                            if ($existingPost->deleted_at) {
+                               
+                                // Restore the soft deleted post
+                                $existingPost->restore();
+                                
+                                // Update the restored post with new description if needed
+                                $existingPost->update([
+                                    'title' => $record['title'],
+                                    'description' => $record['description'],
+                                    'status' => $record['status'],
+                                    'created_user_id' => Auth::id(),
+                                    'updated_user_id' => Auth::id(),
+                                    'created_at' => Carbon::now(),
+                                    'updated_at' => Carbon::now(),
+                                ]);
+                
+                            } else {
+                                // Post with the same title exists and is not soft deleted
+                                return redirect()->back()->with(['error' => 'The title has already been taken.'])->withInput();
+                            }
+                        } else {
+                                // Create new post
+                            Post::Create([
+                                'title' => $record['title'],
+                                'description' => $record['description'],
+                                'status' => $record['status'],
+                                'created_user_id' => Auth::id(),
+                                'updated_user_id' => Auth::id(),
+                                'created_at' => Carbon::now(),
+                                'updated_at' => Carbon::now(),
+                             ]);
+                         }
+           
                     
             }
     
@@ -245,7 +273,7 @@ class PostListController extends Controller
                }
                else{
 
-                $posts = PostList::where('title', 'like', '%'.$text.'%')
+                $posts = Post::where('title', 'like', '%'.$text.'%')
                                 ->orWhere('description', 'like', '%'.$text.'%')
                                 ->whereNull('deleted_at') 
                                 ->paginate(5);
@@ -270,7 +298,7 @@ class PostListController extends Controller
                
                 $text = $request->input('text', '');
                 //dd($text);
-                $posts = PostList::where('title', 'like', '%'.$text.'%')
+                $posts = Post::where('title', 'like', '%'.$text.'%')
                         ->where('created_user_id',auth()->user()->id)
                         ->orWhere('description', 'like', '%'.$text.'%')
                         ->whereNull('deleted_at')
