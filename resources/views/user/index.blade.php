@@ -18,49 +18,40 @@
             <div class="col"><button class="btn btn-success">Search</button></div>
           </div>        
       </form> 
-      <table class="table table-striped mt-5 table-primary ">
-        <thead>
-          <tr>
-            <th>No</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Created User</th>
-            <th>Type</th>
-            <th>Phone</th>
-            <th>Date of Birth</th>
-            <th>Address</th>
-            <th>Created_date</th>
-            <th>Updated_date</th>
-            <th>Operation</th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php $index=0 ?>
-            @foreach($users as $user)
-            <tr id='{{$user->id}}'>
-              <td>{{(($users->currentPage()*5)-5)+$loop->iteration}}</td>
-              <td><a href="#" class=" link-underline link-underline-opacity-0">{{$user->name}}</a></td>
-              <td>{{$user->email}}</td>
-              <td>{{$names[((($users->currentPage()*5)-5)+$loop->iteration)-1]}}</td>
-              @if($user->type == 1)
-                <td>User</td>              
-              @else
-                <td>Admin</td>             
-              @endif           
-              <td>{{$user->phone}}</td>
-              <td>{{$user->dob}}</td>
-              <td>{{$user->address}}</td>
-              <td>{{$user->created_at}}</td>
-              <td>{{$user->updated_at}}</td>
-              <td><a href="" class="btn btn-danger userdelete">Delete</a></td>
-            </tr>
-            <?php $index++?>
-            @endforeach
-        </tbody>
-      </table> 
-      {!!$users->links()!!}
+      <div class="row mt-5">
+         <!-- Pagination Links -->
+        <div class="">
+            {!! $users->links() !!}
+        </div>
+        @foreach($users as $user)
+        <div class="col-md-4 mb-4">
+            <div class="card" id="{{$user->id}}">
+                <div class="card-header">
+                    <h5 class="card-title text-primary" id="user_detail">{{ $user->name }}</h5>
+                   
+                </div>
+                <div class="card-body">
+                    <p class="card-text"><strong>Email:</strong>{{ $user->email }}</p>
+                    <p class="card-text"><strong>Created User:</strong> {{ $names[((($users->currentPage() * 5) - 5) + $loop->iteration) - 1] }}</p>
+                    <p class="card-text"><strong>Type:</strong> {{ $user->type == 1 ? 'User' : 'Admin' }}</p>
+                    <p class="card-text"><strong>Phone:</strong> {{ $user->phone }}</p>
+                    <p class="card-text"><strong>Date of Birth:</strong> {{ $user->dob }}</p>
+                    <p class="card-text"><strong>Address:</strong> {{ $user->address }}</p>
+                    <p class="card-text"><strong>Created Date:</strong> {{ $user->created_at }}</p>
+                    <p class="card-text"><strong>Updated Date:</strong> {{ $user->updated_at }}</p>
+                </div>
+                <div class="card-footer">
+                    
+                    <a href="#" class="btn btn-sm btn-danger userdelete" data-id="{{ $user->id }}"><i class="fa fa-trash"></i></a>
+                   
+                </div>
+            </div>
+        </div>
+        @endforeach
+    </div>
+   
 </div>   
-  <!--start modal-->
+  <!-- start delete modal-->
   <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -83,8 +74,90 @@
                 </div>
             </div>
         </div>
-    </div>
-    <!--end modal-->
+  </div>
+   <!--end delete modal-->
+  <!--start detail modal-->
+  <div class="modal fade" id="userdetailModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" id="userdetailModalLabel">User Detail</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                      <div class="col-4"><img src="" alt="Profile" id="user_profile" style="width: 150px; height: 150px;"></div>
+                      <div class="col-8">
+                        <div class="row  mb-3">
+                          <div class="col-5">
+                            <strong>Name:</strong>
+                          </div>
+                          <div class="col-7"><span id="name"></span></div>
+                        </div>
+                        <div class="row  mb-3">
+                          <div class="col-5">
+                            <strong>Type:</strong> 
+                          </div>
+                          <div class="col-7"><span id="type"></span></div>
+                        </div>
+                        <div class="row  mb-3">
+                          <div class="col-5">
+                            <strong>Email:</strong> 
+                          </div>
+                          <div class="col-7"><span id="email"></span></div>
+                        </div>
+                        <div class="row  mb-3">
+                          <div class="col-5">
+                            <strong>Phone:</strong> 
+                          </div>
+                          <div class="col-7"><span id="phone"></span></div>
+                        </div>
+                        <div class="row  mb-3">
+                          <div class="col-5">
+                            <strong>Date Of Birth:</strong> 
+                          </div>
+                          <div class="col-7"><span id="dob"></span></div>
+                        </div>
+                        <div class="row  mb-3">
+                          <div class="col-5">
+                            <strong>Address:</strong> 
+                          </div>
+                          <div class="col-7"><span id="address"></span></div>
+                        </div>
+                        <div class="row  mb-3">
+                          <div class="col-5">
+                            <strong>Created Date:</strong> 
+                          </div>
+                          <div class="col-7"><span id="created_date"></span></div>
+                        </div>
+                        <div class="row  mb-3">
+                          <div class="col-5">
+                            <strong>Created User:</strong> 
+                          </div>
+                          <div class="col-7"><span id="created_user"></span></div>
+                        </div>
+                        <div class="row  mb-3">
+                          <div class="col-5">
+                            <strong>Updated Date:</strong> 
+                          </div>
+                          <div class="col-7"><span id="updated_date"></span></div>
+                        </div>
+                        <div class="row  mb-3">
+                          <div class="col-5">
+                            <strong>Updated User:</strong> 
+                          </div>
+                          <div class="col-7"><span id="updated_user"></span></div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                
+                </div>
+            </div>
+        </div>
+  </div>
+    <!--end detail modal-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $.ajaxSetup({
@@ -92,11 +165,12 @@
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        // start delete user 
         $(document).ready(function(){
          
           $('.userdelete').on('click',function(e){
-            let tr=this.parentElement.parentElement;
-            let id=tr.getAttribute('id');
+           
+            let id=$(this).data('id');
             e.preventDefault();
             $.ajax({
               method:`post`,
@@ -134,6 +208,45 @@
             })            
           });
         });
+        //end delete user
+        //start user details
+          $(document).ready(function(){
+            $(document).on('click','#user_detail',function(){
+              var tag=this.parentElement.parentElement;
+              var id=tag.getAttribute('id');
+              console.log(id);
+              $.ajax({
+                method:`post`,
+                url:`/user/detail/${id}`,
+                success:function(response){
+                  console.log(response)
+                  var user=response.detail;
+                  console.log(user.name)
+                  if(response.detail){
+                    $('#user_profile').attr('src', user.profile);
+                    $('#userdetailModal').modal('show');
+                    $('#name').text(user.name);
+                    if(user.type==1){
+                      $('#type').text("User");
+                    }
+                    else{
+                      $('#type').text("Admin");
+                    }
+                    $('#email').text(user.email);
+                    $('#phone').text(user.phone);
+                    $('#dob').text(user.dob);
+                    $('#address').text(user.address);
+                    $('#created_date').text(user.created_at);
+                    $('#updated_date').text(user.updated_at);
+                    $('#updated_user').text(response.created_user);
+                    $('#created_user').text(response.created_user);
+                  }
+               
+                }
+              })
+            })
+          });
+        //end user details
     </script>
 </section>
 @endsection

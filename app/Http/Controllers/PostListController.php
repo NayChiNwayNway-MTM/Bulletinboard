@@ -24,22 +24,17 @@ class PostListController extends Controller
 
     if(auth()->user()->type == 1){
         $postlist = Post::where('created_user_id', auth()->user()->id )
-                        ->whereNull('deleted_at')
+                        
                         ->paginate(5);
         $users = User::all();
         return view('post.postlist', compact('postlist', 'users'));
     }else{
-        $postlist=Post::whereNull('deleted_at')->paginate(5);
+      
+        $postlist=Post::paginate(5);
         $users = User::all();
         return view('post.postlist', compact('postlist', 'users'));
     }
-    
-    //$get_type =auth()->user()->type;
-    //$postlist = PostList::where('created_user_id', auth()->user()->id )
-    //                    ->whereNull('deleted_at')
-    //                    ->paginate(5);
-    //$users = User::all();
-    //return view('post.postlist', compact('postlist', 'users','get_type','admin_post'));
+
     }
     public function createpost(){
         return view('post.create_post');
@@ -49,95 +44,101 @@ class PostListController extends Controller
         
         $request->validate(
             [
-            'title'=>'required',
+            'title'=>'required|unique:posts|max:255',
             'description'=>'required|max:255'
 
             ],
             [
                'title.required'=>'Title can\'t be blank',
-               'description.required'=>'Description can\'t be balnk' 
+               'title.unique' => 'The title has already been taken.',
+               'description.required'=>'Description can\'t be balnk' ,
+               'description.max' => 'Description must not exceed 255 characters.',
             ]);
            // dd($request->title);
+
            $title = $request->title;
+           $valid_title=Post::where('title',$title);
            $des=$request->description;
            return view('post.post_confirm_create',compact('title','des'));
             
     }
     //post create store
-    //public function store(Request $request){
-    //    $validatedData = $request->validate([
-    //        'title' => 'required|unique:post_lists|max:255',
-    //        'description' => 'required|max:255',
-    //    ], [
-    //        'title.required' => 'Title can\'t be blank',
-    //        'title.unique' => 'The title has already been taken.',
-    //        'description.required' => 'Description can\'t be blank',
-    //        'description.max' => 'Description must not exceed 255 characters.',
-    //    ]);       
-    //    PostList::create([
-    //        'title'=>$request->title,
-    //        'description'=>$request->description,
-    //        'created_user_id'=>Auth::user()->id,
-    //        'created_at'=>Carbon::now(),
-    //        
-    //    ]);
-    //    //dd($data);
-    //    Session::flash('postcreated', 'Post created successfully.');
-    //    return view('post.create_post');
-    //}
-    // start post create with restoration
-    public function store(Request $request)
-    {
-        // Validate request data
-        $request->validate([
-            'title' => 'required|max:255',
+    public function store(Request $request){
+      $request->validate([
+            'title' => 'required|unique:posts|max:255',
             'description' => 'required|max:255',
         ], [
             'title.required' => 'Title can\'t be blank',
             'title.unique' => 'The title has already been taken.',
             'description.required' => 'Description can\'t be blank',
             'description.max' => 'Description must not exceed 255 characters.',
+        ]);       
+        Post::create([
+            'title'=>$request->title,
+            'description'=>$request->description,
+            'created_user_id'=>Auth::user()->id,
+            'updated_user_id'=>Auth::user()->id,
+            'created_at'=>Carbon::now(),
+            'updated_at'=>Carbon::now(),
+            
         ]);
-
-        // Check if a post with the same title exists (including soft deleted ones)
-        $existingPost = Post::withTrashed()
-            ->where('title', $request->title)
-            ->first();
-
-        if ($existingPost) {
-            if ($existingPost->deleted_at) {
-                // Restore the soft deleted post
-                $existingPost->restore();
-
-                // Update the restored post with new description if needed
-                $existingPost->update([
-                    'description' => $request->description,
-                    'created_user_id' => Auth::user()->id,
-                    'created_at' => now(),
-                ]);
-
-                // Flash success message
-                Session::flash('postcreated', 'Post created successfully after restoration.');
-            } else {
-                // Post with the same title exists and is not soft deleted
-                return redirect()->back()->withErrors(['title' => 'The title has already been taken.']);
-            }
-        } else {
-            // Create new post
-            Post::create([
-                'title' => $request->title,
-                'description' => $request->description,
-                'created_user_id' => Auth::user()->id,
-                'created_at' => now(),
-            ]);
-
-            // Flash success message
-            Session::flash('postcreated', 'Post created successfully.');
-        }
-
-        // Redirect or return view as per your application flow
+        //dd($data);
+        Session::flash('postcreated', 'Post created successfully.');
         return view('post.create_post');
     }
+    // start post create with restoration
+//    public function store(Request $request)
+//    {
+//        // Validate request data
+//        $request->validate([
+//            'title' => 'required|max:255',
+//            'description' => 'required|max:255',
+//        ], [
+//            'title.required' => 'Title can\'t be blank',
+//            'title.unique' => 'The title has already been taken.',
+//            'description.required' => 'Description can\'t be blank',
+//            'description.max' => 'Description must not exceed 255 characters.',
+//        ]);
+//
+//        // Check if a post with the same title exists (including soft deleted ones)
+//        $existingPost = Post::withTrashed()
+//            ->where('title', $request->title)
+//            ->first();
+//
+//        if ($existingPost) {
+//            if ($existingPost->deleted_at) {
+//                // Restore the soft deleted post
+//                $existingPost->restore();
+//
+//                // Update the restored post with new description if needed
+//                $existingPost->update([
+//                    'description' => $request->description,
+//                    'created_user_id' => Auth::user()->id,
+//                    'created_at' => now(),
+//                ]);
+//
+//                // Flash success message
+//                Session::flash('postcreated', 'Post created successfully after restoration.');
+//            } else {
+//                // Post with the same title exists and is not soft deleted
+//                return redirect()->back()->withErrors(['title' => 'The title has already been taken.']);
+//            }
+//        } else {
+//            // Create new post
+//            Post::create([
+//                'title' => $request->title,
+//                'description' => $request->description,
+//                'created_user_id' => Auth::user()->id,
+//                'created_at' => now(),
+//            ]);
+//
+//            // Flash success message
+//            Session::flash('postcreated', 'Post created successfully.');
+//        }
+//
+//        // Redirect or return view as per your application flow
+//        return view('post.create_post');
+//    }
     // end post create with restoration
     //post edit 
     public function edit($id){
@@ -149,13 +150,15 @@ class PostListController extends Controller
     public function post_edit_confirm(Request $request,$id){
         $request->validate(
             [
-            'title'=>'required',
+            'title'=>'required|unique:posts|max:255',
             'description'=>'required|max:255'
 
             ],
             [
                'title.required'=>'Title can\'t be blank',
-               'description.required'=>'Description can\'t be balnk' 
+               'title.unique' => 'The title has already been taken.',
+               'description.required'=>'Description can\'t be balnk' ,
+               'description.max' => 'Description must not exceed 255 characters.',
             ]);
             $status = $request->status ? 1 : 0;
            // dd($status);
@@ -167,7 +170,7 @@ class PostListController extends Controller
     }
         //post updated from database
         public function update(Request $request ,$id){
-           
+           //dd($id);
             $title=$request->title;
             $des=$request->description;
             $status = $request->status ? 1 : 0;
@@ -215,33 +218,33 @@ class PostListController extends Controller
                             return redirect()->back()->with('error', 'Each row in the CSV must have exactly 3 columns.')->withInput();
                         }
                       
-                       $existingPost = Post::withTrashed() //check post deleted
-                       ->where('title',$record['title'])
-                       ->first();
+                    //   $existingPost = Post::withTrashed() //check post deleted
+                    //   ->where('title',$record['title'])
+                    //   ->first();
                        
-                        if ($existingPost) {
-                           //dd($existingPost->deleted_at);
-                            if ($existingPost->deleted_at) {
-                               
-                                // Restore the soft deleted post
-                                $existingPost->restore();
-                                
-                                // Update the restored post with new description if needed
-                                $existingPost->update([
-                                    'title' => $record['title'],
-                                    'description' => $record['description'],
-                                    'status' => $record['status'],
-                                    'created_user_id' => Auth::id(),
-                                    'updated_user_id' => Auth::id(),
-                                    'created_at' => Carbon::now(),
-                                    'updated_at' => Carbon::now(),
-                                ]);
-                
-                            } else {
-                                // Post with the same title exists and is not soft deleted
-                                return redirect()->back()->with(['error' => 'The title has already been taken.'])->withInput();
-                            }
-                        } else {
+                //        if ($existingPost) {
+                //           //dd($existingPost->deleted_at);
+                //            if ($existingPost->deleted_at) {
+                //               
+                //                // Restore the soft deleted post
+                //                $existingPost->restore();
+                //                
+                //                // Update the restored post with new description if needed
+                //                $existingPost->update([
+                //                    'title' => $record['title'],
+                //                    'description' => $record['description'],
+                //                    'status' => $record['status'],
+                //                    'created_user_id' => Auth::id(),
+                //                    'updated_user_id' => Auth::id(),
+                //                    'created_at' => Carbon::now(),
+                //                    'updated_at' => Carbon::now(),
+                //                ]);
+                //
+                //            } else {
+                //                // Post with the same title exists and is not soft deleted
+                //                return redirect()->back()->with(['error' => 'The title has already been taken.'])->withInput();
+                //            }
+                //        } else {
                                 // Create new post
                             Post::Create([
                                 'title' => $record['title'],
@@ -252,7 +255,7 @@ class PostListController extends Controller
                                 'created_at' => Carbon::now(),
                                 'updated_at' => Carbon::now(),
                              ]);
-                         }
+                       //  }
            
                     
             }
@@ -261,7 +264,7 @@ class PostListController extends Controller
             } catch (Exception $e) {
                 return redirect()->back()->with('error', 'There was an error processing the CSV file.')->withInput();
             }
-     }
+        }
         //post download with csv format
         public function export(Request $request)
         { 
@@ -275,7 +278,6 @@ class PostListController extends Controller
 
                 $posts = Post::where('title', 'like', '%'.$text.'%')
                                 ->orWhere('description', 'like', '%'.$text.'%')
-                                ->whereNull('deleted_at') 
                                 ->paginate(5);
                 return new StreamedResponse(function () use ($posts) {
                          $handle = fopen('php://output', 'w');
@@ -301,7 +303,6 @@ class PostListController extends Controller
                 $posts = Post::where('title', 'like', '%'.$text.'%')
                         ->where('created_user_id',auth()->user()->id)
                         ->orWhere('description', 'like', '%'.$text.'%')
-                        ->whereNull('deleted_at')
                         ->where('created_user_id',auth()->user()->id)
                         ->paginate(5);
         

@@ -37,12 +37,10 @@ class AuthController extends Controller
             'name'=>$request->name,
             'email'=>$request->email,
             'password'=>Hash::make($request->password),
-            'created_user_id'=>1,
-            'updated_user_id'=>1,
             'created_at'=>Carbon::now(),
-            'updated_at'=>Carbon::now()
-
-       
+            'updated_at'=>Carbon::now(),
+            'created_user_id'=>1,
+            'updated_user_id'=>1,      
         ]);
         //dd($request->id);
         auth()->login($data);

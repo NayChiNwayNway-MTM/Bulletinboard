@@ -95,8 +95,12 @@ class UserController extends Controller
      
         $existingemail = User::withTrashed()
         ->where('email',$request->email)->first();
+        
             if($existingemail){
+                
                  if($existingemail->deleted_at){
+
+                    $existingemail->restore();
 
                     $existingemail->update([
                     'name'=>$request->name,
@@ -107,9 +111,14 @@ class UserController extends Controller
                     'address'=>$request->address,
                     'dob'=>$request->dob,
                     'created_user_id'=>auth()->user()->id,
-                    'created_at'=>Carbon::now()
+                    'updated_user_id'=>auth()->user()->id,
+                    'created_at'=>Carbon::now(),
+                    'updated_at'=>Carbon::now()
 
                    ]);
+                   
+                   Session::flash('register','Register Successfully');
+                   return redirect()->back()->with(['register'=>'Register Successfully.']);
                    
                 }
                 else{
@@ -129,7 +138,9 @@ class UserController extends Controller
                         'address'=>$request->address,
                         'dob'=>$request->dob,
                         'created_user_id'=>auth()->user()->id,
-                        'created_at'=>Carbon::now()
+                        'updated_user_id'=>auth()->user()->id,
+                        'created_at'=>Carbon::now(),
+                        'updated_at'=>Carbon::now()
                     ]);
                     Session::flash('register','Register Successfully');
                         return view('user.register');
@@ -144,7 +155,9 @@ class UserController extends Controller
                         'address'=>$request->address,
                         'dob'=>$request->dob,
                         'created_user_id'=>auth()->user()->id,
-                        'created_at'=>Carbon::now()
+                        'updated_user_id'=>auth()->user()->id,
+                        'created_at'=>Carbon::now(),
+                        'updated_at'=>Carbon::now()
     
                        ]);
                        Session::flash('register','Register Successfully');
@@ -155,15 +168,96 @@ class UserController extends Controller
 
     }
     //show profile info
-    public function profile(){
-        return view('user.show_profile');
+    public function profile($id){
+        $user_data=User::find($id);
+        return view('user.show_profile',compact('user_data'));
     }
     //show edit profile ui
-    public function editprofile(){
-        return view('user.edit_profile');
+    public function editprofile($id){
+       $user=User::find($id);
+        return view('user.edit_profile',compact('user'));
     }
     //update profile validation and store database
+    public function update_profile(Request $request,$id){
+        $request->validate([
+            'name'=>'required',
+            'email'=>'required' ,
+                  
+        ],[
+            'name.required'=>'Name can\'t blank',
+            'email.reqied'=>'Email can\'t blank'
+        ]);
+       //check type admin
+        if(auth()->user()->type == 0){
+            $type=$request->input('type');
+           
+            if($type == 'user'){
+                $type_value =1;
+            }
+            else{
+                $type_value=0;
 
+            }
+            if($request->new_profile){
+                $imageName=time().'.'.$request->new_profile->extension();
+                $success=$request->new_profile->move(public_path('uploads'),$imageName);
+                $imagePath = 'uploads/' . $imageName;
+                User::where('id',$id)->update([
+                    'name'=>$request->name,
+                    'email'=>$request->email,
+                    'phone'=>$request->phone,
+                    'dob'=>$request->dob,
+                    'address'=>$request->address,
+                    'type'=>$type_value,
+                    'profile'=>$imagePath,
+                    'updated_at'=>Carbon::now()
+                ]);
+            }
+            else{
+                User::where('id',$id)->update([
+                    'name'=>$request->name,
+                    'email'=>$request->email,
+                    'phone'=>$request->phone,
+                    'dob'=>$request->dob,
+                    'address'=>$request->address,
+                    'type'=>$type_value,
+                    'updated_at'=>Carbon::now()
+                ]);
+            }
+            Session::flash('profileedited',"Edit Profile Successfully");
+            return redirect()->route('profile',['id' => $id]);
+        }
+        else{
+            if($request->new_profile){
+                $imageName=time().'.'.$request->new_profile->extension();
+                $success=$request->new_profile->move(public_path('uploads'),$imageName);
+                $imagePath = 'uploads/' . $imageName;
+                User::where('id',$id)->update([
+                    'name'=>$request->name,
+                    'email'=>$request->email,
+                    'phone'=>$request->phone,
+                    'dob'=>$request->dob,
+                    'address'=>$request->address,
+                    'profile'=>$imagePath,
+                    'updated_at'=>Carbon::now()
+                ]);
+            }
+            else{
+                User::where('id',$id)->update([
+                    'name'=>$request->name,
+                    'email'=>$request->email,
+                    'phone'=>$request->phone,
+                    'dob'=>$request->dob,
+                    'address'=>$request->address,
+                    'updated_at'=>Carbon::now()
+                ]);
+            }
+            Session::flash('profileedited',"Edit Profile Successfully");
+            return redirect()->route('profile',['id' => $id]);
+        }
+       
+        
+    }
     //forget password ui
     public function forgetpassword(){
         return view('user.forget_password');

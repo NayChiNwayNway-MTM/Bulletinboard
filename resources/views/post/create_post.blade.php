@@ -3,15 +3,17 @@
 
   <div class="container col-md-6 mt-5">
     <form action="{{route('post.create')}}" method="get" class="border border-primary rounded ">
-      <div class="row">
-      <div class= "mb-5"><h4 class="text-primary text-center mt-2">Create Post</h4></div>
-      </div>
       @csrf 
       @if(Session::has('postcreated'))
                 <div class="alert alert-success" role="alert" id='alert'>
                     {{Session::get('postcreated')}}
                 </div>
       @endif
+      <div class="row">
+      <div class= "mb-5"><h4 class="text-primary text-center mt-2">Create Post</h4></div>
+      </div>
+    
+     
       <div class="row d-flex justify-content-around align-item-center">
         <label for="" class="form-label col-sm-2">Title <span class="text-danger">&#42;</span></label>
         <div class="col-sm-8"><input type="text" class="form-control" name="title"></div>

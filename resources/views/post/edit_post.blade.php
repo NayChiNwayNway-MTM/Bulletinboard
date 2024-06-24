@@ -25,11 +25,11 @@
       <div class="row mt-2">
         <div class="col-4"></div>
         <div class="col-6">
-        <span class="text-danger ">
-          @error('description')
-            {{$message}}
-          @enderror
-        </span>
+          <span class="text-danger ">
+            @error('description')
+              {{$message}}
+            @enderror
+          </span>
         </div>
       </div>
       <div class="row mt-3">

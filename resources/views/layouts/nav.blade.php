@@ -32,7 +32,7 @@
            {{auth()->user()->name}}
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{route('profile')}}">Profile</a></li>
+            <li><a class="dropdown-item" href="{{route('profile',auth()->user()->id)}}">Profile</a></li>
             <li><a class="dropdown-item" href="{{route('logout')}}">Log Out</a></li>
           </ul>
         </ul>

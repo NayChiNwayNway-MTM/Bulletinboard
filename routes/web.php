@@ -20,6 +20,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::get('/logout','AuthController@logout')->name('logout');
     Route::get('/signup','AuthController@signup')->name('signup');
     Route::post('/signup','AuthController@create')->name('signup');
+    Route::get('/pass','UserController@forgetpassword')->name('forgetpassword');
+        Route::post('/restpass','UserController@resetpassword')->name('resetpassword');
+        Route::post('/updatepass','UserController@update_password')->name('updatepassword');
+        Route::get('/changepassword','UserController@change_password')->name('changepassword');
+        Route::post('/changepassword','UserController@changed_password')->name('changedpassword');
     Route::middleware('authmiddleware')->group(function(){
       
         //user
@@ -27,17 +32,16 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/register','UserController@registration')->name('registration');
         Route::post('/saveregister','UserController@saveregister')->name('saveregister');
         Route::get('/user','UserController@userlist')->name('user');   
-        Route::get('/profile','UserController@profile')->name('profile');
-        Route::post('/editprofile','UserController@editprofile')->name('editprofile');
-        Route::get('/pass','UserController@forgetpassword')->name('forgetpassword');
-        Route::post('/restpass','UserController@resetpassword')->name('resetpassword');
-        Route::post('/updatepass','UserController@update_password')->name('updatepassword');
-        Route::get('/changepassword','UserController@change_password')->name('changepassword');
-        Route::post('/changepassword','UserController@changed_password')->name('changedpassword');
+        Route::get('/profile/{id}','UserController@profile')->name('profile');
+        Route::get('/editprofile/{id}','UserController@editprofile')->name('editprofile');
+        Route::post('/update/{id}','UserController@update_profile')->name('updateprofile');
+        
 
         //userdelete
         Route::post('/user/userdelete/{id}','UserDeleteController@delete');
         Route::post('/user/deleteduser/{id}','UserDeleteController@confirm');
+        //user detail
+        Route::post('/user/detail/{id}','UserDetailController@showdetail');
         //post
         Route::get('/postlist','PostListController@postlist')->name('postlist')->middleware('authmiddleware');   
         Route::resource('/post','PostListController');

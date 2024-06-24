@@ -54,3 +54,9 @@ body {
   transform: translateY(-50%);
  
 }
+#profile{
+  width: 50%;
+  height: 70%;
+  margin-left: 80px;
+  margin-top: 20px;
+}

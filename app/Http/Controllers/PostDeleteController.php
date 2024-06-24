@@ -20,8 +20,9 @@ class PostDeleteController extends Controller
             $post = Post::find($id);       
             if (!$post) {
                 return response()->json(['message' => 'Post not found'], 404);
-            }        
-        Post::where('id',$id)->update(['deleted_at'=>Carbon::now(),'deleted_user_id'=>auth()->user()->id]);
+         }        
+       
+        $post->delete();
             return response()->json(['message' => 'Post deleted successfully'], 200);
         }
         //post search
@@ -30,7 +31,6 @@ class PostDeleteController extends Controller
                 $posts = Post::where('title', 'like', '%'.$text.'%')
                             ->where('created_user_id',auth()->user()->id)
                             ->orWhere('description', 'like', '%'.$text.'%')
-                            ->whereNull('deleted_at')
                             ->where('created_user_id',auth()->user()->id)
                             ->paginate(5);
 
@@ -43,7 +43,6 @@ class PostDeleteController extends Controller
             else{
                 $posts = Post::where('title', 'like', '%'.$text.'%')
                                 ->orWhere('description', 'like', '%'.$text.'%')
-                                ->whereNull('deleted_at') 
                                 ->paginate(5);
                 
                 return response()->json([

@@ -13,6 +13,10 @@
                 <div class="alert alert-success" role="alert" id='alert'>
                   {{Session::get('postedites')}}
                 </div>
+    @elseif(Session::has('message'))
+                <div class="alert alert-success" role="alert" id='alert'>
+                  {{Session::get('message')}}
+                </div>
     @endif
       <div class="row float-end mb-5">
           <form action="" method="get" id="form">
@@ -52,11 +56,13 @@
                     @endif
                     <td>{{$list->created_at}}</td>
                     <td>
-                      <a href="{{route('post.edit',$list->id)}}" class="btn btn-warning">Edit</a>
+                      <a href="{{route('post.edit',$list->id)}}" class="btn btn-warning">
+                        <i class="fa fa-edit"></i></a>
                       <form action="" method="get" class="btn ">
                         @csrf 
                         @method('DELETE')
-                        <button class="btn btn-danger m-0 delete">Delete</button>
+                        <button class="btn btn-danger m-0 delete">
+                        <i class="fa fa-trash"></i> </button>
                       </form>
                     </td>
                   </tr>
