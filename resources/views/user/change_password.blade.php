@@ -3,15 +3,16 @@
 <div class="container">
     <form action="{{route('changedpassword')}}" method="post" class="mt-5">
         @csrf 
-        <div class="row">
-          <header><h2 class="bg-primary">Change Password?</h2></header>
+     
+                <div class="row">
+          <header><h2 class="">Change Password?</h2></header>
         </div>
         <div class="row d-flex mt-3">
           <div class="col-2 "><label for="" class="form-label float-end">Current Password<span class="text-danger">&#42;</span></label></div>
           <div class="col-8">
-            <input type="text" name="cur-pass" class="form-control" value="">
+            <input type="password" name="cur_pass" class="form-control" value="">
               <span class="text-danger ">
-                @error('cur-pass')
+                @error('cur_pass')
                   {{$message}}
                 @enderror
               </span>
@@ -20,9 +21,9 @@
         <div class="row d-flex mt-3">
           <div class="col-2 "><label for="" class="form-label float-end">New Password<span class="text-danger">&#42;</span></label></div>
           <div class="col-8">
-            <input type="text" name="new-pass" class="form-control" value="">
+            <input type="password" name="new_pass" class="form-control" value="">
               <span class="text-danger ">
-                @error('new-pass')
+                @error('new_pass')
                   {{$message}}
                 @enderror
               </span>
@@ -31,9 +32,9 @@
         <div class="row d-flex mt-3">
           <div class="col-2 "><label for="" class="form-label float-end">New Confirm Password<span class="text-danger">&#42;</span></label></div>
           <div class="col-8">
-            <input type="text" name="con-new-pass" class="form-control" value="">
+            <input type="password" name="con_new_pass" class="form-control" value="">
               <span class="text-danger ">
-                @error('new-con-pass')
+                @error('con_new_pass')
                   {{$message}}
                 @enderror
               </span>

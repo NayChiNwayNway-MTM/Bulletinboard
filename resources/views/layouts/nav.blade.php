@@ -13,7 +13,7 @@
 <body>
 <nav class="navbar navbar-expand-lg px-3">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Bulletin_Board</a>
+    <a class="navbar-brand" href="{{route('post')}}">Bulletin_Board</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">

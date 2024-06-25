@@ -1,28 +1,39 @@
 @extends('layouts.master')
 @section('content')
 <div class="container">
-    <form action="{{route('resetpassword')}}" method="post" class="border border-primary mt-5">
+    <div class="row">
+      <div class="col-md-6 m-auto">
+      <form action="{{route('resetpassword')}}" method="post" class=" mt-5">
         @csrf 
-        <div class="row"><header><h2 class="bg-success mb-3">Forgot Password?</h2></header></div>
-        <div class="row d-flex mt-3">
-          <div class="col-2 "><label for="" class="form-label float-end">Email<span class="text-danger">&#42;</span></label></div>
-          <div class="col-8">
-            <input type="text" name="email" class="form-control"
-                data-bs-toggle="tooltip" data-bs-placement="top"
-                data-bs-custom-class="custom-tooltip"
-                data-bs-title="This top tooltip is themed via CSS variables." value="">
-              <span class="text-danger ">
-                @error('email')
-                  {{$message}}
-                @enderror
-              </span>
-              <div class="row mt-4 mb-3">
-                <div class="col-3">
-                  <button class="btn btn-success">Reset Password</button>
-                </div>
+       
+          <div class="card text-center" style="width: 500px;">
+            <div class="card-header h5 text-white bg-primary">Password Reset</div>
+              <div class="card-body px-5">
+                  <p class="card-text py-2">
+                      Enter your email address and we'll send you an email with instructions to reset your password.
+                  </p>
+                  @if(session('error'))
+                    <div class="alert alert-danger" id="alert">
+                      {{session('error')}}
+                    </div>
+                  @endif
+                  <div data-mdb-input-init class="form-outline mt-3">
+                      <label class="form-label" for="typeEmail">Email input</label>
+                      <input type="email" id="typeEmail" name="email" class="form-control my-3" />
+                      <span class="text-danger ">
+                        @error('email')
+                          {{$message}}
+                        @enderror
+                      </span>
+                  </div>
+                  <button  class="btn btn-primary w-100 mt-3">Reset password</button>
+                  
               </div>
-          </div>         
-        </div>
+            </div>
+
     </form>
+      </div>
+    </div>
+   
 </div>
 @endsection

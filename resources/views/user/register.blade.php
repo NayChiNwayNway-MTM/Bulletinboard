@@ -36,7 +36,7 @@
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">Password<span class="text-danger">&#42;</span></label></div>
       <div class="col-8">
-        <input type="text" name="password" class="form-control">
+        <input type="password" name="password" class="form-control">
           <span class="text-danger ">
             @error('password')
               {{$message}}
@@ -47,7 +47,7 @@
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">Confirm Password<span class="text-danger">&#42;</span></label></div>
       <div class="col-8">
-        <input type="text" name="confirmpass" class="form-control">
+        <input type="password" name="confirmpass" class="form-control">
         <span class="text-danger ">
           @error('confirmpass')
             {{$message}}

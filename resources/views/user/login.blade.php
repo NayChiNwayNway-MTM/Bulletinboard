@@ -15,6 +15,11 @@
                       </div>
                       <form action="{{route('userlogin')}}" method="post" class="mt-5">
                       @csrf
+                      @if(session('reset_pass'))
+                      <div class="alert alert-success" id="alert">
+                        {{session('reset_pass')}}
+                      </div>
+                      @endif
                         <h4 class="mb-3">Please login to your account</h4>
                         <div data-mdb-input-init class="form-outline mb-4">
                           <label class="form-label" for="form2Example11">Email Address:<span class="text-danger">&#42;</span></label>

@@ -5,29 +5,46 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
     //userlist
     public function userlist(){
+
         $created_user=User::find(auth()->user()->created_user_id);
         $all_users=User::select('id', 'name')->get()->whereNull('deleted_at');
 
         $created_all_user_id=User::select('created_user_id')->whereNull('deleted_at')->get();
         //dd($created_all_user_id);
-        $users=User::whereNull('deleted_at')->Paginate(5);
-        $created_all_user_id = User::whereNull('deleted_at')->pluck('created_user_id')->toArray();
+        if(auth()->user()->type == 0){
+            $users=User::whereNull('deleted_at')->Paginate(5);
+            $created_all_user_id = User::whereNull('deleted_at')->pluck('created_user_id')->toArray();
 
-        $names = [];
-        foreach ($created_all_user_id as $index => $created_user_id) {
-            $user = User::select('name')->where('id', $created_user_id)->whereNull('deleted_at')->first();
-            //dd($users);
-            $names[$index] = $user ? $user->name : 'Unknown';
+                $names = [];
+                foreach ($created_all_user_id as $index => $created_user_id) {
+                    $user = User::select('name')->where('id', $created_user_id)->whereNull('deleted_at')->first();
+                    //dd($users);
+                    $names[$index] = $user ? $user->name : 'Unknown';
+                } 
         }
-        return view('user.index',compact('users'),compact('created_all_user_id','names'));
-    }
-   
+        else{
+            $users = User::whereNull('deleted_at')
+             ->where('created_user_id', auth()->user()->id)
+             ->with('createdBy')
+             ->paginate(5);
+             $names='';
+             foreach($users as $user){
+               $names= $user->createdBy->name;
+             }
+            //dd($names);          
+             return view('user.index',compact('users'),compact('created_all_user_id','names'));
+        }
+        //dd($names);
+        return view('user.index',compact('users'),compact('names'));
+    
+} 
     //user register ui
     public function register(){
         return view('user.register');
@@ -267,9 +284,16 @@ class UserController extends Controller
         $request->validate([
             'email'=>'required|email'
         ]);
-        //TDO::sent email verification code
-        //TDO::get id
-        return view('user.update_password');
+        //dd($request->email);
+        $user=User::where('email',$request->email)->first();
+        if($user){
+            
+            return redirect()->route('login')->with(['reset_pass'=>'Email sent with password reset instructions.']);
+        }
+        else{
+            return redirect()->route('forgetpassword')->with(['error'=>'Email does not exist.']);
+        }
+        
     }
     //update password and save to database
     public function update_password(){
@@ -284,19 +308,39 @@ class UserController extends Controller
     //change password and new password is store database
     public function changed_password(Request $request){
         $request->validate([
-            'cur-pass'=>'required',
-            'new-pass'=>'required|min:6|confirmed',
-            'new-con-pass'=>'required|min:6|confirmed'
+            'cur_pass'=>'required',
+            'new_pass'=>'required|min:6',
+            'con_new_pass'=>'required|same:new_pass'
         ],
         [
-           'cur-pass.required'=>'Current Password can\'t be blank' ,
-           'new-pass.required'=>'New Password can\'t be blank',
-           'new-con-pass.required'=>'Confirm New Password can\'t be blank',
-           'new-pass.min' => 'New Password must be at least 6 characters.',
-            'new-con-pass.confirmed' => 'New Password and Confirm New Password must match.',
+           'cur_pass.required'=>'Current Password can\'t be blank' ,
+           'new_pass.required'=>'New Password can\'t be blank',
+           'con_new_pass.required'=>'Confirm New Password can\'t be blank',
+           'new_pass.min' => 'New Password must be at least 6 characters.',
+            'con_new_pass.same' => 'New Password and Confirm New Password must match.',
         ]);
+       $current_pass=$request->cur_pass;
+       $new_password=$request->new_pass;
+       $confirm_pass=$request->con_new_pass;
+
+       $user = User::find(auth()->user()->id);
+       $hashedPassword = $user->password;
+       if (Hash::check($current_pass, $hashedPassword)) {
+            if ($new_password === $confirm_pass) {
+
+                $user->password = Hash::make($new_password);
+                $user->save();
+
+                return redirect()->route('user')->with('success', 'Password updated successfully.');
+            } else {
+                return redirect()->back()->withErrors(['error' => 'New passwords do not match.']);
+            }
+        } else {
         
-        //TDO::check cur-pass is locate in database and true store database
+            return redirect()->back()->withErrors(['error' => 'Current password is incorrect.']);
+        }
+
+  
 
     }
 

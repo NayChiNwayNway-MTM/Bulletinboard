@@ -4,7 +4,6 @@
 <div class="container">
   <!--////-->
   <div class="card m-auto mt-5" style="width: 30rem;">
- 
   <div class="card-body">
   <form action="{{route('editprofile',$user_data->id)}}" method="get" class="">
       <div class="row"><header><h2 class="">Profile</h2></header></div>

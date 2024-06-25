@@ -15,16 +15,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'App\Http\Controllers'], function () {
     
-    Route::get('/login','AuthController@loginForm')->name('login');
-    Route::post('/user-login','AuthController@login')->name('userlogin');
-    Route::get('/logout','AuthController@logout')->name('logout');
-    Route::get('/signup','AuthController@signup')->name('signup');
-    Route::post('/signup','AuthController@create')->name('signup');
-    Route::get('/pass','UserController@forgetpassword')->name('forgetpassword');
+        Route::get('/login','AuthController@loginForm')->name('login');
+        Route::post('/user-login','AuthController@login')->name('userlogin');
+        Route::get('/logout','AuthController@logout')->name('logout');
+        Route::get('/signup','AuthController@signup')->name('signup');
+        Route::post('/signup','AuthController@create')->name('signup');
+        Route::get('/pass','UserController@forgetpassword')->name('forgetpassword');
         Route::post('/restpass','UserController@resetpassword')->name('resetpassword');
         Route::post('/updatepass','UserController@update_password')->name('updatepassword');
         Route::get('/changepassword','UserController@change_password')->name('changepassword');
         Route::post('/changepassword','UserController@changed_password')->name('changedpassword');
+        
     Route::middleware('authmiddleware')->group(function(){
       
         //user
@@ -42,7 +43,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/user/deleteduser/{id}','UserDeleteController@confirm');
         //user detail
         Route::post('/user/detail/{id}','UserDetailController@showdetail');
+        //user search
+        Route::get('/search','UserDetailController@search_user')->name('search_user');
+      
+
         //post
+        Route::get('/','PostListController@postlist')->name('post'); 
         Route::get('/postlist','PostListController@postlist')->name('postlist')->middleware('authmiddleware');   
         Route::resource('/post','PostListController');
         Route::post('/post_edit_confirm/{id}','PostListController@post_edit_confirm')->name('post_edit_confirm');
