@@ -2,13 +2,14 @@
   @section('content')
 
   <div class="container col-md-6 mt-5">
-    <form action="{{route('post.create')}}" method="get" class="border border-primary rounded ">
-      @csrf 
       @if(Session::has('postcreated'))
                 <div class="alert alert-success" role="alert" id='alert'>
                     {{Session::get('postcreated')}}
                 </div>
       @endif
+    <form action="{{route('post.create')}}" method="get" class="border border-primary rounded ">
+      @csrf 
+    
       <div class="row">
       <div class= "mb-5"><h4 class="text-primary text-center mt-2">Create Post</h4></div>
       </div>
@@ -43,12 +44,12 @@
         </span>
         </div>
       </div>
-      <div class="row d-flex justify-content-around align-item-center m-5 ">
-        <div class="col-sm-6">
-          <button class="btn btn-info col-sm-4">Create</button>
+      <div class="row  justify-content-center align-items-center m-5 ">
+        <div class="col-sm-6 d-flex justify-content-center align-items-center">
+          <button class="btn btn-info col-sm-4 mx-2">Create</button>
           <form action="" method="post">
             @csrf 
-            <button class="btn btn-primary col-4" type="reset">Clear</button>
+            <button class="btn btn-primary col-4 mx-2" type="reset">Clear</button>
           </form>
         </div>        
       </div>

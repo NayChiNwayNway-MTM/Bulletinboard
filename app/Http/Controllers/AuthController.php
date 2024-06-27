@@ -27,9 +27,9 @@ class AuthController extends Controller
             'confirm-password'=>'required|same:password'
         ],
         [
-            'name.required'=>'Name can\'t be blank',
-            'email.required'=>'Email can\'t be blank',
-            'password.required'=>'Password can\'t be blank'
+            'name.required'=>'Name can\'t be blank.',
+            'email.required'=>'Email can\'t be blank.',
+            'password.required'=>'Password can\'t be blank.'
            
         ]);
        
@@ -72,7 +72,7 @@ class AuthController extends Controller
           
                 return redirect()->route('postlist');          
         } else {
-           return redirect()->to('login');
+           return redirect()->to('login')->with('incorrect','Incorrect,Try again.');
         }
 
     }

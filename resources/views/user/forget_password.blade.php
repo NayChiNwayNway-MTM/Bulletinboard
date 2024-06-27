@@ -3,7 +3,7 @@
 <div class="container">
     <div class="row">
       <div class="col-md-6 m-auto">
-      <form action="{{route('resetpassword')}}" method="post" class=" mt-5">
+      <form action="{{route('forget.password.post',)}}" method="post" class=" mt-5">
         @csrf 
        
           <div class="card text-center" style="width: 500px;">

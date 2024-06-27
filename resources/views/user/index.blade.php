@@ -3,6 +3,7 @@
 <section>
 <header><h2 class="px-5 py-2">User List</h2></header>
 <div class="container">
+
       <form action="{{route('search_user')}}" method="get" class="mt-3" id="search_form">
         @csrf 
         @if(session('success'))
@@ -24,57 +25,59 @@
             <div class="col"><button  type="submit" class="btn btn-success" id="user_search" value="{{request('to')}}">Search</button></div>
           </div>        
       </form> 
-      <!--<div id="paginationLinksContainer">
-          Pagination links will be inserted here
-      </div>
-      <div class="container">
-        <div class="row mt-4" id="search_results">
-          enter search user data    
-        </div>
-      </div>-->
+      <form method="GET" action="{{ route('user') }}" class="mt-3 pt-3" id="pagesize">
+        <label for="page_size">Items per page:</label>
+        <select name="page_size" id="page_size" onchange="this.form.submit()">
+            <option value="10" {{ request('page_size') == 10 ? 'selected' : '' }}>10</option>
+            <option value="15" {{ request('page_size') == 15 ? 'selected' : '' }}>15</option>
+            <option value="20" {{ request('page_size') == 20 ? 'selected' : '' }}>20</option>
+        </select>
+      </form>
      
       <div class="row mt-3" id="body">
-         <!-- Pagination Links -->
-        <div class="">
-            {!! $users->links() !!}
-        </div>
+         
         @if($users->isEmpty())
           <h5 class="text-center mt-3">No users found.</h5>
-        @else
-            @foreach($users as $user)
-            <div class="col-md-4 mb-4">
-                <div class="card" id="{{$user->id}}">
-                    <div class="card-header">
-                        <h5 class="card-title text-primary" id="user_detail">{{ $user->name }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text"><strong>Email:</strong>{{ $user->email }}</p>
-                        @if(auth()->user()->type == 0)
-                        <p class="card-text"><strong>Created User:</strong>
-                        {{ $names [((($users->currentPage() * 5) - 5) + $loop->iteration) - 1] }}               
-                      </p>
-                      @else
-                      <p class="card-text"><strong>Created User:</strong>
-                        {{ $names}}                   
-                      </p>
-                        @endif
-                      
-                        <p class="card-text"><strong>Type:</strong> {{ $user->type == 1 ? 'User' : 'Admin' }}</p>
-                        <p class="card-text"><strong>Phone:</strong> {{ $user->phone }}</p>
-                        <p class="card-text"><strong>Date of Birth:</strong> {{ $user->dob }}</p>
-                        <p class="card-text"><strong>Address:</strong> {{ $user->address }}</p>
-                        <p class="card-text"><strong>Created Date:</strong> {{ $user->created_at }}</p>
-                        <p class="card-text"><strong>Updated Date:</strong> {{ $user->updated_at }}</p>
-                    </div>
-                    <div class="card-footer">
-                        
-                        <a href="#" class="btn btn-sm btn-danger userdelete" data-id="{{ $user->id }}"><i class="fa fa-trash"></i></a>
-                      
-                    </div>
-                </div>
-            </div>
-            @endforeach
+        @else       
+        <table class="table table-striped table-primary mt-5">
+                <tr class="text-center">
+                  <th>No</th>
+                  <th>Profile</th>
+                  <th >Name</th>
+                  
+                  <th>Email</th>
+                  <th>Created User</th>
+                  <th>Type</th>
+                  <th>Phone</th>
+                  <th>Date of Birth</th>
+                  <th>Address</th>
+                  <th>Operation</th>
+                </tr>
+             <tbody>
+                @foreach($users as $user)
+                  <tr class="text-center" id="{{$user->id}}">
+                    <td>{{$user->id}}</td>
+                    <td><img src="{{$user->profile}}" alt="profile" style="width: 50px; height: 50px; border-radius: 50%;"
+                      class="rounded-circle img-thumbnail"></td>
+                    <td id="user_detail" class="text-primary">{{ $user->name }}</td>
+                   
+                    <td>{{ $user->email }}</td>
+                    <td>{{ $names[$user->id] }}</td>
+                    <td> {{ $user->type == 1 ? 'User' : 'Admin' }}</td>
+                    <td>{{$user->phone}}</td>
+                    <td>{{$user->dob}}</td>
+                    <td>{{$user->address}}</td>
+                    <td><a href="#" class="btn btn-sm btn-danger userdelete" data-id="{{ $user->id }}"><i class="fa fa-trash"></i></a></td>
+                  </tr>
+                @endforeach
+             </tbody>         
+        </table>
         @endif
+        <!-- Pagination Links -->
+        <div class="">
+      
+            {!! $users->appends(['page_size'=>$pageSize])->links() !!}
+        </div>
     </div>
 
 </div>   
@@ -239,8 +242,9 @@
         //start user details
           $(document).ready(function(){
             $(document).on('click','#user_detail',function(){
-              var tag=this.parentElement.parentElement;
-              var id=tag.getAttribute('id');
+              
+              var tr=$(this).closest('tr')
+              var id=tr.attr('id')
               console.log(id);
               $.ajax({
                 method:`post`,
@@ -263,8 +267,12 @@
                     $('#phone').text(user.phone);
                     $('#dob').text(user.dob);
                     $('#address').text(user.address);
-                    $('#created_date').text(user.created_at);
-                    $('#updated_date').text(user.updated_at);
+                    var created_at=new Date(user.created_at);
+                    var dateFormat=created_at.toISOString().split('T')[0];
+                    $('#created_date').text(dateFormat);
+                    var updated_at=new Date(user.updated_at);
+                    var Updated_format = updated_at.toISOString().split('T')[0];
+                    $('#updated_date').text(Updated_format);
                     $('#updated_user').text(response.created_user);
                     $('#created_user').text(response.created_user);
                   }

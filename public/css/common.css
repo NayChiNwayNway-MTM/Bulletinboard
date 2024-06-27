@@ -60,3 +60,15 @@ body {
   margin-left: 80px;
   margin-top: 20px;
 }
+.custom-card {
+  border-radius: 15px; /* Rounded corners */
+  border: px solid #0d6efd; /* Solid red border with 3px width */
+}
+
+/* start post detail modal*/
+.modal-header .close {
+  border: none; 
+  background-color: #fff;
+  font-size: 30px;
+}
+/* end post detail modal*/

@@ -14,26 +14,35 @@ use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use League\Csv\Reader;
 use League\Csv\Statement;
-use Illuminate\Support\Facades\Validator;
-use Exception;
+use Illuminate\Support\Facades\DB;
 class PostListController extends Controller
 {
     //
     
-    public function postlist(){
+    public function postlist(Request $request){
 
-    if(auth()->user()->type == 1){
-        $postlist = Post::where('created_user_id', auth()->user()->id )
-                        
-                        ->paginate(5);
-        $users = User::all();
-        return view('post.postlist', compact('postlist', 'users'));
-    }else{
-      
-        $postlist=Post::paginate(5);
-        $users = User::all();
-        return view('post.postlist', compact('postlist', 'users'));
-    }
+        $pageSize = $request->input('page_size', 10);
+        session(['pagesize'=>$pageSize]);
+        if(Auth::check()){
+            if(auth()->user()->type == 1){
+                $postlist = Post::where('created_user_id', auth()->user()->id )
+                                
+                                ->paginate($pageSize);
+                $users = User::all();
+                return view('post.postlist', compact('postlist', 'users','pageSize'));
+            }else{
+            
+                $postlist=Post::paginate($pageSize);
+                $users = User::all();
+                return view('post.postlist', compact('postlist', 'users','pageSize'));
+            }
+        }
+        else{
+            $postlist=Post::where('status',1)->paginate($pageSize);
+            $users = User::all();
+            return view('post.postlist', compact('postlist', 'users'));
+        }
+   
 
     }
     public function createpost(){
@@ -49,9 +58,9 @@ class PostListController extends Controller
 
             ],
             [
-               'title.required'=>'Title can\'t be blank',
+               'title.required'=>'Title can\'t be blank.',
                'title.unique' => 'The title has already been taken.',
-               'description.required'=>'Description can\'t be balnk' ,
+               'description.required'=>'Description can\'t be balnk.' ,
                'description.max' => 'Description must not exceed 255 characters.',
             ]);
            // dd($request->title);
@@ -68,9 +77,9 @@ class PostListController extends Controller
             'title' => 'required|unique:posts|max:255',
             'description' => 'required|max:255',
         ], [
-            'title.required' => 'Title can\'t be blank',
+            'title.required' => 'Title can\'t be blank.',
             'title.unique' => 'The title has already been taken.',
-            'description.required' => 'Description can\'t be blank',
+            'description.required' => 'Description can\'t be blank.',
             'description.max' => 'Description must not exceed 255 characters.',
         ]);       
         Post::create([
@@ -155,7 +164,7 @@ class PostListController extends Controller
 
             ],
             [
-               'title.required'=>'Title can\'t be blank',
+               'title.required'=>'Title can\'t be blank.',
                'title.unique' => 'The title has already been taken.',
                'description.required'=>'Description can\'t be balnk' ,
                'description.max' => 'Description must not exceed 255 characters.',
@@ -179,7 +188,7 @@ class PostListController extends Controller
                                                         'description'=>$des,
                                                         'status'=>$status,
                                                         'updated_user_id'=>auth()->user()->id,'updated_at'=>Carbon::now()]);
-            Session::flash('postedites','Post Updated Successfully');
+            Session::flash('postedites','Post Updated Successfully.');
             return redirect()->route('postlist');
         }
         //upload_post ui
@@ -187,83 +196,68 @@ class PostListController extends Controller
             return view('post.upload_post');
         }
         //upload_post validation
-        public function uploaded_post(Request $request){
+        public function uploaded_post(Request $request)
+        {
             $request->validate([
                 'csvfile' => 'required|file'
             ]);
-          
-    
 
-             $path = $request->file('csvfile')->getRealPath(); 
+            // Retrieve and process the uploaded file
+            $file = $request->file('csvfile');
+            $tempPath = sys_get_temp_dir().'/'.uniqid().'csv';
+
+            
             $file_type= $request->file('csvfile')->getClientOriginalExtension();
             if($file_type !== 'csv'){
                 return redirect()->back()->with('error', 'File must be csv type.')->withInput();
             }
+           
             try {
-                    $csv = Reader::createFromPath($path, 'r');
-                    $csv->setHeaderOffset(0);
+                // Move the uploaded file to a temporary location
+                $file->move(sys_get_temp_dir(), $tempPath);
 
-                     $header = $csv->getHeader();
-
-                    //Check if the header has exactly 3 columns
-                    if (count($header) !== 3) {
-                        return redirect()->back()->with('error', 'CSV must have exactly 3 columns.')->withInput();
-                    }
-                    $records = Statement::create()->process($csv);
-                   
-                    foreach ($records as $record) {
-
-                        if (count($record) !== 3) {
-                           
+                // Read the content of the file
+                $csv = Reader::createFromPath($tempPath, 'r');
+                $csv->setHeaderOffset(0);
+                $records = $csv->getRecords();
+              
+                foreach ($records as $record) {
+                          // Validate the CSV data structure
+                          if (count($record) !== 3) {
+                            DB::rollBack();
                             return redirect()->back()->with('error', 'Each row in the CSV must have exactly 3 columns.')->withInput();
                         }
-                      
-                    //   $existingPost = Post::withTrashed() //check post deleted
-                    //   ->where('title',$record['title'])
-                    //   ->first();
-                       
-                //        if ($existingPost) {
-                //           //dd($existingPost->deleted_at);
-                //            if ($existingPost->deleted_at) {
-                //               
-                //                // Restore the soft deleted post
-                //                $existingPost->restore();
-                //                
-                //                // Update the restored post with new description if needed
-                //                $existingPost->update([
-                //                    'title' => $record['title'],
-                //                    'description' => $record['description'],
-                //                    'status' => $record['status'],
-                //                    'created_user_id' => Auth::id(),
-                //                    'updated_user_id' => Auth::id(),
-                //                    'created_at' => Carbon::now(),
-                //                    'updated_at' => Carbon::now(),
-                //                ]);
-                //
-                //            } else {
-                //                // Post with the same title exists and is not soft deleted
-                //                return redirect()->back()->with(['error' => 'The title has already been taken.'])->withInput();
-                //            }
-                //        } else {
-                                // Create new post
-                            Post::Create([
-                                'title' => $record['title'],
-                                'description' => $record['description'],
-                                'status' => $record['status'],
-                                'created_user_id' => Auth::id(),
-                                'updated_user_id' => Auth::id(),
-                                'created_at' => Carbon::now(),
-                                'updated_at' => Carbon::now(),
-                             ]);
-                       //  }
-           
+                        $existingPost = Post::where('title', $record['title'])->first();
+                        if ($existingPost) {
+                            
+                            return redirect()->back()->with('error','Post title already exists:'.$record['title'])->withInput();
+                           
+                        }
+                }
+                foreach ($records as $record) {
+                            
+                    if (count($record) !== 3) {
+                        
+                        return redirect()->back()->with('error', 'Each row in the CSV must have exactly 3 columns.')->withInput();
+                    }
                     
-            }
-    
-            return redirect()->route('postlist')->with('success', 'CSV data imported successfully.');
-            } catch (Exception $e) {
-                return redirect()->back()->with('error', 'There was an error processing the CSV file.')->withInput();
-            }
+                        // Create or update posts based on CSV data
+                        Post::create([
+                            'title' => $record['title'],
+                            'description' => $record['description'],
+                            'status' => $record['status'],
+                            'created_user_id' => Auth::id(),
+                            'updated_user_id' => Auth::id(),
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ]);
+                }
+                 
+                    return redirect()->route('postlist')->with('success', 'CSV data imported successfully.'); 
+
+            }catch (\Exception $e) {
+                return back()->withInput()->withErrors(['error' => $e->getMessage()]);
+            } 
         }
         //post download with csv format
         public function export(Request $request)
@@ -323,6 +317,4 @@ class PostListController extends Controller
             }
             
         }
-       
-       
 }

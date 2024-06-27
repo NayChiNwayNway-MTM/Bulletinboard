@@ -2,49 +2,70 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SendMail;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
     //userlist
-    public function userlist(){
-
+    public function userlist(Request $request){
+        
+        $pageSize = $request->input('page_size', 10);
+        session(['pageSize'=>$pageSize]);
         $created_user=User::find(auth()->user()->created_user_id);
         $all_users=User::select('id', 'name')->get()->whereNull('deleted_at');
 
         $created_all_user_id=User::select('created_user_id')->whereNull('deleted_at')->get();
-        //dd($created_all_user_id);
-        if(auth()->user()->type == 0){
-            $users=User::whereNull('deleted_at')->Paginate(5);
-            $created_all_user_id = User::whereNull('deleted_at')->pluck('created_user_id')->toArray();
 
+            if (auth()->user()->type == 0) {
+                // Get paginated users, including the 'created_user_id'
+                $users = User::whereNull('deleted_at')->paginate($pageSize);
+                
+                // Fetch the created users' names using a single query
+                $createdUserIds = $users->pluck('created_user_id')->filter()->unique()->toArray();
+                
+                $createdUsers = User::whereIn('id', $createdUserIds)
+                                    ->whereNull('deleted_at')
+                                    ->pluck('name', 'id')
+                                    ->toArray();
+            
+                // Map names to the users' created_user_ids
                 $names = [];
-                foreach ($created_all_user_id as $index => $created_user_id) {
-                    $user = User::select('name')->where('id', $created_user_id)->whereNull('deleted_at')->first();
-                    //dd($users);
-                    $names[$index] = $user ? $user->name : 'Unknown';
-                } 
-        }
+                foreach ($users as $user) {
+                    $names[$user->id] = $createdUsers[$user->created_user_id] ?? 'Unknown';
+                }
+                
+            return view('user.index', compact('users', 'names','pageSize'));
+            }
+       
         else{
-            $users = User::whereNull('deleted_at')
-             ->where('created_user_id', auth()->user()->id)
-             ->with('createdBy')
-             ->paginate(5);
-             $names='';
-             foreach($users as $user){
-               $names= $user->createdBy->name;
-             }
-            //dd($names);          
-             return view('user.index',compact('users'),compact('created_all_user_id','names'));
-        }
-        //dd($names);
-        return view('user.index',compact('users'),compact('names'));
     
-} 
+            $users = User::whereNull('deleted_at')
+            ->where('created_user_id', auth()->user()->id)
+            ->with('createdBy')
+            ->paginate($pageSize);
+
+                // Initialize names array
+                $names = [];
+
+                // Collect names of creators
+                foreach ($users as $user) {
+                    $names[$user->id] = $user->createdBy ? $user->createdBy->name : 'Unknown';
+                }
+
+                return view('user.index', compact('users', 'names','pageSize'));
+                        }
+                        //dd($names);
+                    
+    
+    } 
     //user register ui
     public function register(){
         return view('user.register');
@@ -60,9 +81,9 @@ class UserController extends Controller
             'profile'=>'required|image|mimes:jpeg,jpg,png,svg|max:2048'
         ],
         [
-            'name.required'=>'Name can\'t blank',
-            'email.required'=>'Email can\'t blank',
-            'profile.required'=>'Profile can\'t blank'
+            'name.required'=>'Name can\'t blank.',
+            'email.required'=>'Email can\'t blank.',
+            'profile.required'=>'Profile can\'t blank.'
         ]);
         
         session(['type'=>$request->input('type')]);//get type admin or user
@@ -98,8 +119,8 @@ class UserController extends Controller
             'confirmpass'=>'required|same:password',           
         ],
         [
-            'name.required'=>'Name can\'t blank',
-            'email.required'=>'Email can\'t blank',          
+            'name.required'=>'Name can\'t blank.',
+            'email.required'=>'Email can\'t blank.',          
         ]);
       $image_path = session('image');
       $type =session('type');
@@ -159,7 +180,7 @@ class UserController extends Controller
                         'created_at'=>Carbon::now(),
                         'updated_at'=>Carbon::now()
                     ]);
-                    Session::flash('register','Register Successfully');
+                    Session::flash('register','Register Successfully.');
                         return view('user.register');
                 }
                 else{
@@ -177,7 +198,7 @@ class UserController extends Controller
                         'updated_at'=>Carbon::now()
     
                        ]);
-                       Session::flash('register','Register Successfully');
+                       Session::flash('register','Register Successfully.');
                         return view('user.register');
                 }
                 
@@ -201,8 +222,8 @@ class UserController extends Controller
             'email'=>'required' ,
                   
         ],[
-            'name.required'=>'Name can\'t blank',
-            'email.reqied'=>'Email can\'t blank'
+            'name.required'=>'Name can\'t blank.',
+            'email.reqied'=>'Email can\'t blank.'
         ]);
        //check type admin
         if(auth()->user()->type == 0){
@@ -276,18 +297,37 @@ class UserController extends Controller
         
     }
     //forget password ui
-    public function forgetpassword(){
+    public function showforgetpassword(){
+       
         return view('user.forget_password');
     }
-    //reset pass and store database
-    public function resetpassword(Request $request){
+    //reset pass and store token to database
+    public function submitforgetpassword(Request $request){
         $request->validate([
             'email'=>'required|email'
         ]);
         //dd($request->email);
         $user=User::where('email',$request->email)->first();
+        $userName=User::select('name')->where('email',$request->email)->first()->name;
+        //dd($userName);
         if($user){
-            
+            $userEmail=$request->email;
+            $token = Str::random(64);
+            DB::table('password_reset_tokens')->insert([
+                'email' => $request->email, 
+                'token' => $token, 
+                'created_at' => Carbon::now()
+            ]);
+           // dd($userEmail);
+          
+           $data = [
+           'token'=>$token,
+           'email' => $request->email,
+            'name'=>$userName,
+           ];
+         Mail::to($userEmail)->send(new SendMail($data));
+          // dd($bladeurl);
+            //return view('user.reset_password');
             return redirect()->route('login')->with(['reset_pass'=>'Email sent with password reset instructions.']);
         }
         else{
@@ -295,11 +335,38 @@ class UserController extends Controller
         }
         
     }
-    //update password and save to database
-    public function update_password(){
-        dd("ada");
+    //reset password ui
+    public function reset_password(Request $request,$token){
+        $user_token=$token;
+        $email = $request->query('email');
+        //dd($email);
+        return view('user.reset_password',compact('user_token','email'));
+
         //TDO::get id ,check validation,and save to database
         //
+    }
+    //reset password and store new password
+    public function submit_reset_password(Request $request){
+       // dd($request->email);
+        $request->validate([
+            'password'=>'required',
+            'password_confirm'=>'required'
+        ]);
+        $check_token =DB::table('password_reset_tokens')
+                    ->where([
+                        'email'=>$request->email,
+                        'token'=>$request->token,
+                    ])->first();
+        if(!$check_token){
+            return redirect()->route('login')->with('error','Invalid Token');
+        }
+        User::where('email',$request->email)
+            ->update([
+                'password'=>Hash::make($request->password),
+                'updated_at'=>Carbon::now()
+            ]);
+        DB::table('password_reset_tokens')->where('email',$request->email)->delete();
+        return redirect('/login')->with('message', 'Your password has been changed!');
     }
     //change password ui
     public function change_password(){
@@ -313,9 +380,9 @@ class UserController extends Controller
             'con_new_pass'=>'required|same:new_pass'
         ],
         [
-           'cur_pass.required'=>'Current Password can\'t be blank' ,
-           'new_pass.required'=>'New Password can\'t be blank',
-           'con_new_pass.required'=>'Confirm New Password can\'t be blank',
+           'cur_pass.required'=>'Current Password can\'t be blank.' ,
+           'new_pass.required'=>'New Password can\'t be blank.',
+           'con_new_pass.required'=>'Confirm New Password can\'t be blank.',
            'new_pass.min' => 'New Password must be at least 6 characters.',
             'con_new_pass.same' => 'New Password and Confirm New Password must match.',
         ]);

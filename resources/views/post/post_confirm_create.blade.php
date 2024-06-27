@@ -38,11 +38,11 @@
         </div>
       </div>
       <div class="row d-flex justify-content-around align-item-center m-5 ">
-        <div class="col-sm-6">
-          <button class="btn btn-info col-sm-4">Comfirm</button>
+        <div class="col-sm-6 d-flex justify-content-around align-item-center">
+          <button class="btn btn-info col-sm-4 mx-1">Comfirm</button>
           <form action="{{route('post.create')}}" method="get">
             @csrf 
-            <button class="btn btn-primary col-4" type="reset">Cancle</button>
+            <button class="btn btn-primary col-4 mx-1" type="reset">Cancle</button>
           </form>
           
         </div>        

@@ -3,12 +3,14 @@
 
 <div class="container">
 <header><h2 class="bg-success mt-5">Reset Password</h2></header>
-  <form action="{{route('updatepassword')}}" method="post" class="mt-5" enctype="multipart/form-data">
+  <form action="{{route('resetpassword.post')}}" method="post" class="mt-5">
     @csrf 
+    <input type="hidden" name="token" value="{{ $user_token }}">
+    <input type="hidden" name="email" value="{{ $email }}">
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">Password<span class="text-danger">&#42;</span></label></div>
       <div class="col-8">
-        <input type="text" name="password" class="form-control">
+        <input type="password" name="password" class="form-control">
           <span class="text-danger ">
             @error('password')
               {{$message}}
@@ -19,7 +21,7 @@
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">Password Conformation<span class="text-danger">&#42;</span></label></div>
       <div class="col-8">
-        <input type="text" name="password_confirm" class="form-control">
+        <input type="password" name="password_confirm" class="form-control">
           <span class="text-danger ">
             @error('password_confirm')
               {{$message}}

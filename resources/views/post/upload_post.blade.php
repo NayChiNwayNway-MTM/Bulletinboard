@@ -18,9 +18,9 @@
                     {{ $message }}
                 @enderror
               </span>         
-              <div class="row d-flex mt-5 mb-5">
-                <button class="btn btn-success col-4 m-2">Upload</button>
-                <button class="btn btn-info col-4 m-2 ty" type="reset">Clear</button>
+              <div class="row d-flex  mt-5 mb-5">
+                <button class="btn btn-info col-4 m-2">Upload</button>
+                <button class="btn btn-primary col-4 m-2 ty" type="reset">Clear</button>
               </div>
             </div>
           </div>

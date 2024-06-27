@@ -27,12 +27,13 @@ class PostDeleteController extends Controller
         }
         //post search
         public function search($text) {
+            $pagesize=session('pagesize');
             if(auth()->user()->type == 1){
                 $posts = Post::where('title', 'like', '%'.$text.'%')
                             ->where('created_user_id',auth()->user()->id)
                             ->orWhere('description', 'like', '%'.$text.'%')
                             ->where('created_user_id',auth()->user()->id)
-                            ->paginate(5);
+                            ->paginate($pagesize);
 
                 return response()->json([
                     
@@ -43,7 +44,7 @@ class PostDeleteController extends Controller
             else{
                 $posts = Post::where('title', 'like', '%'.$text.'%')
                                 ->orWhere('description', 'like', '%'.$text.'%')
-                                ->paginate(5);
+                                ->paginate($pagesize);
                 
                 return response()->json([
                                 
