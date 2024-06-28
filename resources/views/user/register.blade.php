@@ -1,6 +1,7 @@
 @extends('layouts.nav')
 @section('content')
-<div class="mask d-flex align-items-center h-100 ">
+<section class="background">
+<div class="mask d-flex align-items-center h-100 pt-5">
     <div class="container mt-5 h-100 ">
     @if(Session::has('register'))
                               <div class="alert alert-success" role="alert" id='alert'>
@@ -41,8 +42,9 @@
                     </div>   
                     <div class="row d-flex mb-5">
                       <div class="col-3 "><label for="" class="form-label float-end">Password<span class="text-danger">&#42;</span></label></div>
-                      <div class="col-8">
-                        <input type="password" name="password" class="form-control">
+                      <div class="col-8 password">
+                        <input type="password" name="password" id="password" class="form-control password">
+                        <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
                           <span class="text-danger ">
                             @error('password')
                               {{$message}}
@@ -52,8 +54,9 @@
                     </div>  
                     <div class="row d-flex mb-5">
                       <div class="col-3 "><label for="" class="form-label float-end">Confirm Password<span class="text-danger">&#42;</span></label></div>
-                      <div class="col-8">
-                        <input type="password" name="confirmpass" class="form-control">
+                      <div class="col-8 password">
+                        <input type="password" name="confirmpass" id="con_password" class="form-control">
+                        <i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
                         <span class="text-danger ">
                           @error('confirmpass')
                             {{$message}}
@@ -113,4 +116,6 @@
   </div>
 
 </div>
+</section>
+
 @endsection

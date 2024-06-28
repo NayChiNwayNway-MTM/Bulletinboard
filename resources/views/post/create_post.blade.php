@@ -1,13 +1,17 @@
 @extends('layouts.nav')
   @section('content')
+<section class="background">
 
-  <div class="container col-md-6 mt-5">
-      @if(Session::has('postcreated'))
+  <div class="container margin">
+  @if(Session::has('postcreated'))
                 <div class="alert alert-success" role="alert" id='alert'>
                     {{Session::get('postcreated')}}
                 </div>
-      @endif
-    <form action="{{route('post.create')}}" method="get" class="border border-primary rounded ">
+  @endif
+  <div class="card m-auto " style="width: 60rem;">
+    <div class="card-body">
+    
+    <form action="{{route('post.create')}}" method="get" class="">
       @csrf 
     
       <div class="row">
@@ -55,6 +59,10 @@
       </div>
     </form>
   </div>
+  </div>
+  </div>
+</section>
+ 
 
   @endsection
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

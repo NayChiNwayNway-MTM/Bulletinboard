@@ -1,9 +1,10 @@
 @extends('layouts.nav')
 @section('content')
   <!--*****-->
+  <section class="background">
   <div class="mask d-flex align-items-center h-100 ">
     <div class="container mt-5 h-100 ">
-      <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100 mt-5">
         <div class="col-10">
           <div class="card" style="border-radius: 15px;">
             <div class="card-body p-5">
@@ -30,10 +31,12 @@
                     </span> 
                   </div>               
                 </div>
-
+                
                 <div  class="row mb-5">
                   <label class="col-3 form-label" for="">Password <span class="text-danger">&#42;</span></label>
-                  <div class="col-sm-8"><input type="password" name="password" id="" class="form-control" />
+                  <div class="col-sm-8 password">
+                    <input type="password" name="password" id="password" class="form-control" />
+                    <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
                     <span class="text-danger ">
                       @error('password')
                         {{$message}}
@@ -44,7 +47,9 @@
 
                 <div class="row mb-5">
                   <label class="col-3 form-label" for="">Confirm password <span class="text-danger">&#42;</span></label>
-                  <div class="col-sm-8"><input type="password" name="confirm-password" id="" class="form-control" />
+                  <div class="col-sm-8 password">
+                    <input type="password" name="confirm-password" id="con_password" class="form-control" />
+                    <i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
                     <span class="text-danger ">
                       @error('confirm-password')
                         {{$message}}
@@ -77,5 +82,7 @@
   </div>
 
 </div>
+  </section>
+
 
 @endsection

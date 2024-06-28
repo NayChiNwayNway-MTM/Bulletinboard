@@ -1,9 +1,10 @@
 @extends('layouts.nav')
 @section('content')
-
-
-  <div class="container col-md-6 mt-5">
-    <form action="{{route('post.update',$post->id)}}" method="post" class="border border-primary rounded ">
+<section class="background">
+  <div class="container col-md-6 margin">
+  <div class="card m-auto mt-5" style="width: 60rem;">
+    <div class="card-body">
+    <form action="{{route('post.update',$post->id)}}" method="post">
       @csrf 
       @method('PUT')
       <div class="row">
@@ -56,4 +57,8 @@
       </div>
     </form>
   </div>
+  </div>
+  </div>
+</section>
+
   @endsection

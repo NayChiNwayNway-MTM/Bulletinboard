@@ -1,8 +1,9 @@
 @extends('layouts.nav')
 @section('content')
 
+  
+  <section class="background mt-5">
   <header><h1 class="px-5 py-2">Post List</h1></header> 
-  <section>
     <!--start container-->
     <div class="container">
     @if(Session::has('success'))
@@ -22,6 +23,7 @@
                   {{session('error')}}
                 </div>
     @endif
+    @auth
       <div class="row float-end mb-5">
           <form action="" method="get" id="form">
             <div class="d-flex flex-row">       
@@ -29,7 +31,7 @@
                   <div class="col-xs-8  m-2">
                     <input type="text" class="form-control" name="text" id='text' value="{{request('text')}}">
                   </div>
-                  <div class="col-xs-4"><button id="searchpost" class="btn btn-primary m-2">Search</button></div>
+                  <div class="col-xs-4"><button id="search_post" class="btn btn-primary m-2">Search</button></div>
                  
                 <button  id="createpost" class="btn btn-primary m-2">Create</button>
                 <button id="uploadpost" class="btn btn-primary m-2">Upload</button>
@@ -38,6 +40,7 @@
               </div>                   
           </form>
       </div>
+    @endauth
       <form method="GET" action="{{ route('postlist') }}" class="mt-3 pt-3">
         <label for="page_size">Items per page:</label>
         <select name="page_size" id="page_size" onchange="this.form.submit()">
@@ -47,7 +50,7 @@
         </select>
       </form>
       <div class="row d-block">
-        <table class="table table-striped table-primary " id="postTable">
+        <table class="table table-striped table-primary mt-3" id="postTable">
           <thead>
             <tr class="align-middle">
               <th>Post Title</th>
@@ -59,33 +62,43 @@
               @endauth
             </tr>
           </thead>
-          <tbody>           
-              @foreach($postlist as $list)  
-                
-                  <tr id='{{$list->id}}' class="align-middle">
-                    <td><label class="form-label text-primary" id="post_detail">{{$list->title}}</label></td>
-                    <td>{{$list->description}}</td>
-                    @if($list->created_user_id == 0)
-                      <td>Admin</td>
-                    @else
-                        <td>User</td>                    
-                    @endif
-                    <td>{{$list->created_at->format('Y-m-d')}}</td>
-                    @auth
-                    <td>
-                      <a href="{{route('post.edit',$list->id)}}" class="btn btn-warning">
-                        <i class="fa fa-edit"></i></a>
-                      <form action="" method="get" class="btn ">
-                        @csrf 
-                        @method('DELETE')
-                        <button class="btn btn-danger m-0 delete">
-                        <i class="fa fa-trash"></i> </button>
-                      </form>
-                    </td>
-                    @endauth
-                  </tr>
-                
-              @endforeach
+        
+
+          <tbody>    
+              @if($postlist->isEmpty()) 
+              <tr>
+                <td colspan="5">
+                  <h6 class="text-center">Post Not Found</h6>
+                </td>
+              </tr>
+              @else  
+                @foreach($postlist as $list)  
+                  
+                    <tr id='{{$list->id}}' class="align-middle">
+                      <td><label class="form-label text-primary" id="post_detail">{{$list->title}}</label></td>
+                      <td>{{$list->description}}</td>
+                      @if($list->created_user_id == 0)
+                        <td>Admin</td>
+                      @else
+                          <td>User</td>                    
+                      @endif
+                      <td>{{$list->created_at->format('Y-m-d')}}</td>
+                      @auth
+                      <td>
+                        <a href="{{route('post.edit',$list->id)}}" class="btn btn-warning">
+                          <i class="fa fa-edit"></i></a>
+                        <form action="" method="get" class="btn ">
+                          @csrf 
+                          @method('DELETE')
+                          <button class="btn btn-danger m-0 delete">
+                          <i class="fa fa-trash"></i> </button>
+                        </form>
+                      </td>
+                      @endauth
+                    </tr>
+                  
+                @endforeach
+              @endif
           </tbody>
         </table>
         <div class="row">
@@ -181,6 +194,25 @@
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         }
     });
+    
+    $(document).ready(function(){
+      var form=$('#form');
+      $('#uploadpost').on('click',function(){
+        form.attr('action','{{url("/uploadpost")}}')
+      });
+
+      $('#createpost').on('click',function(){
+        form.attr('action','{{url("/createpost")}}');
+      });
+      
+      $('#downloadpost').on('click',function(){
+        form.attr('action','{{url("/posts/export")}}');
+      });
+      $('#search_post').on('click',function(){
+        console.log('hi')
+        form.attr('action','{{url("/search_post")}}');
+      })
+    });
   //start post delete 
     $(document).ready(function () {
         $('.delete').on('click', function (e) {
@@ -226,128 +258,6 @@
         });
     });
     //end post delete
-
-    $(document).ready(function(){
-      var form=$('#form');
-      $('#uploadpost').on('click',function(){
-        form.attr('action','{{url("/uploadpost")}}')
-      });
-
-      $('#createpost').on('click',function(){
-        form.attr('action','{{url("/createpost")}}');
-      });
-      
-      $('#downloadpost').on('click',function(){
-        form.attr('action','{{url("/posts/export")}}');
-      });
-    });
-    //for search action
-    $(document).ready(function() {
-          // Function to load posts with pagination
-          function loadPosts(url) {
-              $.ajax({
-                  method: 'post',
-                  url: url,
-                  dataType: 'json',
-                  success: function(response) {
-                      var tableBody = $('#postTable tbody');
-                      tableBody.empty();
-
-                      if (response.posts.length > 0) {
-                          $.each(response.posts, function(index, post) {
-                              var row = $('<tr>', { id: post.id,class:'text-center' });
-
-                              row.append($('<td>').text(post.title));
-                              row.append($('<td>').text(post.description));
-                              if(post.created_user_id == 0){
-                                row.append($('<td>').text("Admin"));
-                              }else{
-                                row.append($('<td>').text("User"));
-                              }
-                              var createdAt = new Date(post.created_at);
-                              var dateFormat=createdAt.toISOString().split('T')[0];
-                              row.append($('<td>').text(dateFormat));
-
-                              var td = $('<td>');
-                              var editLink = $('<a>', {
-                                  href: `post/${post.id}/edit`,
-                                  class: 'btn btn-warning',
-                                  html: '<i class="fa fa-edit"></i>'
-                              });
-                              var deleteButton = $('<button>', {
-                                  type: 'button',
-                                  class: 'btn btn-danger delete mx-2',
-                                  html:  '<i class="fa fa-trash"></i>'
-                              });
-
-                              td.append(editLink).append(deleteButton);
-                              row.append(td);
-                              tableBody.append(row);
-                          });
-
-                          // Update pagination links
-                          $('#paginationLinks').remove();
-                          $('#paginationLinksContainer').html(response.pagination);
-                      } else {
-                          // Display no posts found message
-                          tableBody.append($('<tr>').append($('<td>', {
-                              colspan: 5,
-                              text: 'No posts found.',
-                              class:'text-center'
-                          })));
-                          $('#paginationLinks').remove();
-                      }
-                  }
-              });
-          }
-
-          // start search
-          $('#searchpost').on('click', function(e) {
-              e.preventDefault();
-              var text = $('#text').val();
-              loadPosts(`search/${text}`);
-          });
-
-
-          $(document).on('click', '#paginationLinksContainer .pagination a', function(e) {
-              e.preventDefault();
-              var url = $(this).attr('href');
-              loadPosts(url);
-          });
-
-          $(document).on('click', '.delete', function(e) {
-              e.preventDefault();
-              var id = $(this).closest('tr').attr('id');
-
-              $.ajax({
-                  method: 'post',
-                  url: `delete/${id}`,
-                  dataType: 'json',
-                  success: function(response) {
-                      if (response.success) {
-                          var post = response.post;
-                          $('#postModal').modal('show');
-
-                          // Update modal content with post details
-                          $('#postid').text(post.id);
-                          $('#posttitle').text(post.title);
-                          $('#postdescription').text(post.description);
-                          $('#poststatus').text(post.status == 1 ? 'Active' : 'Inactive');
-
-                          $('#confirmDelete').off('click').on('click', function() {
-                              $.ajax({
-                                  url: `postlist/deletedpost/${id}`,
-                                  type: 'delete',
-                                  success: function(response) {
-                                      location.reload();
-                                  }
-                              });
-                          });
-                      }
-                  }
-              });
-          });
-    });
 
     //post deail modal box
     $(document).ready(function(){

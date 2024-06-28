@@ -1,8 +1,10 @@
 @extends('layouts.nav')
   @section('content')
-
-  <div class="container col-md-6 mt-5">
-    <form action="{{route('post_edit_confirm',$post->id)}}" method="post" class="border border-primary rounded ">
+<section class="background">
+  <div class="container col-md-6 margin">
+  <div class="card m-auto mt-5" style="width: 60rem;">
+    <div class="card-body">
+    <form action="{{route('post_edit_confirm',$post->id)}}" method="post">
       @csrf 
       <div class="row">
       <div class= "mb-5"><h4 class="text-primary text-center mt-2">Edit Post</h4></div>
@@ -54,4 +56,8 @@
       </div>
     </form>
   </div>
+  </div>
+  </div>
+</section>
+ 
   @endsection

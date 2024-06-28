@@ -30,8 +30,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/changepassword','UserController@changed_password')->name('changedpassword');
 
         //unauthorized user and auth user
-        Route::get('/postlist','PostListController@postlist')->name('postlist');
-        Route::post('/search/{text}','PostDeleteController@search')->name('search');  
+        Route::get('/postlist','PostListController@postlist')->name('postlist');      
+       
     
         
         
@@ -74,7 +74,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
             //download post
             Route::get('/posts/export','PostListController@export')->name('posts.export'); 
-        
+            //post search
+            Route::get('/search_post','PostListController@search')->name('search');  
        
     });
    

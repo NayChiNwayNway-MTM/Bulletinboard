@@ -12,10 +12,10 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-lg px-3">
-  <!--////////-->
   @guest
   <div class="container-fluid">
-    <a class="navbar-brand" href="{{route('login')}}">Bulletin_Board</a>
+    <a class="navbar-brand" href="{{route('login')}}">
+      Bulletin_Board</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
@@ -32,8 +32,6 @@
               <a href="{{route('signup')}}"
             class="link-offset-2 link-underline link-underline-opacity-0 px-3 register">Sign Up</a>
           </li>
-      
-         
         </ul>
       </form>
     </div>

@@ -1,10 +1,10 @@
 @extends('layouts.nav')
 @section('content')
-<section>
-<header><h2 class="px-5 py-2">User List</h2></header>
-<div class="container">
+<section class="background">
+<header><h2 class="px-5 pt-2 margin">User List</h2></header>
+<div class="container ">
 
-      <form action="{{route('search_user')}}" method="get" class="mt-3" id="search_form">
+      <form action="{{route('search_user')}}" method="get" class="" id="search_form">
         @csrf 
         @if(session('success'))
             <div class="alert alert-success" id="alert">
@@ -25,7 +25,7 @@
             <div class="col"><button  type="submit" class="btn btn-primary" id="user_search" value="{{request('to')}}">Search</button></div>
           </div>        
       </form> 
-      <form method="GET" action="{{ route('user') }}" class="mt-3 pt-3" id="pagesize">
+      <form method="GET" action="{{ route('user') }}" class="mt-3 pt-2" id="pagesize">
         <label for="page_size">Items per page:</label>
         <select name="page_size" id="page_size" onchange="this.form.submit()">
             <option value="10" {{ request('page_size') == 10 ? 'selected' : '' }}>10</option>
@@ -39,7 +39,7 @@
         @if($users->isEmpty())
           <h5 class="text-center mt-3">No users found.</h5>
         @else       
-        <table class="table table-striped table-primary mt-5">
+        <table class="table table-striped table-primary mt-3">
                 <tr class="align-middle">
                   <th>No</th>
                   <th>Profile</th>

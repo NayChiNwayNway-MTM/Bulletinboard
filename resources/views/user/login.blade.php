@@ -1,7 +1,7 @@
 @extends('layouts.nav')
 @section('content')
-
-    <div class="container col-md-7 ">
+<section class="background">
+<div class="container col-md-7">
           @if(session('reset_pass'))
               <div class="alert alert-success mt-2" id="alert">
                 {{session('reset_pass')}}
@@ -38,9 +38,14 @@
                           <div class="col-sm-8"><input type="text" class="form-control" name="email"></div>
                         </div>
                         <div class="row mb-5">
-                          <label for="" class="col-3 col-form-label">Password: <span class="text-danger">&#42;</span></label>
-                          <div class="col-sm-8"><input type="password" class="form-control" name="password"></div>
+                              <label for="password" class="col-3 col-form-label">Password: <span class="text-danger">&#42;</span></label>
+                              <div class="col-sm-8 password">
+                                  <input type="password" class="form-control" id="password" name="password">
+                                  <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
+                              </div>
+
                         </div>
+
                         <div class="row mb-5">
                           <div class="col-3"></div>
                           <div class="col-md-8">
@@ -78,5 +83,7 @@
       </section>
   </div>
     
+</section>
+   
 
 @endsection

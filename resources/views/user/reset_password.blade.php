@@ -12,8 +12,9 @@
     <input type="hidden" name="email" value="{{ $email }}">
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">Password<span class="text-danger">&#42;</span></label></div>
-      <div class="col-8">
-        <input type="password" name="password" class="form-control">
+      <div class="col-8 password">
+        <input type="password" name="password" id="password" class="form-control">
+        <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Shwo Password"></i>
           <span class="text-danger ">
             @error('password')
               {{$message}}
@@ -23,8 +24,9 @@
     </div>   
     <div class="row d-flex mt-3">
       <div class="col-2 "><label for="" class="form-label float-end">Password Conformation<span class="text-danger">&#42;</span></label></div>
-      <div class="col-8">
-        <input type="password" name="password_confirm" class="form-control">
+      <div class="col-8 password">
+        <input type="password" name="password_confirm" id="con_password" class="form-control">
+        <i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
           <span class="text-danger ">
             @error('password_confirm')
               {{$message}}

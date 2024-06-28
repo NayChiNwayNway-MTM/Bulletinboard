@@ -1,12 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Post;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
-
 class PostDeleteController extends Controller
 {   
         public function delete($id){
@@ -24,35 +21,6 @@ class PostDeleteController extends Controller
        
         $post->delete();
             return response()->json(['message' => 'Post deleted successfully'], 200);
-        }
-        //post search
-        public function search($text) {
-            $pagesize=session('pagesize');
-            if(auth()->user()->type == 1){
-                $posts = Post::where('title', 'like', '%'.$text.'%')
-                            ->where('created_user_id',auth()->user()->id)
-                            ->orWhere('description', 'like', '%'.$text.'%')
-                            ->where('created_user_id',auth()->user()->id)
-                            ->paginate($pagesize);
-
-                return response()->json([
-                    
-                    'posts' => $posts->items(), 
-                    'pagination' => (string) $posts->appends(['text' => $text])->links('pagination::bootstrap-4')
-                ]); 
-            }
-            else{
-                $posts = Post::where('title', 'like', '%'.$text.'%')
-                                ->orWhere('description', 'like', '%'.$text.'%')
-                                ->paginate($pagesize);
-                
-                return response()->json([
-                                
-                    'posts' => $posts->items(), 
-                    'pagination' => (string) $posts->appends(['text' => $text])->links('pagination::bootstrap-4')
-
-                 ]);
-            }
         }
         //get post details
         public function postdetails($id){

@@ -19,168 +19,115 @@ class PostListController extends Controller
 {
     //
     
-    public function postlist(Request $request){
+        public function postlist(Request $request){
 
-        $pageSize = $request->input('page_size', 10);
-        session(['pagesize'=>$pageSize]);
-        if(Auth::check()){
-            if(auth()->user()->type == 1){
-                $postlist = Post::where('created_user_id', auth()->user()->id )
-                                
-                                ->paginate($pageSize);
-                $users = User::all();
-                return view('post.postlist', compact('postlist', 'users','pageSize'));
-            }else{
-            
-                $postlist=Post::paginate($pageSize);
-                $users = User::all();
-                return view('post.postlist', compact('postlist', 'users','pageSize'));
-            }
-        }
-        else{
-            $postlist=Post::where('status',1)->paginate($pageSize);
-            $users = User::all();
-            return view('post.postlist', compact('postlist', 'users','pageSize'));
-        }
-   
-
-    }
-    public function createpost(){
-        return view('post.create_post');
-    }
-    //post create
-    public function create(Request $request){
-        
-        $request->validate(
-            [
-            'title'=>'required|unique:posts|max:255',
-            'description'=>'required|max:255'
-
-            ],
-            [
-               'title.required'=>'Title can\'t be blank.',
-               'title.unique' => 'The title has already been taken.',
-               'description.required'=>'Description can\'t be balnk.' ,
-               'description.max' => 'Description must not exceed 255 characters.',
-            ]);
-           // dd($request->title);
-
-           $title = $request->title;
-           $valid_title=Post::where('title',$title);
-           $des=$request->description;
-           return view('post.post_confirm_create',compact('title','des'));
-            
-    }
-    //post create store
-    public function store(Request $request){
-      $request->validate([
-            'title' => 'required|unique:posts|max:255',
-            'description' => 'required|max:255',
-        ], [
-            'title.required' => 'Title can\'t be blank.',
-            'title.unique' => 'The title has already been taken.',
-            'description.required' => 'Description can\'t be blank.',
-            'description.max' => 'Description must not exceed 255 characters.',
-        ]);       
-        Post::create([
-            'title'=>$request->title,
-            'description'=>$request->description,
-            'created_user_id'=>Auth::user()->id,
-            'updated_user_id'=>Auth::user()->id,
-            'created_at'=>Carbon::now(),
-            'updated_at'=>Carbon::now(),
-            
-        ]);
-        //dd($data);
-        Session::flash('postcreated', 'Post created successfully.');
-        return view('post.create_post');
-    }
-    // start post create with restoration
-//    public function store(Request $request)
-//    {
-//        // Validate request data
-//        $request->validate([
-//            'title' => 'required|max:255',
-//            'description' => 'required|max:255',
-//        ], [
-//            'title.required' => 'Title can\'t be blank',
-//            'title.unique' => 'The title has already been taken.',
-//            'description.required' => 'Description can\'t be blank',
-//            'description.max' => 'Description must not exceed 255 characters.',
-//        ]);
-//
-//        // Check if a post with the same title exists (including soft deleted ones)
-//        $existingPost = Post::withTrashed()
-//            ->where('title', $request->title)
-//            ->first();
-//
-//        if ($existingPost) {
-//            if ($existingPost->deleted_at) {
-//                // Restore the soft deleted post
-//                $existingPost->restore();
-//
-//                // Update the restored post with new description if needed
-//                $existingPost->update([
-//                    'description' => $request->description,
-//                    'created_user_id' => Auth::user()->id,
-//                    'created_at' => now(),
-//                ]);
-//
-//                // Flash success message
-//                Session::flash('postcreated', 'Post created successfully after restoration.');
-//            } else {
-//                // Post with the same title exists and is not soft deleted
-//                return redirect()->back()->withErrors(['title' => 'The title has already been taken.']);
-//            }
-//        } else {
-//            // Create new post
-//            Post::create([
-//                'title' => $request->title,
-//                'description' => $request->description,
-//                'created_user_id' => Auth::user()->id,
-//                'created_at' => now(),
-//            ]);
-//
-//            // Flash success message
-//            Session::flash('postcreated', 'Post created successfully.');
-//        }
-//
-//        // Redirect or return view as per your application flow
-//        return view('post.create_post');
-//    }
-    // end post create with restoration
-    //post edit 
-    public function edit($id){
-       
-        $post = Post::find($id);
-        //dd($post);
-        return view('post.edit_post',compact('post'));
-    }
-    public function post_edit_confirm(Request $request,$id){
-        $request->validate(
-            [
-            'title'=>'required',
-            'description'=>'required|max:255'
-
-            ],
-            [
-               'title.required'=>'Title can\'t be blank.',
-               'description.required'=>'Description can\'t be balnk' ,
-               'description.max' => 'Description must not exceed 255 characters.',
-            ]);
-            $status = $request->status ? 1 : 0;
-           // dd($status);
-            $post=$request;
-            $unique=Post::where('title',$request->title)->where('id',$id)->first();
-            if($unique){
-                return view('post.post_edit_confirm',compact('post','status'));
+            $pageSize = $request->input('page_size', 10);
+            session(['pagesize'=>$pageSize]);
+            if(Auth::check()){
+                if(auth()->user()->type == 1){
+                    $postlist = Post::where('created_user_id', auth()->user()->id )
+                                    
+                                    ->paginate($pageSize);
+                    $users = User::all();
+                    return view('post.postlist', compact('postlist', 'users','pageSize'));
+                }else{
+                
+                    $postlist=Post::paginate($pageSize);
+                    $users = User::all();
+                    return view('post.postlist', compact('postlist', 'users','pageSize'));
+                }
             }
             else{
-                Session::flash('error','The title has already been taken.');
-                return redirect()->route('postlist');
+                $postlist=Post::where('status',1)->paginate($pageSize);
+                $users = User::all();
+                return view('post.postlist', compact('postlist', 'users','pageSize'));
             }
-           
-    }
+    
+
+        }
+        public function createpost(){
+            return view('post.create_post');
+        }
+        //post create
+        public function create(Request $request){
+            
+            $request->validate(
+                [
+                'title'=>'required|unique:posts|max:255',
+                'description'=>'required|max:255'
+
+                ],
+                [
+                'title.required'=>'Title can\'t be blank.',
+                'title.unique' => 'The title has already been taken.',
+                'description.required'=>'Description can\'t be balnk.' ,
+                'description.max' => 'Description must not exceed 255 characters.',
+                ]);
+            // dd($request->title);
+
+            $title = $request->title;
+            $valid_title=Post::where('title',$title);
+            $des=$request->description;
+            return view('post.post_confirm_create',compact('title','des'));
+                
+        }
+        //post create store
+        public function store(Request $request){
+        $request->validate([
+                'title' => 'required|unique:posts|max:255',
+                'description' => 'required|max:255',
+            ], [
+                'title.required' => 'Title can\'t be blank.',
+                'title.unique' => 'The title has already been taken.',
+                'description.required' => 'Description can\'t be blank.',
+                'description.max' => 'Description must not exceed 255 characters.',
+            ]);       
+            Post::create([
+                'title'=>$request->title,
+                'description'=>$request->description,
+                'created_user_id'=>Auth::user()->id,
+                'updated_user_id'=>Auth::user()->id,
+                'created_at'=>Carbon::now(),
+                'updated_at'=>Carbon::now(),
+                
+            ]);
+            //dd($data);
+            Session::flash('postcreated', 'Post created successfully.');
+            return view('post.create_post');
+        }
+        
+        //post edit 
+        public function edit($id){
+        
+            $post = Post::find($id);
+            //dd($post);
+            return view('post.edit_post',compact('post'));
+        }
+        public function post_edit_confirm(Request $request,$id){
+            $request->validate(
+                [
+                'title'=>'required',
+                'description'=>'required|max:255'
+
+                ],
+                [
+                'title.required'=>'Title can\'t be blank.',
+                'description.required'=>'Description can\'t be balnk' ,
+                'description.max' => 'Description must not exceed 255 characters.',
+                ]);
+                $status = $request->status ? 1 : 0;
+            // dd($status);
+                $post=$request;
+                $unique=Post::where('title',$request->title)->where('id',$id)->first();
+                if($unique){
+                    return view('post.post_edit_confirm',compact('post','status'));
+                }
+                else{
+                    Session::flash('error','The title has already been taken.');
+                    return redirect()->route('postlist');
+                }
+            
+        }
         //post updated from database
         public function update(Request $request ,$id){
            //dd($id);
@@ -331,4 +278,30 @@ class PostListController extends Controller
             }
             
         }
+        //search post
+        public function search(Request $request){
+            $text = $request->text;
+            $pageSize = session('pagesize');
+            if($request->pagesize){
+                session(['pagesize' => $request->pagesize]);
+                $pageSize = $request->pagesize;
+            }
+            if(auth()->user()->type == 1){
+                $postlist = Post::where(function ($query) use ($text) {
+                                $query->where('title', 'like', '%' . $text . '%')
+                                      ->orWhere('description', 'like', '%' . $text . '%');
+                            })
+                            ->where('created_user_id', auth()->user()->id)
+                            ->paginate($pageSize);
+            }
+            
+            else{
+                $postlist = Post::where('title', 'like', '%'.$text.'%')
+                                ->orWhere('description', 'like', '%'.$text.'%')
+                                ->paginate($pageSize);
+            }
+            return view('post.postlist', compact('postlist', 'pageSize'));
+        }
+
 }
+
