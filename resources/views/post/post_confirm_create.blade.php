@@ -1,7 +1,10 @@
 @extends('layouts.nav')
   @section('content')
-
-
+@if(session('error'))
+<div class="alert alert-danger" id="alert">
+  {{session('error')}}
+</div>
+@endif
   <div class="container col-md-6 mt-5">
     <form action="{{route('post.store')}}" method="post" class="border border-primary rounded ">
       @csrf 

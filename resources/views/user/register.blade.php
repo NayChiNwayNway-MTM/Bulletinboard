@@ -2,6 +2,11 @@
 @section('content')
 <div class="mask d-flex align-items-center h-100 ">
     <div class="container mt-5 h-100 ">
+    @if(Session::has('register'))
+                              <div class="alert alert-success" role="alert" id='alert'>
+                                  {{Session::get('register')}}
+                              </div>
+    @endif  
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-10">
           <div class="card custom-card" >
@@ -9,11 +14,7 @@
               <h2 class="text-primary text-center mb-5">Register</h2>
                 <form action="{{route('registration')}}" method="post" class="" enctype="multipart/form-data">
                   @csrf 
-                  @if(Session::has('register'))
-                              <div class="alert alert-success" role="alert" id='alert'>
-                                  {{Session::get('register')}}
-                              </div>
-                  @endif                
+                               
                   <div class="row d-flex mb-5">
                     <div class="col-3 "><label for="" class="form-label float-end">Name<span class="text-danger">&#42;</span></label></div>
                       <div class="col-8">
@@ -82,7 +83,7 @@
                       <div class="col-8"><input type="text" name="address" class="form-control"></div>
                     </div>
                     <div class="row d-flex mb-5">
-                      <div class="col-3 "><label for="" class="form-label float-end">Profile</label></div>
+                      <div class="col-3 "><label for="" class="form-label float-end">Profile <span class="text-danger">&#42;</span></label></div>
                       <div class="col-8">
                         <input type="file" name="profile" class="form-control">
                           <span class="text-danger ">

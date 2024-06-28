@@ -17,6 +17,10 @@
                 <div class="alert alert-success" role="alert" id='alert'>
                   {{Session::get('message')}}
                 </div>
+    @elseif(session('error'))
+                <div class="alert alert-danger" id="alert">
+                  {{session('error')}}
+                </div>
     @endif
       <div class="row float-end mb-5">
           <form action="" method="get" id="form">
@@ -45,7 +49,7 @@
       <div class="row d-block">
         <table class="table table-striped table-primary " id="postTable">
           <thead>
-            <tr class="text-center">
+            <tr class="align-middle">
               <th>Post Title</th>
               <th>Post Description</th>
               <th>Posted User</th>
@@ -58,7 +62,7 @@
           <tbody>           
               @foreach($postlist as $list)  
                 
-                  <tr id='{{$list->id}}' class="text-center">
+                  <tr id='{{$list->id}}' class="align-middle">
                     <td><label class="form-label text-primary" id="post_detail">{{$list->title}}</label></td>
                     <td>{{$list->description}}</td>
                     @if($list->created_user_id == 0)

@@ -1,6 +1,7 @@
 @extends('layouts.nav')
 @section('content')
-
+<img src="{{auth()->user()->profile}}" alt="">
+<?php echo auth()->user()->profile;?>
 <div class="container">
   <form action="{{route('updateprofile',$user->id)}}" method="post" class="border border-primary rounded mt-5" enctype="multipart/form-data">
     @csrf     

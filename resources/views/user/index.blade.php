@@ -22,7 +22,7 @@
             <div class="col"><input type="date" name="from" class="form-control" id="start_date" value="{{request('from')}}"></div>
             <div class="col"><label for="" class="form-label float-end">to:</label></div>
             <div class="col"><input type="date" name="to" class="form-control" id="end_date"></div>
-            <div class="col"><button  type="submit" class="btn btn-success" id="user_search" value="{{request('to')}}">Search</button></div>
+            <div class="col"><button  type="submit" class="btn btn-primary" id="user_search" value="{{request('to')}}">Search</button></div>
           </div>        
       </form> 
       <form method="GET" action="{{ route('user') }}" class="mt-3 pt-3" id="pagesize">
@@ -40,7 +40,7 @@
           <h5 class="text-center mt-3">No users found.</h5>
         @else       
         <table class="table table-striped table-primary mt-5">
-                <tr class="text-center">
+                <tr class="align-middle">
                   <th>No</th>
                   <th>Profile</th>
                   <th >Name</th>
@@ -55,7 +55,7 @@
                 </tr>
              <tbody>
                 @foreach($users as $user)
-                  <tr class="text-center" id="{{$user->id}}">
+                  <tr class="align-middle" id="{{$user->id}}">
                     <td>{{$user->id}}</td>
                     <td><img src="{{$user->profile}}" alt="profile" style="width: 50px; height: 50px; border-radius: 50%;"
                       class="rounded-circle img-thumbnail"></td>

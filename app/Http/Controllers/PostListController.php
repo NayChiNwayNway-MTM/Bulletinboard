@@ -40,7 +40,7 @@ class PostListController extends Controller
         else{
             $postlist=Post::where('status',1)->paginate($pageSize);
             $users = User::all();
-            return view('post.postlist', compact('postlist', 'users'));
+            return view('post.postlist', compact('postlist', 'users','pageSize'));
         }
    
 
@@ -159,23 +159,27 @@ class PostListController extends Controller
     public function post_edit_confirm(Request $request,$id){
         $request->validate(
             [
-            'title'=>'required|unique:posts|max:255',
+            'title'=>'required',
             'description'=>'required|max:255'
 
             ],
             [
                'title.required'=>'Title can\'t be blank.',
-               'title.unique' => 'The title has already been taken.',
                'description.required'=>'Description can\'t be balnk' ,
                'description.max' => 'Description must not exceed 255 characters.',
             ]);
             $status = $request->status ? 1 : 0;
            // dd($status);
             $post=$request;
-           // $post_update=PostList::find($id);
-            //$post_update->update($request->except('_token'));
-            //return redirect()->route('postlist')->with('success','Edit post successfully');
-            return view('post.post_edit_confirm',compact('post','status'));
+            $unique=Post::where('title',$request->title)->where('id',$id)->first();
+            if($unique){
+                return view('post.post_edit_confirm',compact('post','status'));
+            }
+            else{
+                Session::flash('error','The title has already been taken.');
+                return redirect()->route('postlist');
+            }
+           
     }
         //post updated from database
         public function update(Request $request ,$id){
@@ -184,12 +188,22 @@ class PostListController extends Controller
             $des=$request->description;
             $status = $request->status ? 1 : 0;
             //dd($status);
-            $update =Post::where('id',$id)->update(['title'=>$title,
-                                                        'description'=>$des,
-                                                        'status'=>$status,
-                                                        'updated_user_id'=>auth()->user()->id,'updated_at'=>Carbon::now()]);
-            Session::flash('postedites','Post Updated Successfully.');
-            return redirect()->route('postlist');
+            $unique=Post::where('title',$title)->where('id',$id)->first();
+            //dd($unique);
+            if($unique){
+                $update =Post::where('id',$id)->update(['title'=>$title,
+                'description'=>$des,
+                'status'=>$status,
+                'updated_user_id'=>auth()->user()->id,'updated_at'=>Carbon::now()]);
+                Session::flash('postedites','Post Updated Successfully.');
+                return redirect()->route('postlist');
+            }
+            else{
+                Session::flash('error','Title already taken.');
+                return redirect()->route('postlist');
+            }
+            
+           
         }
         //upload_post ui
         public function upload_post(){

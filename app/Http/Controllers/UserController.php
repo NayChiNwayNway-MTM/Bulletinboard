@@ -19,6 +19,8 @@ class UserController extends Controller
         
         $pageSize = $request->input('page_size', 10);
         session(['pageSize'=>$pageSize]);
+
+        
         $created_user=User::find(auth()->user()->created_user_id);
         $all_users=User::select('id', 'name')->get()->whereNull('deleted_at');
 

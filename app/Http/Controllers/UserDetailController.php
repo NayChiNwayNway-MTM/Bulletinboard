@@ -67,7 +67,7 @@ class UserDetailController extends Controller
             $names=[];
              foreach($users as $user){
                $names[$user->id]=$user->createdBy ?$user->createdBy->name : 'Unknown';
-             }
+            }
              return view('user.index',compact('users'),compact('names','pageSize'));           
         }
         

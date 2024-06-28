@@ -7,7 +7,7 @@
         @csrf 
        
           <div class="card text-center" style="width: 500px;">
-            <div class="card-header h5 text-white bg-primary">Password Reset</div>
+            <div class="card-header h5 text-primary">Forget Password</div>
               <div class="card-body px-5">
                   <p class="card-text py-2">
                       Enter your email address and we'll send you an email with instructions to reset your password.
