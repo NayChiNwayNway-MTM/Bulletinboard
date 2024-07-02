@@ -20,19 +20,20 @@ class PostListController extends Controller
     //
     
         public function postlist(Request $request){
-
             $pageSize = $request->input('page_size', 10);
             session(['pagesize'=>$pageSize]);
+            
             if(Auth::check()){
                 if(auth()->user()->type == 1){
                     $postlist = Post::where('created_user_id', auth()->user()->id )
                                     
                                     ->paginate($pageSize);
                     $users = User::all();
+                   
                     return view('post.postlist', compact('postlist', 'users','pageSize'));
                 }else{
-                
-                    $postlist=Post::paginate($pageSize);
+                    
+                    $postlist=Post::with('user')->paginate($pageSize);
                     $users = User::all();
                     return view('post.postlist', compact('postlist', 'users','pageSize'));
                 }
@@ -41,6 +42,34 @@ class PostListController extends Controller
                 $postlist=Post::where('status',1)->paginate($pageSize);
                 $users = User::all();
                 return view('post.postlist', compact('postlist', 'users','pageSize'));
+               
+            }
+           
+
+        }
+        public function cardView(Request $request){
+          
+            $pageSize = $request->input('page_size', 10);
+            session(['pagesize'=>$pageSize]);
+            if(Auth::check()){
+                if(auth()->user()->type == 1){
+                    $postlist = Post::where('created_user_id', auth()->user()->id )
+                                    
+                                    ->paginate($pageSize);
+                    $users = User::all();
+                   
+                    return view('post.postlist_card', compact('postlist', 'users','pageSize'));
+                }else{
+                    
+                    $postlist=Post::with('user')->paginate($pageSize);
+                    $users = User::all();
+                    return view('post.postlist_card', compact('postlist', 'users','pageSize'));
+                }
+            }
+            else{
+                $postlist=Post::where('status',1)->paginate($pageSize);
+                $users = User::all();
+                return view('post.postlist_card', compact('postlist', 'users','pageSize'));
             }
     
 
@@ -278,13 +307,15 @@ class PostListController extends Controller
             }
             
         }
-        //search post
+        //search post for table
         public function search(Request $request){
             $text = $request->text;
-            $pageSize = session('pagesize');
-            if($request->pagesize){
-                session(['pagesize' => $request->pagesize]);
-                $pageSize = $request->pagesize;
+
+            $pageSize = $request->input('page_size', session('page_size', 10)); // Default to 10 if not set
+
+            // Update session with the new page size if provided
+            if ($request->has('page_size')) {
+                session(['page_size' => $request->input('page_size')]);
             }
             if(auth()->user()->type == 1){
                 $postlist = Post::where(function ($query) use ($text) {
@@ -293,6 +324,7 @@ class PostListController extends Controller
                             })
                             ->where('created_user_id', auth()->user()->id)
                             ->paginate($pageSize);
+                           
             }
             
             else{
@@ -300,7 +332,36 @@ class PostListController extends Controller
                                 ->orWhere('description', 'like', '%'.$text.'%')
                                 ->paginate($pageSize);
             }
+            
             return view('post.postlist', compact('postlist', 'pageSize'));
+        }
+        //search psot for card
+        public function search_card(Request $request){
+            $text = $request->text;
+
+            $pageSize = $request->input('page_size', session('page_size', 10)); // Default to 10 if not set
+
+            // Update session with the new page size if provided
+            if ($request->has('page_size')) {
+                session(['page_size' => $request->input('page_size')]);
+            }
+            if(auth()->user()->type == 1){
+                $postlist = Post::where(function ($query) use ($text) {
+                                $query->where('title', 'like', '%' . $text . '%')
+                                      ->orWhere('description', 'like', '%' . $text . '%');
+                            })
+                            ->where('created_user_id', auth()->user()->id)
+                            ->paginate($pageSize);
+                           
+            }
+            
+            else{
+                $postlist = Post::where('title', 'like', '%'.$text.'%')
+                                ->orWhere('description', 'like', '%'.$text.'%')
+                                ->paginate($pageSize);
+            }
+            
+            return view('post.postlist_card', compact('postlist', 'pageSize'));
         }
 
 }

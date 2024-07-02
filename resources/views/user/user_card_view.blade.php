@@ -4,7 +4,7 @@
 <header><h3 class="px-5 margin">User List</h3></header>
 <div class="container ">
 
-      <form action="" method="get" class="" id="search_form">
+<form action="" method="get" class="" id="search_form">
         @csrf 
         @if(session('success'))
             <div class="alert alert-success" id="alert">
@@ -13,6 +13,7 @@
         @endif
           <div class="alert" role="alert" id="response">
           </div>
+
           <div class="row g-3 align-items-center">
             <div class="col-auto">
                 <label for="search_name" class="col-form-label text-end">Name:</label>
@@ -42,72 +43,90 @@
                 <button type="submit" class="btn btn-primary" id="search_user">Search</button>
             </div>
             <div class="col-auto">
-                <a href="{{route('user_card')}}" class="btn btn-primary" id="designView">Design</a>
+                <a href="{{route('user')}}" class="btn btn-primary" id="designView">Design</a>
             </div>
           </div>
-          <div class="row mt-3">
-            <div class="col-md-1">
-              <label for="page_size">Page size:</label>
-            </div>
-            <div class="col-md-1">
-              <select name="page_size" id="page_size" onchange="this.form.submit()" class="form-select">
-                  <option value="10" {{ request('page_size') == 10 ? 'selected' : '' }}>10</option>
-                  <option value="15" {{ request('page_size') == 15 ? 'selected' : '' }}>15</option>
-                  <option value="20" {{ request('page_size') == 20 ? 'selected' : '' }}>20</option>
-              </select>
-            </div>
+        <div class="row mt-3">
+          <div class="col-md-1">
+            <label for="page_size">Page size:</label>
           </div>
+          <div class="col-md-1">
+            <select name="page_size" id="page_size" onchange="this.form.submit()" class="form-select">
+                <option value="10" {{ request('page_size') == 10 ? 'selected' : '' }}>10</option>
+                <option value="15" {{ request('page_size') == 15 ? 'selected' : '' }}>15</option>
+                <option value="20" {{ request('page_size') == 20 ? 'selected' : '' }}>20</option>
+            </select>
+          </div>
+        </div>
       </form> 
       <div class="row mt-3" id="body">
          
         @if($users->isEmpty())
           <h5 class="text-center mt-3">No users found.</h5>
         @else       
-        <table class="table table-striped table-primary mt-3 userTable">
-          <thead>
-          <tr class="align-middle">
-                  <th>No</th>
-                  <th>Profile</th>
-                  <th >Name</th>
-                  
-                  <th>Email</th>
-                  <th>Created User</th>
-                  <th>Type</th>
-                  <th>Phone</th>
-                  <th>Date of Birth</th>
-                  <th>Address</th>
-                  <th>Operation</th>
-                </tr>
-             
-          </thead>
-          <tbody>      
-                @foreach($users as $user)
-                  <tr class="align-middle" id="{{$user->id}}">
-                    <td>{{$user->id}}</td>
-                    <td><img src="{{$user->profile}}" alt="profile" style="width: 50px; height: 50px; border-radius: 50%;"
-                      class="rounded-circle img-thumbnail custom-img-thumbnail"></td>
-                    <td id="user_detail" class="text-primary" >
-                       <span data-bs-toggle="tooltip" data-bs-placement="bottom" title="View detail">{{ $user->name }}</span>
-                    </td>
-                    <td>{{ $user->email }}</td>
-                    <td>{{ $names[$user->id] }}</td>
-                    <td> {{ $user->type == 1 ? 'User' : 'Admin' }}</td>
-                    <td>{{$user->phone}}</td>
-                    <td>{{$user->dob}}</td>
-                    <td>{{$user->address}}</td>
-                    <td><a href="#" class="btn btn-sm btn-danger userdelete" data-id="{{ $user->id }}"><i class="fa fa-trash"></i></a></td>
-                  </tr>
-                @endforeach
-          </tbody>         
-        </table>
-        @endif
-        <!-- Pagination Links -->
-        <div class="">
-            {!! $users->appends(request()->except('page'))->links() !!}
-        </div>
-      </div>
+        <div class="container" id="postCard">
+                  <div class="row row-cols-1 row-cols-md-3 g-4" id="card">
+                    @foreach($users as $user)
+                      <div class="col mb-3" id="{{$user->id}}">
+                          <div class="card h-100 rounded-3 shadow-sm custom-card"> 
+                              <div class="card-body  d-flex flex-column"> 
+                                  <div class="d-flex justify-content-center align-items-center mb-3">
+                                      <div class="text-center">
+                                        <img src="{{$user->profile}}" alt="profile" class="rounded-circle img-thumbnail custom-img-thumbnail" style="width:80px; height: 80px;">
+                                      </div>
+                                    </div>     
+                                        <div class="dropdown custom-dropdown ms-auto">
+                                          <button class="btn btn-link p-0 text-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                              <i class="fa fa-ellipsis-h"></i>
+                                          </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                              <li>
+                                                <button class="userdelete dropdown-item" data-id="{{ $user->id }}"><i class="fa fa-trash me-2"></i>Delete</button>
+                                              </li>
+                                            </ul>
+                                        </div>
 
-</div>   
+                                  <h5 class="text-center">{{$user->name}}</h5>
+                                  <div class="mb-3">
+                                      <div class="d-flex align-items-center">
+                                          <i class="fa fa-envelope me-2"></i>
+                                          <div>{{ $user->email }}</div>
+                                      </div>
+                                      <div class="d-flex align-items-center mt-2">
+                                          <i class="fa fa-phone me-2"></i>
+                                          <div>{{ $user->phone }}</div>
+                                      </div>
+                                      <div class="d-flex align-items-center mt-3">
+                                            <i class="fa fa-birthday-cake me-2"></i>
+                                            <div>{{ $user->dob }}</div>
+                                      </div>
+                                      <div class="d-flex align-items-center mt-3">
+                                            <i class="fa fa-address-card-o me-2"></i>
+                                            <div>{{$user->address}}</div>
+                                      </div>
+
+                                  </div>
+                                    <div class="ms-3"></div>
+                              </div>
+                              <div class="card-footer mt-auto text-end"> 
+                                  <button class=" user_detail_card view"><i class="fa fa-eye fa-lg"></i></button>
+                                  
+                              </div>
+                          </div>
+                      </div>                    
+                    @endforeach
+                  </div>
+                </div>
+          @endif
+          <!-- Pagination Links -->
+          <div class="">
+        
+              {!! $users->appends(request()->except('page'))->links() !!}
+              
+          </div>
+        </div>
+
+      </div>   
   <!-- start delete modal-->
   <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -222,19 +241,20 @@
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $(document).ready(function(){
-      var form=$('#search_form');
+          $(document).ready(function(){
+            var form=$('#search_form');
       
-      $('#search_user').on('click',function(){
-        form.attr('action','{{url("/search")}}');
-      })
-    });
-        // start delete user 
+            $('#search_user').on('click',function(){
+              form.attr('action','{{url("/search_card")}}');
+            })
+          });
+        // start delete user for card
         $(document).ready(function(){
          
-          $('.userdelete').on('click',function(e){
-           
-            let id=$(this).data('id');
+          $(document).on('click','.userdelete',function(e){
+           let parentDiv=$(this).closest('.col.mb-3')
+           let id=parentDiv.attr('id');
+           console.log(id)
             e.preventDefault();
             $.ajax({
               method:`post`,
@@ -269,16 +289,18 @@
                   });
                 }
               }
-            })            
-          });
+            })   
+          })
+           
+                    
+          
         });
-        //end delete user
-        //start user details
+        //end delete user for card
+        //start user details for card
           $(document).ready(function(){
-            $(document).on('click','#user_detail',function(){
-              
-              var tr=$(this).closest('tr')
-              var id=tr.attr('id')
+            $(document).on('click','.user_detail_card',function(){
+              var parentDiv=$(this).closest('.col.mb-3')
+              var id=parentDiv.attr('id')
               console.log(id);
               $.ajax({
                 method:`post`,
@@ -315,25 +337,24 @@
               })
             })
           });
-        //end user details
+       //end user detail for card
+       //start toggle design 
+       $(document).ready(function(){
+       var viewBtn=document.getElementById('designView');
+       let currentRoute="{{Route::currentRouteName() }}";
+       if(currentRoute === 'user'){
+        viewBtn.textContent= 'View Card';
 
-        //start toggle design 
-        $(document).ready(function(){
-                var viewBtn=document.getElementById('designView');
-              let currentRoute="{{Route::currentRouteName() }}";
-              if(currentRoute === 'user'){
-                viewBtn.textContent= 'View Card';
-
-              }
-              else if(currentRoute === 'search_user'){
-                viewBtn.textContent ='View Card';
-              }
-              else if(currentRoute === 'user_card'){
-                viewBtn.textContent = 'View Table';
-              }
-              else if(currentRoute === 'search_card'){
-                viewBtn.textContent = 'View Table'
-              }
+       }
+       else if(currentRoute === 'search_user'){
+        viewBtn.textContent ='View Card';
+       }
+       else if(currentRoute === 'user_card'){
+        viewBtn.textContent = 'View Table';
+       }
+       else if(currentRoute === 'search_card'){
+        viewBtn.textContent = 'View Table'
+       }
        })
        //end toggle design
     </script>

@@ -14,6 +14,6 @@ class Post extends Model
         'title','description','created_user_id','updated_user_id','created_at','updated_at'
     ];
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'created_user_id');
     }
 }

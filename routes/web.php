@@ -31,12 +31,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
         //unauthorized user and auth user
         Route::get('/postlist','PostListController@postlist')->name('postlist');      
-       
-    
-        
-        
         Route::middleware('authmiddleware')->group(function(){
-      
+      //user card
+        Route::get('/user_card','UserController@cardView')->name('user_card');
+        Route::get('/search_card','UserDetailController@search_card')->name('search_card');
         //user
             Route::get('/register','UserController@register')->name('register');
             Route::post('/register','UserController@registration')->name('registration');
@@ -54,18 +52,22 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::post('/user/detail/{id}','UserDetailController@showdetail');
             //user search
             Route::get('/search','UserDetailController@search_user')->name('search_user');
-        
+            
+
+          
+            
+            //post card
+            Route::get('post_card','PostListController@cardView')->name('card_view');
+            Route::get('/search_post_card','PostListController@search_card')->name('search_cardView'); 
 
             //post
-            
-            
             Route::resource('/post','PostListController');
             Route::post('/post_edit_confirm/{id}','PostListController@post_edit_confirm')->name('post_edit_confirm');
             Route::get('/postdelete','PostListController@postdelete')->name('postdelete'); 
             Route::get('/createpost','PostListController@createpost');
             Route::get('/uploadpost','PostListController@upload_post');
             Route::post('/uploadedpost','PostListController@uploaded_post')->name('uploadedpost');
-            
+
             //postdelete
             Route::post('/delete/{id}','PostDeleteController@delete')->name('delete');
             Route::delete('postlist/deletedpost/{id}','PostDeleteController@destroy');   

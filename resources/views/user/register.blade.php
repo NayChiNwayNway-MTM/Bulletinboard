@@ -3,14 +3,15 @@
 <section class="background">
 <div class="mask d-flex align-items-center h-100 pt-5">
     <div class="container mt-5 h-100 ">
-    @if(Session::has('register'))
+    
+      <div class="row d-flex justify-content-center align-items-center h-100">
+      @if(Session::has('register'))
                               <div class="alert alert-success" role="alert" id='alert'>
                                   {{Session::get('register')}}
                               </div>
-    @endif  
-      <div class="row d-flex justify-content-center align-items-center h-100">
+      @endif  
         <div class="col-10">
-          <div class="card custom-card" >
+          <div class="card" >
             <div class="card-body p-5">
               <h2 class="text-primary text-center mb-5">Register</h2>
                 <form action="{{route('registration')}}" method="post" class="" enctype="multipart/form-data">

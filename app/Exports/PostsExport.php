@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\PostList;
+use App\Models\Post;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 class PostsExport implements FromCollection, WithHeadings
@@ -12,7 +12,7 @@ class PostsExport implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        return PostList::all();
+        return Post::all();
     }
 
     public function headings(): array

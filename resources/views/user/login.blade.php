@@ -2,23 +2,24 @@
 @section('content')
 <section class="background">
 <div class="container col-md-7">
+        
+      <section class=" gradient-form">
+     
+        <div class="container py-5  mt-5">
+          <div class="row ">
           @if(session('reset_pass'))
-              <div class="alert alert-success mt-2" id="alert">
+              <div class="alert alert-success mt-2 margin" id="alert">
                 {{session('reset_pass')}}
               </div>
           @elseif(session('message'))
-            <div class="alert alert-success mt-2" id="alert">
+            <div class="alert alert-success mt-2 margin" id="alert">
               {{session('message')}}
             </div>
           @elseif(session('incorrect'))
-            <div class="alert alert-danger mt-3" id="alert">
+            <div class="alert alert-danger mt-3 margin" id="alert">
                 {{session('incorrect')}}
             </div>
           @endif
-      <section class=" gradient-form">
-     
-        <div class="container py-5  mt-4">
-          <div class="row ">
             <div class="col-xl-12">
               <div class="card rounded-3 text-black">
               

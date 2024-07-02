@@ -14,21 +14,21 @@
 <nav class="navbar navbar-expand-lg px-3">
   @guest
   <div class="container-fluid">
-    <a class="navbar-brand" href="{{route('login')}}">
+    <a class="navbar-brand bulletin-board-link" href="{{route('login')}}">
       Bulletin_Board</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="{{route('postlist')}}">Posts</a>
+          <a class="nav-link nav_link" href="{{route('postlist')}}">Posts</a>
         </li>
       </ul>
       <form class="d-flex">
         <ul class="navbar-nav me-auto mb-lg-0">
-          <li class="link-offset-2 link-underline link-underline-opacity-0 py-2">
+          <li class="link-offset-2 link-underline link-underline-opacity-0 py-2 nav_link">
               <a href="{{route('login')}}"
-            class="link-offset-2 link-underline link-underline-opacity-0 px-3 register">Login</a>
+            class="link-offset-2 link-underline link-underline-opacity-0 px-3 register ">Login</a>
           </li>
-          <li class="link-offset-2 link-underline link-underline-opacity-0 py-2">
+          <li class="link-offset-2 link-underline link-underline-opacity-0 py-2 sign_up">
               <a href="{{route('signup')}}"
             class="link-offset-2 link-underline link-underline-opacity-0 px-3 register">Sign Up</a>
           </li>
@@ -40,14 +40,14 @@
   <!--*****************-->
   @auth
   <div class="container-fluid">
-    <a class="navbar-brand" href="{{route('login')}}">Bulletin_Board</a>
+    <a class="navbar-brand bulletin-board-link" href="{{route('logout')}}">Bulletin_Board</a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
+        <li class="nav-item nav_link">
           <a class="nav-link active" aria-current="page" href="{{route('user')}}">Users</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{route('postlist')}}">Posts</a>
+        <li class="nav-item nav_link mx-5">
+          <a class="nav-link active" href="{{route('postlist')}}">Posts</a>
         </li>
       </ul>
       <form class="d-flex">
@@ -56,7 +56,7 @@
            class="link-offset-2 link-underline link-underline-opacity-0 px-3 register">Create User</a></li>
            <li>
             <a href="{{route('profile',auth()->user()->id)}}"><img src="{{ asset(auth()->user()->profile)}}" alt="profile" style="width: 50px; height: 50px; border-radius: 50%;"
-                      class="rounded-circle img-thumbnail">
+                      class="rounded-circle img-thumbnail custom-img-thumbnail">
             </a>
             </li>
           <li class="nav-item dropdown mx-2">

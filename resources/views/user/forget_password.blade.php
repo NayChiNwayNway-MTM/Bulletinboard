@@ -2,7 +2,7 @@
 @section('content')
 <section class="background">
   <div class="container margin">
-  <
+  
       <div class="row">
         <div class="col-md-6 m-auto">
         <form action="{{route('forget.password.post',)}}" method="post" class=" mt-5">

@@ -20,7 +20,11 @@ class UserController extends Controller
         $pageSize = $request->input('page_size', 10);
         session(['pageSize'=>$pageSize]);
 
-        
+       // dd($pageSize);
+
+        if ($request->has('page_size')) {
+            session(['page_size' => $request->input('page_size')]);
+        }
         $created_user=User::find(auth()->user()->created_user_id);
         $all_users=User::select('id', 'name')->get()->whereNull('deleted_at');
 
@@ -68,6 +72,61 @@ class UserController extends Controller
                     
     
     } 
+    //user list for card
+    public function cardView(Request $request){
+        $pageSize = $request->input('page_size', 10);
+        session(['pageSize'=>$pageSize]);
+
+       // dd($pageSize);
+
+        if ($request->has('page_size')) {
+            session(['page_size' => $request->input('page_size')]);
+        }
+        $created_user=User::find(auth()->user()->created_user_id);
+        $all_users=User::select('id', 'name')->get()->whereNull('deleted_at');
+
+        $created_all_user_id=User::select('created_user_id')->whereNull('deleted_at')->get();
+
+            if (auth()->user()->type == 0) {
+                // Get paginated users, including the 'created_user_id'
+                $users = User::whereNull('deleted_at')->paginate($pageSize);
+                
+                // Fetch the created users' names using a single query
+                $createdUserIds = $users->pluck('created_user_id')->filter()->unique()->toArray();
+                
+                $createdUsers = User::whereIn('id', $createdUserIds)
+                                    ->whereNull('deleted_at')
+                                    ->pluck('name', 'id')
+                                    ->toArray();
+            
+                // Map names to the users' created_user_ids
+                $names = [];
+                foreach ($users as $user) {
+                    $names[$user->id] = $createdUsers[$user->created_user_id] ?? 'Unknown';
+                }
+                
+            return view('user.user_card_view', compact('users', 'names','pageSize'));
+            }
+       
+        else{
+    
+            $users = User::whereNull('deleted_at')
+            ->where('created_user_id', auth()->user()->id)
+            ->with('createdBy')
+            ->paginate($pageSize);
+
+                // Initialize names array
+                $names = [];
+
+                // Collect names of creators
+                foreach ($users as $user) {
+                    $names[$user->id] = $user->createdBy ? $user->createdBy->name : 'Unknown';
+                }
+
+                return view('user.user_card_view', compact('users', 'names','pageSize'));
+                        }
+                        //dd($names);
+    }
     //user register ui
     public function register(){
         return view('user.register');

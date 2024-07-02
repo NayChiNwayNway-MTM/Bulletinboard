@@ -47,10 +47,11 @@
               <div class="row d-flex justify-content-around align-item-center m-5 ">
                 <div class="col-sm-6 d-flex justify-content-around align-item-center">
                   <button class="btn btn-info col-sm-4 mx-1">Comfirm</button>
-                  <form action="{{route('post.create')}}" method="get">
+                  <form>
                     @csrf 
-                    <button class="btn btn-primary col-4 mx-1" type="reset">Cancle</button>
-                  </form>
+                    <button class="btn btn-primary col-4 mx-1" type="button" onclick="window.location=`{{url('/createpost')}}`">Cancel</button>
+                </form>
+
                   
                 </div>        
               </div>
