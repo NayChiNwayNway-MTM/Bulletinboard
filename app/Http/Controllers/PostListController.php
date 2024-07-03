@@ -44,8 +44,6 @@ class PostListController extends Controller
                 return view('post.postlist', compact('postlist', 'users','pageSize'));
                
             }
-           
-
         }
         public function cardView(Request $request){
           
@@ -74,6 +72,50 @@ class PostListController extends Controller
     
 
         }
+        // all postlist for table
+        public function all_postlist(Request $request){
+            $pageSize = $request->input('page_size', 10);
+            session(['pagesize'=>$pageSize]);
+            
+            if(Auth::check()){
+                if(auth()->user()->type == 1){
+                    $postlist = Post::with('user')->where('status','1')->paginate($pageSize);
+                    $users = User::all();
+                   
+                    return view('post.all_postlist', compact('postlist', 'users','pageSize'));
+                }else{
+                    
+                    $postlist=Post::with('user')->paginate($pageSize);
+                    $users = User::all();
+                    return view('post.all_postlist', compact('postlist', 'users','pageSize'));
+                }
+            }
+           
+           
+        }
+        //all postlist for cardview
+        public function all_postlist_card(Request $request){
+            
+            $pageSize = $request->input('page_size', 10);
+            session(['pagesize'=>$pageSize]);
+            if(Auth::check()){
+                if(auth()->user()->type == 1){
+                    $postlist = Post::with('user')->paginate($pageSize);
+                    $users = User::all();
+                   
+                    return view('post.all_postlist_card', compact('postlist', 'users','pageSize'));
+                }
+                else{
+                    
+                    $postlist=Post::with('user')->paginate($pageSize);
+                    $users = User::all();
+                    return view('post.all_postlist_card', compact('postlist', 'users','pageSize'));
+                }
+            }
+           
+    
+        }
+        //create post ui
         public function createpost(){
             return view('post.create_post');
         }
@@ -262,7 +304,7 @@ class PostListController extends Controller
 
                 $posts = Post::where('title', 'like', '%'.$text.'%')
                                 ->orWhere('description', 'like', '%'.$text.'%')
-                                ->paginate(5);
+                                ->get();
                 return new StreamedResponse(function () use ($posts) {
                          $handle = fopen('php://output', 'w');
                         fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
@@ -288,7 +330,7 @@ class PostListController extends Controller
                         ->where('created_user_id',auth()->user()->id)
                         ->orWhere('description', 'like', '%'.$text.'%')
                         ->where('created_user_id',auth()->user()->id)
-                        ->paginate(5);
+                        ->get();
         
                 return new StreamedResponse(function () use ($posts) {
                     $handle = fopen('php://output', 'w');
@@ -307,6 +349,62 @@ class PostListController extends Controller
             }
             
         }
+          //post download with csv format
+          public function download_allpost(Request $request)
+          { 
+              if(auth()->user()->type == 0){
+                  $text = $request->input('text', '');
+                // dd($text);
+                 if($text == null){
+                  return Excel::download(new PostsExport, 'posts.csv', \Maatwebsite\Excel\Excel::CSV);
+                 }
+                 else{
+  
+                  $posts = Post::where('title', 'like', '%'.$text.'%')
+                                  ->orWhere('description', 'like', '%'.$text.'%')
+                                  ->get();
+                  return new StreamedResponse(function () use ($posts) {
+                           $handle = fopen('php://output', 'w');
+                          fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
+                                              'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
+                          foreach ($posts as $post) {
+                               fputcsv($handle, [$post->id, $post->title, $post->description,
+                                       $post->status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
+                                      $post->created_at,$post->updated_at,$post->deleted_at]);
+                          }
+                              fclose($handle);
+                          }, 200, [
+                               'Content-Type' => 'text/csv',
+                              'Content-Disposition' => 'attachment; filename="posts.csv"',
+                          ]);                                            
+                 }
+                 
+              }
+              else{
+                 
+                  $text = $request->input('text', '');
+                  //dd($text);
+                  $posts = Post::where('status',1)->orwhere('title', 'like', '%'.$text.'%')
+                          ->orWhere('description', 'like', '%'.$text.'%')
+                          ->get();
+          
+                  return new StreamedResponse(function () use ($posts) {
+                      $handle = fopen('php://output', 'w');
+                      fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
+                                      'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
+                          foreach ($posts as $post) {
+                              fputcsv($handle, [$post->id, $post->title, $post->description,
+                                      $post->status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
+                                      $post->created_at,$post->updated_at,$post->deleted_at]);
+                          }
+                      fclose($handle);
+                  }, 200, [
+                      'Content-Type' => 'text/csv',
+                      'Content-Disposition' => 'attachment; filename="posts.csv"',
+                  ]);
+              }
+              
+          }
         //search post for table
         public function search(Request $request){
             $text = $request->text;
@@ -362,6 +460,67 @@ class PostListController extends Controller
             }
             
             return view('post.postlist_card', compact('postlist', 'pageSize'));
+        }
+        //search all postlist for table
+        public function search_allpost_table(Request $request){
+            $text = $request->text;
+
+            $pageSize = $request->input('page_size', session('page_size', 10)); // Default to 10 if not set
+
+            // Update session with the new page size if provided
+            if ($request->has('page_size')) {
+                session(['page_size' => $request->input('page_size')]);
+            }
+            if(Auth::check()){
+                if(auth()->user()->type == 1){
+                    $postlist = Post::where(function ($query) use ($text) {
+                                    $query->where('title', 'like', '%' . $text . '%')
+                                        ->orWhere('description', 'like', '%' . $text . '%');
+                                })
+                            
+                                ->paginate($pageSize);
+                            
+                }
+            
+                else{
+                    $postlist = Post::where('title', 'like', '%'.$text.'%')
+                                    ->orWhere('description', 'like', '%'.$text.'%')
+                                    ->paginate($pageSize);
+                }
+            }else{
+                $postlist=Post::where('status',1)->paginate($pageSize);
+                $users = User::all();
+                
+            }
+            
+            return view('post.all_postlist', compact('postlist', 'pageSize'));
+        }
+          //search all postlist for card
+          public function search_allpost_card(Request $request){
+            $text = $request->text;
+            
+            $pageSize = $request->input('page_size', session('page_size', 10)); // Default to 10 if not set
+
+            // Update session with the new page size if provided
+            if ($request->has('page_size')) {
+                session(['page_size' => $request->input('page_size')]);
+            }
+            if(auth()->user()->type == 1){
+                $postlist = Post::where(function ($query) use ($text) {
+                                $query->where('title', 'like', '%' . $text . '%')
+                                      ->orWhere('description', 'like', '%' . $text . '%');
+                            })
+                           
+                            ->paginate($pageSize);
+                           
+            } 
+            else{
+                $postlist = Post::where('title', 'like', '%'.$text.'%')
+                                ->orWhere('description', 'like', '%'.$text.'%')
+                                ->paginate($pageSize);
+            }
+
+            return view('post.all_postlist_card', compact('postlist', 'pageSize'));
         }
 
 }

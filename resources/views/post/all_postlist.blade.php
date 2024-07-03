@@ -1,7 +1,7 @@
 @extends('layouts.nav')
 @section('content')
   <section class="background mt-5">
-  <header><h3 class="px-5 py-5">Post List</h3></header> 
+  <header><h3 class="px-5 py-5"> All Post List</h3></header> 
     <!--start container-->
     <div class="container">
     @if(Session::has('success'))
@@ -43,9 +43,8 @@
                         <div class="m-2">
                             <button id="downloadpost" class="btn btn-primary">Download</button>
                         </div>
-                    
                         <div class="m-2">
-                          <a href="{{route('card_view')}}" class="btn btn-primary" id="ViewBtn">Design</a>
+                          <a href="{{route('all_postlist_card')}}" class="btn btn-primary" id="ViewBtn">Design</a>
                         </div>
                     </div>
                 </div>
@@ -70,7 +69,7 @@
     <div class="design_container">
       <div class="row d-block">
         <div class="table-container">
-        <table class="table table-striped table-primary  postTable table-container">
+          <table class="table table-striped table-primary  postTable table-container">
                 <thead>
                   <tr class="align-middle">
                     <th>Post Title</th>
@@ -103,23 +102,41 @@
                             @endif
                             <td>{{$list->created_at->format('Y-m-d')}}</td>
                             @auth
-                            <td>
-                              <a href="{{route('post.edit',$list->id)}}" class="btn btn-warning">
-                                <i class="fa fa-edit"></i></a>
-                              <form action="" method="get" class="btn ">
-                                @csrf 
-                                @method('DELETE')
-                                <button class="btn btn-danger m-0 delete">
-                                <i class="fa fa-trash"></i> </button>
-                              </form>
-                            </td>
+                            @if(auth()->user()->type == 1)
+                              @if(auth()->user()->id == $list->created_user_id)
+                                <td>
+                                  <a href="{{route('post.edit',$list->id)}}" class="btn btn-warning">
+                                    <i class="fa fa-edit"></i></a>
+                                  <form action="" method="get" class="btn ">
+                                    @csrf 
+                                    @method('DELETE')
+                                    <button class="btn btn-danger m-0 delete">
+                                    <i class="fa fa-trash"></i> </button>
+                                  </form>
+                                </td>
+                              @else
+                              <td></td>
+                              @endif
+                            @else
+                                <td>
+                                  <a href="{{route('post.edit',$list->id)}}" class="btn btn-warning">
+                                    <i class="fa fa-edit"></i></a>
+                                  <form action="" method="get" class="btn ">
+                                    @csrf 
+                                    @method('DELETE')
+                                    <button class="btn btn-danger m-0 delete">
+                                    <i class="fa fa-trash"></i> </button>
+                                  </form>
+                                </td>
+                              
+                            @endif
                             @endauth
                           </tr>
                         
                       @endforeach
                     @endif
                 </tbody>
-            </table>
+          </table>
       
         </div>
                 <!--start pagination-->
@@ -230,10 +247,10 @@
       });
       
       $('#downloadpost').on('click',function(){
-        form.attr('action','{{url("/posts/export")}}');
+        form.attr('action','{{url("/download_all")}}');
       });
       $('#search_post').on('click',function(){
-        form.attr('action','{{url("/search_post")}}');
+        form.attr('action','{{url("/search_allpost_table")}}');
       })
     });
   //start post delete for table
@@ -324,10 +341,10 @@
       const toggleViewBtn = document.getElementById('ViewBtn');
       let currentRoute = "{{ Route::currentRouteName() }}";
       
-      if (currentRoute === 'postlist') {
+      if (currentRoute === 'all_postlist') {
           toggleViewBtn.textContent = "View Card";
 
-      } else if (currentRoute === 'card_view') {
+      } else if (currentRoute === 'all_postlist_card') {
           toggleViewBtn.textContent = "View Table ";
       }
      else if(currentRoute === 'search'){

@@ -7,7 +7,7 @@
   </div>
   @endif
  
-      <div class="container col-md-6 margin">
+      <div class="container  margin">
         <div class="card m-auto " style="width: 60rem;">
           <div class="card-body">
             <form action="{{route('post.store')}}" method="post" class="">

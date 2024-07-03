@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.nav')
 @section('content')
 <section class="background">
 
@@ -88,10 +88,10 @@
           </div>
           <div class="row d-flex justify-content-around align-item-center mt-3 mb-3">
                 <div class="col-sm-6">
-                  <button class="btn btn-info col-6">Confirm</button>
+                  <button class="btn btn-info col-5">Confirm</button>
                   <form action="" method="post">
                     @csrf 
-                    <button class="btn btn-primary col-4" type="reset">Cancel</button>
+                    <button class="btn btn-primary col-5" type="reset" onclick="window.location=`{{url('/register')}}`">Cancel</button>
                   </form>
                 </div>        
             </div>

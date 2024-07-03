@@ -24,7 +24,7 @@
       </ul>
       <form class="d-flex">
         <ul class="navbar-nav me-auto mb-lg-0">
-          <li class="link-offset-2 link-underline link-underline-opacity-0 py-2 nav_link">
+          <li class="link-offset-2 link-underline link-underline-opacity-0 py-2 login_hover">
               <a href="{{route('login')}}"
             class="link-offset-2 link-underline link-underline-opacity-0 px-3 register ">Login</a>
           </li>
@@ -44,10 +44,18 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item nav_link">
-          <a class="nav-link active" aria-current="page" href="{{route('user')}}">Users</a>
+          <a class="nav-link {{ request()->routeIs('user','user_card','search_user','search_card') ? 'active' : '' }}" aria-current="page" 
+            href="{{route('user')}}">Users</a>
         </li>
+        @if(auth()->user()->type == 1)
         <li class="nav-item nav_link mx-5">
-          <a class="nav-link active" href="{{route('postlist')}}">Posts</a>
+          <a class="nav-link {{ request()->routeIs('postlist','card_view','search','search_cardView') ? 'active' : '' }}"
+             href="{{route('postlist')}}">Posts</a>
+        </li>
+        @endif
+        <li class="nav-item nav_link mx-5 allpost">
+          <a class="nav-link {{ request()->routeIs('all_postlist','all_postlist_card','search_allpost_table','search_allpost_card')? 'active' : ''}}"
+           href="{{route('all_postlist')}}">All Posts</a>
         </li>
       </ul>
       <form class="d-flex">
@@ -56,7 +64,8 @@
            class="link-offset-2 link-underline link-underline-opacity-0 px-3 register">Create User</a></li>
            <li>
             <a href="{{route('profile',auth()->user()->id)}}"><img src="{{ asset(auth()->user()->profile)}}" alt="profile" style="width: 50px; height: 50px; border-radius: 50%;"
-                      class="rounded-circle img-thumbnail custom-img-thumbnail">
+                      class="rounded-circle img-thumbnail custom-img-thumbnail" 
+                      data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="profile">
             </a>
             </li>
           <li class="nav-item dropdown mx-2">
@@ -71,6 +80,7 @@
       </form>
     </div>
   </div>
+  
    <!--*****************-->
    @endauth
 </nav>

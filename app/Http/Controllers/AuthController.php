@@ -69,8 +69,13 @@ class AuthController extends Controller
         ]);
        $credential=$request->except('_token');
         if (Auth::attempt($credential)) {
-          
-                return redirect()->route('postlist');          
+            if(auth()->user()->type == 0){
+                return redirect()->route('all_postlist'); 
+            }
+            else{
+                return redirect()->route('postlist');
+            }
+                         
         } else {
            return redirect()->to('login')->with('incorrect','Incorrect,Try again.');
         }

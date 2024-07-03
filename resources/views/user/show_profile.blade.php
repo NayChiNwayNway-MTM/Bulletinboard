@@ -42,7 +42,7 @@
               <div class="col"><label for="" class="form-label">Address</label></div>
               <div class="col"><label for="" class="form-label">{{$user_data->address}}</label></div>
             </div>
-            <div class="row mt-2 mx-auto text-center">
+            <div class="row mt-2 mx-auto text-center d-flex justify-content-center align-item-center">
               <div class="col-10"><button class="btn btn-primary col-7">Edit</button></div>        
             </div>       
         </div>

@@ -1,31 +1,32 @@
 @extends('layouts.nav')
 @section('content')
   <section class="background mt-5">
-  <header><h3 class="px-5 py-5">Post List</h3></header> 
+  <header><h3 class="px-5 py-5">All Post List</h3></header> 
     <!--start container-->
     <div class="container">
-    @if(Session::has('success'))
-                <div class="alert alert-success" role="alert" id='alert'>
-                  {{Session::get('success')}}
-                </div>
-    @elseif(Session::has('postedites'))
-                <div class="alert alert-success" role="alert" id='alert'>
-                  {{Session::get('postedites')}}
-                </div>
-    @elseif(Session::has('message'))
-                <div class="alert alert-success" role="alert" id='alert'>
-                  {{Session::get('message')}}
-                </div>
-    @elseif(session('error'))
-                <div class="alert alert-danger" id="alert">
-                  {{session('error')}}
-                </div>
-    @endif
-    @auth     
-      <div class="row mb-3">
+      @if(Session::has('success'))
+                  <div class="alert alert-success" role="alert" id='alert'>
+                    {{Session::get('success')}}
+                  </div>
+      @elseif(Session::has('postedites'))
+                  <div class="alert alert-success" role="alert" id='alert'>
+                    {{Session::get('postedites')}}
+                  </div>
+      @elseif(Session::has('message'))
+                  <div class="alert alert-success" role="alert" id='alert'>
+                    {{Session::get('message')}}
+                  </div>
+      @elseif(session('error'))
+                  <div class="alert alert-danger" id="alert">
+                    {{session('error')}}
+                  </div>
+      @endif
+      @auth    
+      <div class="row mb-5">
         <form action="" method="get" id="form" class="float-start">
+            
             <div class="row">
-                <div class="col float-end">
+                <div class="col-md-12 float-end">
                     <div class="d-flex flex-row align-items-center justify-content-end">
                         <label class="form-label d-block m-2">Keywords:</label>
                         <div class="m-2">
@@ -43,9 +44,9 @@
                         <div class="m-2">
                             <button id="downloadpost" class="btn btn-primary">Download</button>
                         </div>
-                    
+                       
                         <div class="m-2">
-                          <a href="{{route('card_view')}}" class="btn btn-primary" id="ViewBtn">Design</a>
+                          <a href="{{route('all_postlist')}}" class="btn btn-primary" id="ViewBtn">Design</a>
                         </div>
                     </div>
                 </div>
@@ -53,7 +54,7 @@
             <div class="row">
                 <div class="col-6">
                     <div class="d-flex align-items-center">
-                        <label for="page_size" class="me-2">Page size:</label>
+                        <label for="page_size" class="me-2">Page Size:</label>
                         <select name="page_size" id="page_size" onchange="this.form.submit()" class="form-select w-auto">
                             <option value="10" {{ request('page_size') == 10 ? 'selected' : '' }}>10</option>
                             <option value="15" {{ request('page_size') == 15 ? 'selected' : '' }}>15</option>
@@ -62,81 +63,84 @@
                     </div>
                 </div>
             </div>
-
         </form>
       </div>
 
-    @endauth
-    <div class="design_container">
-      <div class="row d-block">
-        <div class="table-container">
-        <table class="table table-striped table-primary  postTable table-container">
-                <thead>
-                  <tr class="align-middle">
-                    <th>Post Title</th>
-                    <th>Post Description</th>
-                    <th>Posted User</th>
-                    <th>Posted Date</th>
-                    @auth
-                    <th>Operation</th>
-                    @endauth
-                  </tr>
-                </thead>        
-                <tbody>    
-                    @if($postlist->isEmpty()) 
-                    <tr>
-                      <td colspan="5">
-                        <h6 class="text-center">Post Not Found</h6>
-                      </td>
-                    </tr>
-                    @else  
-                      @foreach($postlist as $list)  
-                        
-                          <tr id='{{$list->id}}' class="align-middle">
-                            <td><label class="form-label text-primary" id="post_detail_table" data-bs-toggle="tooltip"
-                                  data-bs-placement="bottom" data-bs-title="view detail" >{{$list->title}}</label></td>
-                            <td style="width: 300px;">{{$list->description}}</td>
-                            @if($list->user->type == 0)
-                              <td>Admin</td>
-                            @else
-                                <td>User</td>                    
-                            @endif
-                            <td>{{$list->created_at->format('Y-m-d')}}</td>
-                            @auth
-                            <td>
-                              <a href="{{route('post.edit',$list->id)}}" class="btn btn-warning">
-                                <i class="fa fa-edit"></i></a>
-                              <form action="" method="get" class="btn ">
-                                @csrf 
-                                @method('DELETE')
-                                <button class="btn btn-danger m-0 delete">
-                                <i class="fa fa-trash"></i> </button>
-                              </form>
-                            </td>
-                            @endauth
-                          </tr>
-                        
+      @endauth
+      <div class="design_container">
+        <div class="row d-block">
+            @if($postlist->isEmpty())
+              <h5 class="text-center mt-3">Post Not Found.</h5>
+            @else  
+                <!-- start post card-->
+                  <div class="container" id="postCard">
+                    <div class="row row-cols-1 row-cols-md-3 g-4 " id="card">
+                      @foreach($postlist as $list)
+                      
+                        <div class="col mb-3 " id="{{$list->id}}">
+                            <div class="card h-100 rounded-3 shadow-sm custom-card"> 
+                                <div class="card-body d-flex flex-column"> 
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="{{$list->user->profile}}" alt="profile" class="rounded-circle img-thumbnail @if($list->status == 1) custom-img-thumbnail @endif" style="width:60px; height: 60px;">
+                                        <div class="ms-3">
+                                            @if($list->user->type == 1)
+                                                <p class="mb-0">User</p>
+                                            @else
+                                                <p class="mb-0">Admin</p>
+                                            @endif
+                                            <p>{{$list->created_at->format('Y-m-d')}}</p>
+                                        </div>
+                                        @if(auth()->user()->type == 1)
+                                          @if(auth()->user()->id == $list->created_user_id)
+                                            <div class="dropdown custom-dropdown ms-auto">
+                                              <button class="btn btn-link p-0 text-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                  <i class="fa fa-ellipsis-h" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="edit and delete"></i>
+                                              </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li><a class="dropdown-item" href="{{ route('post.edit', $list->id) }}"><i class="fa fa-edit me-2"></i>Edit</a></li>
+                                                    <li><button class="dropdown-item delete_card" href="#"><i class="fa fa-trash me-2"></i>Delete</button></li>
+                                                </ul>
+                                            </div>
+                                          @endif
+                                        @else
+                                            <div class="dropdown custom-dropdown ms-auto">
+                                              <button class="btn btn-link p-0 text-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                  <i class="fa fa-ellipsis-h" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="edit and delete"></i>
+                                              </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li><a class="dropdown-item" href="{{ route('post.edit', $list->id) }}"><i class="fa fa-edit me-2"></i>Edit</a></li>
+                                                    <li><button class="dropdown-item delete_card" href="#"><i class="fa fa-trash me-2"></i>Delete</button></li>
+                                                </ul>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <h5 class="card-title">{{ $list->title }}</h5>
+                                    <p class="card-text">{{ $list->description }}</p>
+                                </div>
+                                <div class="card-footer mt-auto text-end"> 
+                                    <button class=" post_detail_card view" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="view"><i class="fa fa-eye fa-lg"></i></button>
+                                </div>
+                            </div>
+                        </div>                    
                       @endforeach
-                    @endif
-                </tbody>
-            </table>
-      
-        </div>
-                <!--start pagination-->
-                <div class="row">
-                  <div class="col">
-                      <nav aria-label="Page navigation">
-                          <ul class="pagination" id="paginationLinks">
-                              {!! $postlist->appends(request()->except('page'))->links() !!}
-                          </ul>
-                      </nav>
+                    </div>
                   </div>
-                </div>
-                  <!--end pagination-->
-        
+                <!-- end post card-->
+            @endif
+                  <!--start pagination-->
+                  <div class="row">
+                    <div class="col">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination" id="paginationLinks">
+                                {!! $postlist->appends(request()->except('page'))->links() !!}
+                            </ul>
+                        </nav>
+                    </div>
+                  </div>
+                    <!--end pagination-->
+        </div>
+      
       </div>
-    </div>
-    
     </div>
     <!--end container-->
     <!--start modal-->
@@ -208,7 +212,7 @@
         </div>
     </div>
     <!--end post detail modal-->
-    <img src="{{asset('uploads/page_top.png')}}" alt="page top" class="pagetop" id="scrolltop" onclick="scrollToTop()">
+    <img src="{{asset('uploads/page_top.png')}}" alt="pagetop" class="pagetop" id="scrolltop" onclick="scrollToTop()">
   </section>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -230,18 +234,19 @@
       });
       
       $('#downloadpost').on('click',function(){
-        form.attr('action','{{url("/posts/export")}}');
+        form.attr('action','{{url("/download_all")}}');
       });
       $('#search_post').on('click',function(){
-        form.attr('action','{{url("/search_post")}}');
+        form.attr('action','{{url("/search_allpost_card")}}');
       })
     });
-  //start post delete for table
+
+     //start post delete for card
     $(document).ready(function () {
-        $('.delete').on('click', function (e) {
-            let tr = this.parentElement.parentElement.parentElement;
-            let id= tr.getAttribute('id');
-            //console.log(id);
+        $(document).on('click','.delete_card',function(e){
+        var parentDiv = $(this).closest('.col.mb-3');
+        var id = parentDiv.attr('id');
+            console.log(id);
            e.preventDefault();
            $.ajax({
             method:`post`,
@@ -280,14 +285,16 @@
            });
         });
     });
-    //end post delete for table
-    //start post deail modal box for table 
+    //end post delete for card
+
+    // start post deail modal box for card  
     $(document).ready(function(){
-      $(document).on('click','#post_detail_table',function(){
-       
-        var tr=$(this).closest('tr')
-        var id=tr.attr('id')
+      console.log('hi')
+      $(document).on('click','.post_detail_card',function(){
       
+        var parentDiv = $(this).closest('.col.mb-3');
+        var id = parentDiv.attr('id');
+        console.log(id)
         $.ajax({
           method:`post`,
           url:`/postdetails/${id}`,
@@ -314,20 +321,18 @@
           }
         })
       })
-    })
-    //end post deail modal box for table 
-
-   
-    //start change design mode
+    });
+    // end post deail modal box for card 
+    //start design view
     $(document).ready(function(){
       
       const toggleViewBtn = document.getElementById('ViewBtn');
       let currentRoute = "{{ Route::currentRouteName() }}";
       
-      if (currentRoute === 'postlist') {
+      if (currentRoute === 'all_postlist') {
           toggleViewBtn.textContent = "View Card";
 
-      } else if (currentRoute === 'card_view') {
+      } else if (currentRoute === 'all_postlist_card') {
           toggleViewBtn.textContent = "View Table ";
       }
      else if(currentRoute === 'search'){
@@ -335,24 +340,25 @@
      }
 
     })
-    //end change design mode
-
-    //start for page top
-    function scrollToTop() {
+    //end design view
+    //start page top
+    function scrollToTop(){
       window.scrollTo({
-          top: 0,
-          behavior: 'smooth' // Smooth scroll behavior
-      });
+        top:0,
+        behavior:'smooth'
+      })
     }
-    window.onscroll = function(){scrollfunction();}
-      function scrollfunction(){
-        if(document.body.scrollTop > 20 || document.documentElement.scrollTop > 20){
-          document.getElementById('scrolltop').style.display = 'block';
-        } else{
-          document.getElementById('scrolltop').style.display ='none';
-        }
+    window.onscroll = function(){ 
+      if(document.body.scrollTop > 20 || document.documentElement.scrollTop > 20){
+        document.getElementById('scrolltop').style.display = 'block'
+      }
+      else{
+        document.getElementById('scrolltop').style.display = 'none'
+      }
     }
-    //end for page top
+    //enf page top
+
+
 </script>
 
 @endsection

@@ -4,24 +4,24 @@
   <header><h3 class="px-5 py-5">Post List</h3></header> 
     <!--start container-->
     <div class="container">
-    @if(Session::has('success'))
-                <div class="alert alert-success" role="alert" id='alert'>
-                  {{Session::get('success')}}
-                </div>
-    @elseif(Session::has('postedites'))
-                <div class="alert alert-success" role="alert" id='alert'>
-                  {{Session::get('postedites')}}
-                </div>
-    @elseif(Session::has('message'))
-                <div class="alert alert-success" role="alert" id='alert'>
-                  {{Session::get('message')}}
-                </div>
-    @elseif(session('error'))
-                <div class="alert alert-danger" id="alert">
-                  {{session('error')}}
-                </div>
-    @endif
-    @auth    
+      @if(Session::has('success'))
+                  <div class="alert alert-success" role="alert" id='alert'>
+                    {{Session::get('success')}}
+                  </div>
+      @elseif(Session::has('postedites'))
+                  <div class="alert alert-success" role="alert" id='alert'>
+                    {{Session::get('postedites')}}
+                  </div>
+      @elseif(Session::has('message'))
+                  <div class="alert alert-success" role="alert" id='alert'>
+                    {{Session::get('message')}}
+                  </div>
+      @elseif(session('error'))
+                  <div class="alert alert-danger" id="alert">
+                    {{session('error')}}
+                  </div>
+      @endif
+      @auth    
       <div class="row mb-5">
         <form action="" method="get" id="form" class="float-start">
             
@@ -66,65 +66,67 @@
         </form>
       </div>
 
-    @endauth
-    <div class="design_container">
-    <div class="row d-block">
-             <!-- start post card-->
-               <div class="container" id="postCard">
-                <div class="row row-cols-1 row-cols-md-3 g-4 " id="card">
-                   @foreach($postlist as $list)
-                     <div class="col mb-3 " id="{{$list->id}}">
-                         <div class="card h-100 rounded-3 shadow-sm custom-card"> 
-                             <div class="card-body d-flex flex-column"> 
-                                 <div class="d-flex align-items-center mb-3">
-                                     <img src="{{$list->user->profile}}" alt="profile" class="rounded-circle img-thumbnail @if($list->status == 1) custom-img-thumbnail @endif" style="width:60px; height: 60px;">
-                                     <div class="ms-3">
-                                         @if($list->type == 1)
-                                             <p class="mb-0">User</p>
-                                         @else
-                                             <p class="mb-0">Admin</p>
-                                         @endif
-                                         <p>{{$list->created_at->format('Y-m-d')}}</p>
-                                     </div>
-                                      <div class="dropdown custom-dropdown ms-auto">
-                                        <button class="btn btn-link p-0 text-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa fa-ellipsis-h"></i>
-                                        </button>
-                                          <ul class="dropdown-menu dropdown-menu-end">
-                                              <li><a class="dropdown-item" href="{{ route('post.edit', $list->id) }}"><i class="fa fa-edit me-2"></i>Edit</a></li>
-                                              <li><button class="dropdown-item delete_card" href="#"><i class="fa fa-trash me-2"></i>Delete</button></li>
-                                          </ul>
-                                      </div>
+      @endauth
+      <div class="design_container">
+        <div class="row d-block">
+            @if($postlist->isEmpty())
+              <h5 class="text-center mt-3">Post Not Found.</h5>
+            @else  
+                <!-- start post card-->
+                  <div class="container" id="postCard">
+                    <div class="row row-cols-1 row-cols-md-3 g-4 " id="card">
+                      @foreach($postlist as $list)
+                        <div class="col mb-3 " id="{{$list->id}}">
+                            <div class="card h-100 rounded-3 shadow-sm custom-card"> 
+                                <div class="card-body d-flex flex-column"> 
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="{{$list->user->profile}}" alt="profile" class="rounded-circle img-thumbnail @if($list->status == 1) custom-img-thumbnail @endif" style="width:60px; height: 60px;">
+                                        <div class="ms-3">
+                                            @if($list->user->type == 1)
+                                                <p class="mb-0">User</p>
+                                            @else
+                                                <p class="mb-0">Admin</p>
+                                            @endif
+                                            <p>{{$list->created_at->format('Y-m-d')}}</p>
+                                        </div>
+                                          <div class="dropdown custom-dropdown ms-auto">
+                                            <button class="btn btn-link p-0 text-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa fa-ellipsis-h" data-bs-toggle="tooltip"  data-bs-placement="bottom" data-bs-title="edit and delete"></i>
+                                            </button>
+                                              <ul class="dropdown-menu dropdown-menu-end">
+                                                  <li><a class="dropdown-item" href="{{ route('post.edit', $list->id) }}"><i class="fa fa-edit me-2"></i>Edit</a></li>
+                                                  <li><button class="dropdown-item delete_card" href="#"><i class="fa fa-trash me-2"></i>Delete</button></li>
+                                              </ul>
+                                          </div>
 
-                                 </div>
-                                 <h5 class="card-title">{{ $list->title }}</h5>
-                                 <p class="card-text">{{ $list->description }}</p>
-                             </div>
-                             <div class="card-footer mt-auto text-end"> 
-                                 <button class=" post_detail_card view" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="view"><i class="fa fa-eye fa-lg"></i></button>
-                             </div>
-                         </div>
-                     </div>                    
-                   @endforeach
-                </div>
-               </div>
-             <!-- end post card-->
-               <!--start pagination-->
-               <div class="row">
-                 <div class="col">
-                     <nav aria-label="Page navigation">
-                         <ul class="pagination" id="paginationLinks">
-                             {!! $postlist->appends(request()->except('page'))->links() !!}
-                         </ul>
-                     </nav>
-                 </div>
-               </div>
-                 <!--end pagination-->
+                                    </div>
+                                    <h5 class="card-title">{{ $list->title }}</h5>
+                                    <p class="card-text">{{ $list->description }}</p>
+                                </div>
+                                <div class="card-footer mt-auto text-end"> 
+                                    <button class=" post_detail_card view" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="view"><i class="fa fa-eye fa-lg"></i></button>
+                                </div>
+                            </div>
+                        </div>                    
+                      @endforeach
+                    </div>
+                  </div>
+                <!-- end post card-->
+            @endif
+                  <!--start pagination-->
+                  <div class="row">
+                    <div class="col">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination" id="paginationLinks">
+                                {!! $postlist->appends(request()->except('page'))->links() !!}
+                            </ul>
+                        </nav>
+                    </div>
+                  </div>
+                    <!--end pagination-->
+        </div>
       
-    </div>
-     
-    </div>
-    
+      </div>
     </div>
     <!--end container-->
     <!--start modal-->
@@ -196,6 +198,7 @@
         </div>
     </div>
     <!--end post detail modal-->
+    <img src="{{asset('uploads/page_top.png')}}" alt="pagetop" class="pagetop" id="scrolltop" onclick="scrollToTop()">
   </section>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -306,7 +309,7 @@
       })
     });
     // end post deail modal box for card 
-
+    //start design view
     $(document).ready(function(){
       
             const toggleViewBtn = document.getElementById('ViewBtn');
@@ -324,7 +327,23 @@
             }
    
     })
-
+    //end design view
+    //start page top
+      function scrollToTop(){
+        window.scrollTo({
+          top:0,
+          behavior:'smooth'
+        })
+      }
+      window.onscroll = function(){ 
+        if(document.body.scrollTop > 20 || document.documentElement.scrollTop > 20){
+          document.getElementById('scrolltop').style.display = 'block'
+        }
+        else{
+          document.getElementById('scrolltop').style.display = 'none'
+        }
+      }
+    //enf page top
 
 </script>
 

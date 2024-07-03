@@ -27,7 +27,7 @@ class PostDeleteController extends Controller
             $postdetail=Post::find($id);
             $postcreated=Post::where('id',$id)->pluck('created_user_id');
             $user=User::where('id',$postcreated)->pluck('name');
-            
+            session(['user'=>$user]);
             return response()->json(['postdetail'=>$postdetail,'user'=>$user]);
         }
 

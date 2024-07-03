@@ -59,10 +59,6 @@
           </div>
       </form> 
       <div class="row mt-3" id="body">
-         
-        @if($users->isEmpty())
-          <h5 class="text-center mt-3">No users found.</h5>
-        @else       
         <table class="table table-striped table-primary mt-3 userTable">
           <thead>
           <tr class="align-middle">
@@ -80,7 +76,14 @@
                 </tr>
              
           </thead>
-          <tbody>      
+          <tbody>   
+             @if($users->isEmpty()) 
+                   <tr>
+                     <td colspan="10">
+                       <h6 class="text-center">User Not Found</h6>
+                     </td>
+                   </tr>
+                @else    
                 @foreach($users as $user)
                   <tr class="align-middle" id="{{$user->id}}">
                     <td>{{$user->id}}</td>
@@ -98,15 +101,14 @@
                     <td><a href="#" class="btn btn-sm btn-danger userdelete" data-id="{{ $user->id }}"><i class="fa fa-trash"></i></a></td>
                   </tr>
                 @endforeach
+              @endif
           </tbody>         
         </table>
-        @endif
         <!-- Pagination Links -->
         <div class="">
             {!! $users->appends(request()->except('page'))->links() !!}
         </div>
       </div>
-
 </div>   
   <!-- start delete modal-->
   <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -215,6 +217,7 @@
             </div>
       </div>
   <!--end detail modal-->
+    <img src="{{asset('uploads/page_top.png')}}" alt="pagetop" class="pagetop" id="scrolltop" onclick="scrollToTop()">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $.ajaxSetup({
@@ -336,6 +339,21 @@
               }
        })
        //end toggle design
+       //start page top
+        function scrollToTop(){
+          window.scrollTo({
+            top:0,
+            behavior:'smooth'
+          })
+        }
+        window.onscroll = function(){
+          if(document.body.scrollTop > 20 || document.documentElement.scrollTop > 20){
+            document.getElementById('scrolltop').style.display = 'block'
+          }else{
+            document.getElementById('scrolltop').style.display = 'none'
+          }
+        }
+       //end page top
     </script>
 </section>
 @endsection

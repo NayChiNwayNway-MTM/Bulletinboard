@@ -4,7 +4,7 @@
 <header><h3 class="px-5 margin">User List</h3></header>
 <div class="container ">
 
-<form action="" method="get" class="" id="search_form">
+      <form action="" method="get" class="" id="search_form">
         @csrf 
         @if(session('success'))
             <div class="alert alert-success" id="alert">
@@ -62,7 +62,7 @@
       <div class="row mt-3" id="body">
          
         @if($users->isEmpty())
-          <h5 class="text-center mt-3">No users found.</h5>
+          <h5 class="text-center mt-3">User Not Found.</h5>
         @else       
         <div class="container" id="postCard">
                   <div class="row row-cols-1 row-cols-md-3 g-4" id="card">
@@ -77,7 +77,7 @@
                                     </div>     
                                         <div class="dropdown custom-dropdown ms-auto">
                                           <button class="btn btn-link p-0 text-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                              <i class="fa fa-ellipsis-h"></i>
+                                              <i class="fa fa-ellipsis-h" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="edit and delete"></i>
                                           </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                               <li>
@@ -109,7 +109,7 @@
                                     <div class="ms-3"></div>
                               </div>
                               <div class="card-footer mt-auto text-end"> 
-                                  <button class=" user_detail_card view"><i class="fa fa-eye fa-lg"></i></button>
+                                  <button class=" user_detail_card view" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="view"><i class="fa fa-eye fa-lg"></i></button>
                                   
                               </div>
                           </div>
@@ -234,6 +234,7 @@
             </div>
       </div>
   <!--end detail modal-->
+  <img src="{{asset('uploads/page_top.png')}}" alt="pagetop" class="pagetop" id="scrolltop" onclick="scrollToTop()">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $.ajaxSetup({
@@ -340,23 +341,38 @@
        //end user detail for card
        //start toggle design 
        $(document).ready(function(){
-       var viewBtn=document.getElementById('designView');
-       let currentRoute="{{Route::currentRouteName() }}";
-       if(currentRoute === 'user'){
-        viewBtn.textContent= 'View Card';
+        var viewBtn=document.getElementById('designView');
+        let currentRoute="{{Route::currentRouteName() }}";
+        if(currentRoute === 'user'){
+          viewBtn.textContent= 'View Card';
 
-       }
-       else if(currentRoute === 'search_user'){
-        viewBtn.textContent ='View Card';
-       }
-       else if(currentRoute === 'user_card'){
-        viewBtn.textContent = 'View Table';
-       }
-       else if(currentRoute === 'search_card'){
-        viewBtn.textContent = 'View Table'
-       }
+        }
+        else if(currentRoute === 'search_user'){
+          viewBtn.textContent ='View Card';
+        }
+        else if(currentRoute === 'user_card'){
+          viewBtn.textContent = 'View Table';
+        }
+        else if(currentRoute === 'search_card'){
+          viewBtn.textContent = 'View Table'
+        }
        })
        //end toggle design
+       //start page top
+        function scrollToTop(){
+          window.scrollTo({
+            top:0,
+            behavior:'smooth'
+          })
+        }
+        window.onscroll = function(){
+          if(document.body.scrollTop > 20 || document.documentElement.scrollTop > 20 ){
+            document.getElementById('scrolltop').style.display = 'block'
+          }else{
+            document.getElementById('scrolltop').style.display = 'none'
+          }
+        }
+       //end page top
     </script>
 </section>
 @endsection

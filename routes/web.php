@@ -30,12 +30,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         Route::post('/changepassword','UserController@changed_password')->name('changedpassword');
 
         //unauthorized user and auth user
-        Route::get('/postlist','PostListController@postlist')->name('postlist');      
+        Route::get('/postlist','PostListController@postlist')->name('postlist');  
+            
         Route::middleware('authmiddleware')->group(function(){
-      //user card
-        Route::get('/user_card','UserController@cardView')->name('user_card');
-        Route::get('/search_card','UserDetailController@search_card')->name('search_card');
-        //user
+            //user card
+              Route::get('/user_card','UserController@cardView')->name('user_card');
+              Route::get('/search_card','UserDetailController@search_card')->name('search_card');
+            //user
             Route::get('/register','UserController@register')->name('register');
             Route::post('/register','UserController@registration')->name('registration');
             Route::post('/saveregister','UserController@saveregister')->name('saveregister');
@@ -57,7 +58,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
           
             
             //post card
-            Route::get('post_card','PostListController@cardView')->name('card_view');
+            Route::get('/post_card','PostListController@cardView')->name('card_view');
             Route::get('/search_post_card','PostListController@search_card')->name('search_cardView'); 
 
             //post
@@ -67,7 +68,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             Route::get('/createpost','PostListController@createpost');
             Route::get('/uploadpost','PostListController@upload_post');
             Route::post('/uploadedpost','PostListController@uploaded_post')->name('uploadedpost');
-
+            //allpostlist table
+            Route::get('all_postlist','PostListController@all_postlist')->name('all_postlist');
+            //allpostlist card
+            Route::get('all_postlist_card','PostlistController@all_postlist_card')->name('all_postlist_card');
             //postdelete
             Route::post('/delete/{id}','PostDeleteController@delete')->name('delete');
             Route::delete('postlist/deletedpost/{id}','PostDeleteController@destroy');   
@@ -76,9 +80,15 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
             //download post
             Route::get('/posts/export','PostListController@export')->name('posts.export'); 
-            //post search
-            Route::get('/search_post','PostListController@search')->name('search');  
-       
-    });
+            //download all post
+            Route::get('/download_all','PostListController@download_allpost')->name('download_all');
+            //post search table
+            Route::get('/search_post','PostListController@search')->name('search'); 
+            //all post search table
+            Route::get('/search_allpost_table','PostListController@search_allpost_table')->name('search_allpost_table'); 
+            //all post search card
+            Route::get('/search_allpost_card','PostListController@search_allpost_card')->name('search_allpost_card');
+          
+        });
    
 });
