@@ -117,15 +117,36 @@
                 <div class="modal-header">
                     <h5 class="modal-title text-danger" id="deleteModalLabel">Delete Confirm</h5>
                 </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete this User?</p>
-                    <p><strong>ID:</strong> <span id="userid"></span></p>
-                    <p><strong>Name:</strong> <span id="username"></span></p>
-                    <p><strong>Type:</strong> <span id="usertype"></span></p>
-                    <p><strong>Email:</strong> <span id="useremail"></span></p>
-                    <p><strong>Phone:</strong> <span id="userphone"></span></p>
-                    <p><strong>Date of Birth:</strong> <span id="userdob"></span></p>
-                    <p><strong>Address:</strong> <span id="useraddress"></span></p>
+                <div class="modal-body">  
+                  <p><strong>Are you sure you want to delete this User?</strong></p>          
+                        <div class="row mb-3">
+                          <div class="col-5"><strong>ID:</strong></div>
+                          <div class="col-7"> <span id="userid"></span></div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-5"><strong>Name:</strong></div>
+                          <div class="col-7"><span id="username"></span></div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-5"><strong>Type:</strong></div>
+                          <div class="col-7"><span id="usertype"></span></div>
+                        </div>
+                        <div class="row mb-3" >
+                          <div class="col-5"><strong>Email:</strong></div>
+                          <div class="col-7"><span id="useremail"></span></div>
+                        </div>
+                        <div class="row mb-3">
+                         <div class="col-5"><strong>Phone:</strong></div>
+                         <div class="col-7"><span id="userphone"></span></div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-5"><strong>Date Of Birth:</strong></div>
+                          <div class="col-7"><span id="userdob"></span></div>
+                        </div>
+                        <div class="row mb-3">
+                          <div class="col-5"><strong>Address:</strong></div>
+                          <div class="col-7"><span id="useraddress"></span></div>
+                        </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -136,7 +157,7 @@
   </div>
    <!--end delete modal-->
   <!--start detail modal-->
-      <div class="modal fade" id="userdetailModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal fade" id="userdetailModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true" >
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">

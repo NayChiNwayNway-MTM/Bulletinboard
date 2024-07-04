@@ -137,11 +137,23 @@
                     <h5 class="modal-title" id="deleteModalLabel">Delete Confirm</h5>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete this post?</p>
-                    <p><strong>ID:</strong> <span id="postid"></span></p>
-                    <p><strong>Title:</strong> <span id="posttitle"></span></p>
-                    <p><strong>Description:</strong> <span id="postdescription"></span></p>
-                    <p><strong>Status:</strong> <span id="poststatus"></span></p>
+                    <p><strong>Are you sure you want to delete this post?</strong></p>
+                    <div class="row mb-3">
+                      <div class="col-5"><strong>ID:</strong></div>
+                      <div class="col-7"><span id="postid"></span></div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-5"><strong>Title:</strong></div>
+                      <div class="col-7"><span id="posttitle"></span></div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-5"><strong>Description:</strong></div>
+                      <div class="col-7"><span id="postdescription"></span></div>
+                    </div>
+                    <div class="row mb-3">
+                      <div class="col-5"><strong>Status:</strong></div>
+                      <div class="col-7"><span id="poststatus"></span></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -166,29 +178,29 @@
                 <div class="modal-body">
                     <div class="row mt-2">
                       <div class="col-5"><strong>Title:</strong></div>
-                      <div class="col-5"><span id="title" class="text-info"></span></div>
+                      <div class="col-5"><span id="title" class="text-dark"></span></div>
                     </div>
                     <div class="row mt-4">
                       <div class="col-5"><strong>Status:</strong></div>
-                      <div class="col-5"><span id="status" class="text-info"></span></div>
+                      <div class="col-5"><span id="status"></span></div>
                     </div>
                     <div class="row mt-4">
                       <div class="col-5"><strong>Description:</strong></div>
-                      <div class="col-5"><span id="des" class="text-info"></span></div>
+                      <div class="col-5"><span id="des"></span></div>
                     </div>
                     <div class="row mt-4">
                       <div class="col-5"><strong>Created Date:</strong></div>
-                      <div class="col-5"><span id="created_date" class="text-info"></span></div>
+                      <div class="col-5"><span id="created_date"></span></div>
                     </div>
                     <div class="row mt-4">
                       <div class="col-5"><strong>Created User:</strong></div>
-                      <div class="col-5"><span id="created_user" class="text-info"></span></div>
+                      <div class="col-5"><span id="created_user"></span></div>
                     </div><div class="row mt-4">
                       <div class="col-5"><strong>Updated Date:</strong></div>
-                      <div class="col-5"><span id="updated_date" class="text-info"></span></div>
+                      <div class="col-5"><span id="updated_date"></span></div>
                     </div><div class="row mt-4">
                       <div class="col-5"><strong>Updated User:</strong></div>
-                      <div class="col-5"><span id="updated_user" class="text-info"></span></div>
+                      <div class="col-5"><span id="updated_user"></span></div>
                     </div>
                 </div>
                 <div class="modal-footer">

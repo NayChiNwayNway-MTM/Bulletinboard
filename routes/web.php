@@ -89,6 +89,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
             //all post search card
             Route::get('/search_allpost_card','PostListController@search_allpost_card')->name('search_allpost_card');
           
+            //admin bar chart
+            Route::get('/barchart','PostListController@barchart')->name('barchart');
         });
    
 });

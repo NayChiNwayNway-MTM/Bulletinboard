@@ -100,7 +100,7 @@ class PostListController extends Controller
             session(['pagesize'=>$pageSize]);
             if(Auth::check()){
                 if(auth()->user()->type == 1){
-                    $postlist = Post::with('user')->paginate($pageSize);
+                    $postlist = Post::with('user')->where('status','1')->paginate($pageSize);
                     $users = User::all();
                    
                     return view('post.all_postlist_card', compact('postlist', 'users','pageSize'));
@@ -384,10 +384,18 @@ class PostListController extends Controller
                  
                   $text = $request->input('text', '');
                   //dd($text);
-                  $posts = Post::where('status',1)->orwhere('title', 'like', '%'.$text.'%')
-                          ->orWhere('description', 'like', '%'.$text.'%')
-                          ->get();
-          
+                //  $posts = Post::where('status', 1)
+                //  ->orWhere('title', 'like', '%'.$text.'%')
+                //  ->orWhere('description', 'like', '%'.$text.'%')
+                //  ->get();
+                $posts = Post::where('status', 1)
+                ->where(function ($query) use ($text) {
+                    $query->where('title', 'like', '%'.$text.'%')
+                          ->orWhere('description', 'like', '%'.$text.'%');
+                })
+                ->get();
+   
+               // dd($posts);
                   return new StreamedResponse(function () use ($posts) {
                       $handle = fopen('php://output', 'w');
                       fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
@@ -473,13 +481,17 @@ class PostListController extends Controller
             }
             if(Auth::check()){
                 if(auth()->user()->type == 1){
-                    $postlist = Post::where(function ($query) use ($text) {
-                                    $query->where('title', 'like', '%' . $text . '%')
-                                        ->orWhere('description', 'like', '%' . $text . '%');
-                                })
-                            
-                                ->paginate($pageSize);
-                            
+                    //$postlist = Post::where(function ($query) use ($text) {
+                    //                $query->where('title', 'like', '%' . $text . '%')->where('status',1)
+                    //                    ->orWhere('description', 'like', '%' . $text . '%');
+                    //            })
+                    //        
+                    //            ->paginate($pageSize);
+                    $postlist = Post::where('status', 1)
+                    ->where(function ($query) use ($text) {
+                        $query->where('title', 'like', '%'.$text.'%')
+                              ->orWhere('description', 'like', '%'.$text.'%');
+                    })->paginate($pageSize);  
                 }
             
                 else{
@@ -506,7 +518,8 @@ class PostListController extends Controller
                 session(['page_size' => $request->input('page_size')]);
             }
             if(auth()->user()->type == 1){
-                $postlist = Post::where(function ($query) use ($text) {
+                $postlist = Post::where('status',1)
+                            ->where(function ($query) use ($text) {
                                 $query->where('title', 'like', '%' . $text . '%')
                                       ->orWhere('description', 'like', '%' . $text . '%');
                             })
@@ -521,6 +534,27 @@ class PostListController extends Controller
             }
 
             return view('post.all_postlist_card', compact('postlist', 'pageSize'));
+        }
+
+        //barchart
+        public function barchart(Request $request){
+            $users =User::count();
+            $posts = Post::count();
+            $active=Post::where('status',1)->count();
+            $inactive=Post::where('status',0)->count();
+            $postsPerMonth=Post::selectRaw('MONTH(created_at) as month,COUNT(*) as count')
+                        ->groupBy('month')
+                        ->orderBy('month')->get();
+            $userActivity = Post::select(
+                            'posts.created_user_id',
+                            DB::raw('COUNT(*) as post_count'),
+                            'users.name'
+                        )
+                        ->join('users', 'posts.created_user_id', '=', 'users.id')
+                        ->groupBy('posts.created_user_id', 'users.name')
+                        ->get();
+           // dd($userActivity);
+            return view('barchart',compact('users','posts','active','inactive','postsPerMonth','userActivity'));
         }
 
 }
