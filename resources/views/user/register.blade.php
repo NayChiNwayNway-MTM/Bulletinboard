@@ -2,14 +2,10 @@
 @section('content')
 <section class="background">
 <div class="mask d-flex align-items-center h-100 pt-5">
-    <div class="container mt-5 h-100 ">
+    <div class="container mt-5">
     
       <div class="row d-flex justify-content-center align-items-center h-100">
-      @if(Session::has('register'))
-                              <div class="alert alert-success" role="alert" id='alert'>
-                                  {{Session::get('register')}}
-                              </div>
-      @endif  
+   
         <div class="col-10">
           <div class="card" >
             <div class="card-body p-5">
@@ -120,3 +116,17 @@
 </section>
 
 @endsection
+
+@if(Session::has('register'))
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                   
+                    message: `{{ Session::get('register') }}`
+                });
+            });
+         </script>  
+@endif  

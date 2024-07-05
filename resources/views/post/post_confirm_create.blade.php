@@ -1,11 +1,7 @@
 @extends('layouts.nav')
   @section('content')
   <section class="background">
-    @if(session('error'))
-  <div class="alert alert-danger" id="alert">
-    {{session('error')}}
-  </div>
-  @endif
+
  
       <div class="container  margin">
         <div class="card m-auto " style="width: 60rem;">
@@ -62,3 +58,17 @@
   </section>
 
   @endsection
+  @if(Session::has('error'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.show({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom-danger',
+                   
+                    message: `{{ Session::get('error') }}`
+                });
+            });
+         </script>  
+        
+  @endif

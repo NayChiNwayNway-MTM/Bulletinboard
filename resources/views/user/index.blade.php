@@ -5,14 +5,7 @@
 <div class="container ">
 
       <form action="" method="get" class="" id="search_form">
-        @csrf 
-        @if(session('success'))
-            <div class="alert alert-success" id="alert">
-                {{ session('success') }}
-            </div>
-        @endif
-          <div class="alert" role="alert" id="response">
-          </div>
+        @csrf        
           <div class="row g-3 align-items-center">
             <div class="col-auto">
                 <label for="search_name" class="col-form-label text-end">Name:</label>
@@ -285,8 +278,16 @@
                       url:`user/deleteduser/${id}`,
                       success:function(response){
                        console.log(response.success);
-                       $('#response').text(response.success);
-                       location.reload();
+                        iziToast.success({
+                            title: '',
+                            position: 'topRight',
+                            class: 'iziToast-custom',
+                            message: response.success,
+                            timeout: 5000 // duration in milliseconds (adjust as needed)
+                        });
+                          setTimeout(function() {
+                              location.reload();
+                          }, 5000); 
                       }
                      
                     });

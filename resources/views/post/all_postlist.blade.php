@@ -4,23 +4,8 @@
   <header><h3 class="px-5 py-5"> All Post List</h3></header> 
     <!--start container-->
     <div class="container">
-    @if(Session::has('success'))
-                <div class="alert alert-success" role="alert" id='alert'>
-                  {{Session::get('success')}}
-                </div>
-    @elseif(Session::has('postedites'))
-                <div class="alert alert-success" role="alert" id='alert'>
-                  {{Session::get('postedites')}}
-                </div>
-    @elseif(Session::has('message'))
-                <div class="alert alert-success" role="alert" id='alert'>
-                  {{Session::get('message')}}
-                </div>
-    @elseif(session('error'))
-                <div class="alert alert-danger" id="alert">
-                  {{session('error')}}
-                </div>
-    @endif
+   
+
     @auth     
       <div class="row mb-3">
         <form action="" method="get" id="form" class="float-start">
@@ -78,6 +63,7 @@
                     <th>Posted Date</th>
                     @auth
                     <th>Operation</th>
+                    <th>React</th>
                     @endauth
                   </tr>
                 </thead>        
@@ -91,7 +77,9 @@
                     @else  
                       @foreach($postlist as $list)  
                         
-                          <tr id='{{$list->id}}' class="align-middle">
+                          <tr id='{{$list->id}}' class="align-middle like toastMessage"
+                          data-bs-toggle="tooltip" data-bs-placement="right"
+                           data-bs-title="  {{ $list->likes()->count() }} {{ Str::plural('like', $list->likes()->count()) }}">
                             <td><label class="form-label text-primary" id="post_detail_table" data-bs-toggle="tooltip"
                                   data-bs-placement="bottom" data-bs-title="view detail" >{{$list->title}}</label></td>
                             <td style="width: 300px;">{{$list->description}}</td>
@@ -130,6 +118,24 @@
                                 </td>
                               
                             @endif
+                            <td class="like-section">
+                                  <div class="text-start d-flex" id="{{$list->id}}">
+                                      <div>
+                                        <p  id="likeButton" class="me-2">
+                                            @if ($list->likes->contains('user_id', auth()->id()))
+                                                <i class="fa-solid fa-thumbs-up text-primary" ></i>
+                                            @else
+                                            <i class="fa-solid fa-thumbs-up"></i>
+                                            @endif
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p class="likeCount" id="likeCount{{ $list->id }}">
+                                                {{ $list->likes()->count() }} {{ Str::plural('like', $list->likes()->count()) }}
+                                        </p>
+                                      </div>
+                                  </div>
+                            </td>
                             @endauth
                           </tr>
                         
@@ -299,9 +305,18 @@
                           url: `postlist/deletedpost/${id}`,
                           type: `delete`,
                           success: function(response) {
-                              //alert(response.message);
-                              location.reload();
-                          }
+                            $('#postModal').modal('hide');
+                              iziToast.success({
+                                  title: '',
+                                  position: 'topRight',
+                                  class: 'iziToast-custom',
+                                  message: response.message,
+                                  timeout: 5000 // duration in milliseconds (adjust as needed)
+                                });
+                                  setTimeout(function() {
+                                      location.reload();
+                                  }, 5000);
+                            }
                       });
                     });
               }             
@@ -382,6 +397,78 @@
         }
     }
     //end for page top
+
+     //start like 
+     $(document).ready(function() {
+        $(document).on('click', '#likeButton', function(e) {
+                  e.preventDefault();
+                  let parent = $(this).closest('.text-start');
+                  let id = parent.attr('id');
+                  console.log(id);
+                  $.ajax({
+                      type: 'POST',
+                      url: `/posts/${id}/toggle_like`,                      
+                      success: function(response) {
+                        location.reload();
+                      }
+                  });
+              });
+    });
+    //$(document).ready(function() {
+    //    $(document).on('click', '.like', function(e) {
+    //              e.preventDefault();
+    //              let parent = $(this).closest('.text-start');
+    //              let id = $(this).attr('id');
+    //              console.log(id);
+    //              $.ajax({
+    //                  type: 'POST',
+    //                  url: `/posts/${id}/toggle_like`,                      
+    //                  success: function(response) {
+    //                    location.reload();
+    //                  }
+    //              });
+    //          });
+    //  });
+    //end like
+
+
+
+       
+  
 </script>
 
 @endsection
+@if(Session::has('success'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                    message: `{{ Session::get('success') }}`
+                });
+            });
+         </script>  
+@elseif(Session::has('postedites'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                    message: `{{ Session::get('postedites') }}`
+                });
+            });
+         </script>     
+@elseif(Session::has('error'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.danger({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                    message: `{{ Session::get('error') }}`
+                });
+            });
+         </script>  
+@endif

@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -56,4 +56,8 @@ class User extends Authenticatable
     public function createdBy() {
         return $this->belongsTo(User::class, 'created_user_id');
     }
+    //public function likedPosts()
+    //{
+    //    return $this->belongsToMany(Post::class, 'likes', 'user_id', 'post_id')->withTimestamps();
+    //}
 }

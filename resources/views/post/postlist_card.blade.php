@@ -4,23 +4,7 @@
   <header><h3 class="px-5 py-5">Post List</h3></header> 
     <!--start container-->
     <div class="container">
-      @if(Session::has('success'))
-                  <div class="alert alert-success" role="alert" id='alert'>
-                    {{Session::get('success')}}
-                  </div>
-      @elseif(Session::has('postedites'))
-                  <div class="alert alert-success" role="alert" id='alert'>
-                    {{Session::get('postedites')}}
-                  </div>
-      @elseif(Session::has('message'))
-                  <div class="alert alert-success" role="alert" id='alert'>
-                    {{Session::get('message')}}
-                  </div>
-      @elseif(session('error'))
-                  <div class="alert alert-danger" id="alert">
-                    {{session('error')}}
-                  </div>
-      @endif
+  
       @auth    
       <div class="row mb-5">
         <form action="" method="get" id="form" class="float-start">
@@ -273,8 +257,17 @@
                           url: `postlist/deletedpost/${id}`,
                           type: `delete`,
                           success: function(response) {
-                              //alert(response.message);
-                              location.reload();
+                            $('#postModal').modal('hide');
+                            iziToast.success({
+                            title: '',
+                            position: 'topRight',
+                            class: 'iziToast-custom',
+                            message: response.message,
+                            timeout: 5000 // duration in milliseconds (adjust as needed)
+                              });
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 5000);
                           }
                       });
                     });
@@ -287,7 +280,7 @@
 
     // start post deail modal box for card  
     $(document).ready(function(){
-      console.log('hi')
+    
       $(document).on('click','.post_detail_card',function(){
       
         var parentDiv = $(this).closest('.col.mb-3');
@@ -360,3 +353,37 @@
 </script>
 
 @endsection
+@if(Session::has('success'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                    message: `{{ Session::get('success') }}`
+                });
+            });
+         </script>  
+@elseif(Session::has('postedites'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                    message: `{{ Session::get('postedites') }}`
+                });
+            });
+         </script>     
+@elseif(Session::has('error'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.danger({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                    message: `{{ Session::get('error') }}`
+                });
+            });
+         </script>  
+@endif

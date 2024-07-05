@@ -136,7 +136,7 @@ class UserController extends Controller
        // dd($request->profile);
         $request->validate([
             'name'=>'required',
-            'email'=>'required|email',
+            'email' => 'required',
             'password'=>'required|min:6',
             'confirmpass'=>'required|same:password',
             'profile'=>'required|image|mimes:jpeg,jpg,png,svg|max:2048'
@@ -144,7 +144,9 @@ class UserController extends Controller
         [
             'name.required'=>'Name can\'t blank.',
             'email.required'=>'Email can\'t blank.',
+          
             'profile.required'=>'Profile can\'t blank.'
+        
         ]);
         
         session(['type'=>$request->input('type')]);//get type admin or user
@@ -175,13 +177,16 @@ class UserController extends Controller
     public function saveregister(Request $request){
         $request->validate([
             'name'=>'required',
-            'email'=>'required|email',
+            'email' => 'required',
             'password'=>'required|min:6',
             'confirmpass'=>'required|same:password',           
         ],
         [
             'name.required'=>'Name can\'t blank.',
-            'email.required'=>'Email can\'t blank.',          
+            
+            'email.required'=>'Email can\'t blank.',
+           
+                  
         ]);
       $image_path = session('image');
       $type =session('type');
@@ -194,6 +199,9 @@ class UserController extends Controller
      
         $existingemail = User::withTrashed()
         ->where('email',$request->email)->first();
+
+        $existingname = User::withTrashed()
+        ->where('name',$request->name)->first();
         
             if($existingemail){
                 
@@ -219,9 +227,32 @@ class UserController extends Controller
                    Session::flash('register','Register Successfully');
                    return redirect()->back()->with(['register'=>'Register Successfully.']);
                    
-                }
+                }else if($existingname){
+                    if($existingname->deleted_at){
+
+                        $existingname->restore();
+    
+                        $existingname->update([
+                        'name'=>$request->name,
+                        'email'=>$request->email,
+                        'password'=>$request->password,
+                        'profile'=>$image_path,
+                        'phone'=>$request->phone,
+                        'address'=>$request->address,
+                        'dob'=>$request->dob,
+                        'created_user_id'=>auth()->user()->id,
+                        'updated_user_id'=>auth()->user()->id,
+                        'created_at'=>Carbon::now(),
+                        'updated_at'=>Carbon::now()
+    
+                       ]);
+                       
+                       Session::flash('register','Register Successfully');
+                       return redirect()->back()->with(['register'=>'Register Successfully.']);
+                    }
+                
                 else{
-                    return redirect()->back()->with(['error'=>'The email has already exist.']);
+                    return redirect()->back()->with(['error'=>'The name has already exist.']);
                 }
             }
                     
@@ -266,6 +297,7 @@ class UserController extends Controller
             }
 
     }
+}
     //show profile info
     public function profile($id){
         $user_data=User::find($id);

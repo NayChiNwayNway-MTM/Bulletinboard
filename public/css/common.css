@@ -363,3 +363,22 @@ body {
 .modal-content{
   width: 650px;
 }
+/*for iziToast*/
+.iziToast-custom {
+  top: 70px !important;
+}
+.iziToast-custom .iziToast-message {
+ font-weight: bold !important;
+}
+
+.iziToast-custom-danger {
+  background: #f8d7da !important; 
+  border-left: 5px solid #dc3545; 
+  top: 70px !important;
+}
+.iziToast-custom-danger .iziToast-message {
+  color: #dc3545 !important; 
+}
+.iziToast-custom-danger .iziToast-title {
+  color: #dc3545 !important; 
+}

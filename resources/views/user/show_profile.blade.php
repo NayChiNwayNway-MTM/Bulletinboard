@@ -8,11 +8,6 @@
     <form action="{{route('editprofile',$user_data->id)}}" method="get" class="">
         <div class="row"><header><h2 class="">Profile</h2></header></div>
         @csrf 
-        @if(Session::has('profileedited'))
-        <div class="alert alert-success" role="alert" id="alert">
-          {{Session::get('profileedited')}}
-        </div>
-        @endif
         <div class="row">
           <div>
           <img class="" src="{{ asset($user_data->profile ?? 'default/default-profile.jpg') }}" alt="Profile Image" id="profile">
@@ -55,3 +50,16 @@
 
 </div>
 @endsection
+@if(Session::has('profileedited'))
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                   
+                    message: `{{ Session::get('profileedited') }}`
+                });
+            });
+         </script>  
+@endif 

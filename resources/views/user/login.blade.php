@@ -7,19 +7,7 @@
      
         <div class="container py-5  mt-5">
           <div class="row ">
-          @if(session('reset_pass'))
-              <div class="alert alert-success mt-2 margin" id="alert">
-                {{session('reset_pass')}}
-              </div>
-          @elseif(session('message'))
-            <div class="alert alert-success mt-2 margin" id="alert">
-              {{session('message')}}
-            </div>
-          @elseif(session('incorrect'))
-            <div class="alert alert-danger mt-3 margin" id="alert">
-                {{session('incorrect')}}
-            </div>
-          @endif
+        
             <div class="col-xl-12">
               <div class="card rounded-3 text-black">
               
@@ -88,3 +76,41 @@
    
 
 @endsection
+@if(Session::has('reset_pass'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                   
+                    message: `{{ Session::get('reset_pass') }}`
+                });
+            });
+         </script>
+@elseif(Session::has('message'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                   
+                    message: `{{ Session::get('message') }}`
+                });
+            });
+         </script>
+@elseif(Session::has('incorrect'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.show({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom-danger',
+                   
+                    message: `{{ Session::get('incorrect') }}`
+                });
+            });
+         </script>  
+        
+  @endif

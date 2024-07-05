@@ -3,11 +3,6 @@
 <section class="background">
 
   <div class="container margin">
-  @if(Session::has('postcreated'))
-                <div class="alert alert-success" role="alert" id='alert'>
-                    {{Session::get('postcreated')}}
-                </div>
-  @endif
   <div class="card m-auto " style="width: 60rem;">
     <div class="card-body">
     
@@ -62,8 +57,19 @@
   </div>
   </div>
 </section>
- 
-
   @endsection
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
+  @if(Session::has('postcreated'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                   
+                    message: `{{ Session::get('postcreated') }}`
+                });
+            });
+         </script>       
+  @endif

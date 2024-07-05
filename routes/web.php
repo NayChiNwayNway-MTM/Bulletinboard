@@ -91,6 +91,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
           
             //admin bar chart
             Route::get('/barchart','PostListController@barchart')->name('barchart');
+
+            //like
+         
+            Route::post('/posts/{post}/toggle_like', 'PostListController@toggle_Like')->name('posts.toggle-like');
+
         });
    
 });

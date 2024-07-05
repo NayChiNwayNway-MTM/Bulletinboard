@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Like;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -15,10 +16,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use League\Csv\Reader;
 use League\Csv\Statement;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 class PostListController extends Controller
 {
-    //
-    
+    //    
         public function postlist(Request $request){
             $pageSize = $request->input('page_size', 10);
             session(['pagesize'=>$pageSize]);
@@ -557,5 +558,28 @@ class PostListController extends Controller
             return view('barchart',compact('users','posts','active','inactive','postsPerMonth','userActivity'));
         }
 
+        //likes
+        public function toggle_Like(Request $request, Post $post)
+        {
+            $user = $request->user();
+            $existingLike = Like::where('user_id', $user->id)
+                                ->where('post_id', $post->id)
+                                ->first();
+    
+            if ($existingLike) {
+                $existingLike->delete();
+                $count = $post->likes()->count();
+                return response()->json(['status' => 'unliked', 'count' => $count]);
+
+            } else {
+                $like = new Like();
+                $like->user_id = $user->id;
+                $like->post_id = $post->id;
+                $like->save();
+                $count = $post->likes()->count();
+                return response()->json(['status' => 'liked', 'count' => $count]);
+            }
+
+        }
 }
 
