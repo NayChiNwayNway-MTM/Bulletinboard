@@ -68,16 +68,17 @@
       </ul>
       <form class="d-flex">
         <ul class="navbar-nav me-auto mb-lg-0">
-          <li class="link-offset-2 link-underline link-underline-opacity-0 py-2 mx-2"><a href="{{route('register')}} "
-           class="link-offset-2 link-underline link-underline-opacity-0 px-3 register">Create User</a></li>
+          <li class=" nav-link nav_link link-offset-2 link-underline link-underline-opacity-0
+           py-2 mx-2"><a href="{{route('register')}} " class=" nav-link link-offset-2 link-underline link-underline-opacity-0
+            px-3 register {{request()->routeIs('register','registration')? 'active':''}}">Create User</a></li>
            <li>
             <a href="{{route('profile',auth()->user()->id)}}"><img src="{{ asset(auth()->user()->profile)}}" alt="profile" style="width: 50px; height: 50px; border-radius: 50%;"
                       class="rounded-circle img-thumbnail custom-img-thumbnail" 
                       data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="profile">
             </a>
             </li>
-          <li class="nav-item dropdown mx-2">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <li class="nav-item  nav-link dropdown mx-2">
+            <a class="nav-link dropdown dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             {{auth()->user()->name}}            
             </a>
           <ul class="dropdown-menu">

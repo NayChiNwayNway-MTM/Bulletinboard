@@ -79,7 +79,7 @@
                 @else    
                 @foreach($users as $user)
                   <tr class="align-middle" id="{{$user->id}}">
-                    <td>{{$user->id}}</td>
+                    <td>{{(($users->currentPage()*10)-10)+$loop->iteration}}</td>
                     <td><img src="{{$user->profile}}" alt="profile" style="width: 50px; height: 50px; border-radius: 50%;"
                       class="rounded-circle img-thumbnail custom-img-thumbnail"></td>
                     <td id="user_detail" class="text-primary" >
@@ -327,9 +327,11 @@
                     $('#dob').text(user.dob);
                     $('#address').text(user.address);
                     var created_at=new Date(user.created_at);
+                    created_at.setMinutes(created_at.getMinutes() - created_at.getTimezoneOffset());
                     var dateFormat=created_at.toISOString().split('T')[0];
                     $('#created_date').text(dateFormat);
                     var updated_at=new Date(user.updated_at);
+                    updated_at.setMinutes(updated_at.getMinutes() - updated_at.getTimezoneOffset());
                     var Updated_format = updated_at.toISOString().split('T')[0];
                     $('#updated_date').text(Updated_format);
                     $('#updated_user').text(response.created_user);
@@ -379,3 +381,16 @@
     </script>
 </section>
 @endsection
+@if(Session::has('success'))
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                   
+                    message: `{{ Session::get('success') }}`
+                });
+            });
+         </script>  
+@endif

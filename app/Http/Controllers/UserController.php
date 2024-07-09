@@ -9,72 +9,41 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Services\UserService;
 class UserController extends Controller
 {
-    //userlist
-    public function userlist(Request $request){
-        
-        $pageSize = $request->input('page_size', 10);
-        session(['pageSize'=>$pageSize]);
+    protected $userService;
 
-       // dd($pageSize);
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
+    //userlist 
+    public function userlist(Request $request)
+    {
+        $pageSize = $request->input('page_size', 10);
+        session(['pageSize' => $pageSize]);
 
         if ($request->has('page_size')) {
-            session(['page_size' => $request->input('page_size')]);
+            session(['page_size' => $pageSize]);
         }
-        $created_user=User::find(auth()->user()->created_user_id);
-        $all_users=User::select('id', 'name')->get()->whereNull('deleted_at');
 
-        $created_all_user_id=User::select('created_user_id')->whereNull('deleted_at')->get();
+        $userType = auth()->user()->type;
+        $authUserId = auth()->user()->id;
 
-            if (auth()->user()->type == 0) {
-                // Get paginated users, including the 'created_user_id'
-                $users = User::whereNull('deleted_at')->paginate($pageSize);
-                
-                // Fetch the created users' names using a single query
-                $createdUserIds = $users->pluck('created_user_id')->filter()->unique()->toArray();
-                
-                $createdUsers = User::whereIn('id', $createdUserIds)
-                                    ->whereNull('deleted_at')
-                                    ->pluck('name', 'id')
-                                    ->toArray();
-            
-                // Map names to the users' created_user_ids
-                $names = [];
-                foreach ($users as $user) {
-                    $names[$user->id] = $createdUsers[$user->created_user_id] ?? 'Unknown';
-                }
-                
-            return view('user.index', compact('users', 'names','pageSize'));
-            }
-       
-        else{
-    
-            $users = User::whereNull('deleted_at')
-            ->where('created_user_id', auth()->user()->id)
-            ->with('createdBy')
-            ->paginate($pageSize);
+        $data = $this->userService->getUsers($userType, $pageSize, $authUserId);
 
-                // Initialize names array
-                $names = [];
-
-                // Collect names of creators
-                foreach ($users as $user) {
-                    $names[$user->id] = $user->createdBy ? $user->createdBy->name : 'Unknown';
-                }
-
-                return view('user.index', compact('users', 'names','pageSize'));
-                        }
-                        //dd($names);
-                    
-    
-    } 
+        return view('user.index', [
+            'users' => $data['users'],
+            'names' => $data['names'],
+            'pageSize' => $pageSize
+        ]);
+    }
     //user list for card
     public function cardView(Request $request){
-        $pageSize = $request->input('page_size', 10);
+        $pageSize = $request->input('page_size', 9);
         session(['pageSize'=>$pageSize]);
 
        // dd($pageSize);
@@ -82,222 +51,89 @@ class UserController extends Controller
         if ($request->has('page_size')) {
             session(['page_size' => $request->input('page_size')]);
         }
-        $created_user=User::find(auth()->user()->created_user_id);
-        $all_users=User::select('id', 'name')->get()->whereNull('deleted_at');
 
-        $created_all_user_id=User::select('created_user_id')->whereNull('deleted_at')->get();
-
-            if (auth()->user()->type == 0) {
-                // Get paginated users, including the 'created_user_id'
-                $users = User::whereNull('deleted_at')->paginate($pageSize);
-                
-                // Fetch the created users' names using a single query
-                $createdUserIds = $users->pluck('created_user_id')->filter()->unique()->toArray();
-                
-                $createdUsers = User::whereIn('id', $createdUserIds)
-                                    ->whereNull('deleted_at')
-                                    ->pluck('name', 'id')
-                                    ->toArray();
-            
-                // Map names to the users' created_user_ids
-                $names = [];
-                foreach ($users as $user) {
-                    $names[$user->id] = $createdUsers[$user->created_user_id] ?? 'Unknown';
-                }
-                
-            return view('user.user_card_view', compact('users', 'names','pageSize'));
-            }
-       
-        else{
-    
-            $users = User::whereNull('deleted_at')
-            ->where('created_user_id', auth()->user()->id)
-            ->with('createdBy')
-            ->paginate($pageSize);
-
-                // Initialize names array
-                $names = [];
-
-                // Collect names of creators
-                foreach ($users as $user) {
-                    $names[$user->id] = $user->createdBy ? $user->createdBy->name : 'Unknown';
-                }
-
-                return view('user.user_card_view', compact('users', 'names','pageSize'));
-                        }
-                        //dd($names);
+        $data = $this->userService->getUsersCard($pageSize);
+        return view('user.user_card_view',[
+            'users'=>$data['users'],
+            'names'=>$data['names'],
+            'pageSize'=>$pageSize
+        ]);
     }
     //user register ui
     public function register(){
         return view('user.register');
     }
     //register validate and go confrim page
-    public function registration(Request $request){
-       // dd($request->profile);
+    public function registration(Request $request)
+    {
+        // Validate the input
         $request->validate([
-            'name'=>'required',
-            'email' => 'required',
-            'password'=>'required|min:6',
-            'confirmpass'=>'required|same:password',
-            'profile'=>'required|image|mimes:jpeg,jpg,png,svg|max:2048'
-        ],
-        [
-            'name.required'=>'Name can\'t blank.',
-            'email.required'=>'Email can\'t blank.',
-          
-            'profile.required'=>'Profile can\'t blank.'
-        
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+            'confirmpass' => 'required|same:password',
+            'profile' => 'required|image|mimes:jpeg,jpg,png,svg|max:2048'
+        ], [
+            'name.required' => 'Name can\'t be blank.',
+            'email.required' => 'Email can\'t be blank.',
+            'profile.required' => 'Profile can\'t be blank.',
+            'password.min'=>'Password at least six characer.',
+            'confirmpass.same' => 'Confirm Password must Same Password.',
         ]);
-        
-        session(['type'=>$request->input('type')]);//get type admin or user
 
-        $users=$request;
-        $imageName=time().'.'.$request->profile->extension();
-        $success=$request->profile->move(public_path('uploads'),$imageName);
+        // Save the type in session
+        session(['type' => $request->input('type')]);
+
+        
+        // Handle the image upload
+        $imageName = time() . '.' . $request->profile->extension();
+        $request->profile->move(public_path('uploads'), $imageName);
         $imagePath = 'uploads/' . $imageName;
-        session(['image'=>$imagePath]);
-        $existingemail = User::withTrashed()
-        ->where('email',$request->email)->first();
-            if($existingemail){
-                 if($existingemail->deleted_at){
-                    return view('user.confirm_register',compact('users','imagePath'));
-                }
-                else{
-                    return redirect()->back()->with(['error'=>'The email has already exist.']);
-                }
-            }
-                    
-            else{
-               
-                    return view('user.confirm_register',compact('users','imagePath'));
-            }
-
-    }
-    //register save to database
-    public function saveregister(Request $request){
-        $request->validate([
-            'name'=>'required',
-            'email' => 'required',
-            'password'=>'required|min:6',
-            'confirmpass'=>'required|same:password',           
-        ],
-        [
-            'name.required'=>'Name can\'t blank.',
-            
-            'email.required'=>'Email can\'t blank.',
-           
-                  
-        ]);
-      $image_path = session('image');
-      $type =session('type');
-      if($type == 'user'){
-        $type_value = 1;
-      }
-      else{
-        $type_value =0;
-      }
-     
-        $existingemail = User::withTrashed()
-        ->where('email',$request->email)->first();
-
-        $existingname = User::withTrashed()
-        ->where('name',$request->name)->first();
+        session(['image' => $imagePath]);
         
-            if($existingemail){
-                
-                 if($existingemail->deleted_at){
-
-                    $existingemail->restore();
-
-                    $existingemail->update([
-                    'name'=>$request->name,
-                    'email'=>$request->email,
-                    'password'=>$request->password,
-                    'profile'=>$image_path,
-                    'phone'=>$request->phone,
-                    'address'=>$request->address,
-                    'dob'=>$request->dob,
-                    'created_user_id'=>auth()->user()->id,
-                    'updated_user_id'=>auth()->user()->id,
-                    'created_at'=>Carbon::now(),
-                    'updated_at'=>Carbon::now()
-
-                   ]);
-                   
-                   Session::flash('register','Register Successfully');
-                   return redirect()->back()->with(['register'=>'Register Successfully.']);
-                   
-                }else if($existingname){
-                    if($existingname->deleted_at){
-
-                        $existingname->restore();
-    
-                        $existingname->update([
-                        'name'=>$request->name,
-                        'email'=>$request->email,
-                        'password'=>$request->password,
-                        'profile'=>$image_path,
-                        'phone'=>$request->phone,
-                        'address'=>$request->address,
-                        'dob'=>$request->dob,
-                        'created_user_id'=>auth()->user()->id,
-                        'updated_user_id'=>auth()->user()->id,
-                        'created_at'=>Carbon::now(),
-                        'updated_at'=>Carbon::now()
-    
-                       ]);
-                       
-                       Session::flash('register','Register Successfully');
-                       return redirect()->back()->with(['register'=>'Register Successfully.']);
-                    }
-                
-                else{
-                    return redirect()->back()->with(['error'=>'The name has already exist.']);
-                }
-            }
-                    
-            else{
-                if(auth()->user()->type == 0){
-                    User::create([
-                        'name'=>$request->name,
-                        'email'=>$request->email,
-                        'password'=>Hash::make($request->password),
-                        'profile'=>$image_path,
-                        'type'=>$type_value,                      
-                        'phone'=>$request->phone,
-                        'address'=>$request->address,
-                        'dob'=>$request->dob,
-                        'created_user_id'=>auth()->user()->id,
-                        'updated_user_id'=>auth()->user()->id,
-                        'created_at'=>Carbon::now(),
-                        'updated_at'=>Carbon::now()
-                    ]);
-                    Session::flash('register','Register Successfully.');
-                        return view('user.register');
-                }
-                else{
-                    User::create([
-                        'name'=>$request->name,
-                        'email'=>$request->email,
-                        'password'=>Hash::make($request->password),
-                        'profile'=>$image_path,
-                        'phone'=>$request->phone,
-                        'address'=>$request->address,
-                        'dob'=>$request->dob,
-                        'created_user_id'=>auth()->user()->id,
-                        'updated_user_id'=>auth()->user()->id,
-                        'created_at'=>Carbon::now(),
-                        'updated_at'=>Carbon::now()
-    
-                       ]);
-                       Session::flash('register','Register Successfully.');
-                        return view('user.register');
-                }
-                
-            }
-
+        $result=$this->userService->registration($request,$imagePath);
+        
+        if(isset($result['error'])){
+            return redirect()->back()->withInput()->with(['error'=>$result['error']]);
+        }
+        if(isset($result['nameerror'])){
+            return redirect()->back()->withInput()->with(['nameerror'=>$result['nameerror']]);
+        }
+      
+        return view('user.confirm_register',
+        ['users'=>$request,
+        'imagePath'=>$imagePath]);
+        
     }
-}
+
+    //register save to database
+    public function saveregister(Request $request)
+    {
+        // Validate the input
+        session(['type' => $request->input('type')]);
+        $type =session('type');
+        //dd(session('type'));
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+            'confirmpass' => 'required|same:password',
+        ], [
+            'name.required' => 'Name can\'t be blank.',
+            'email.required' => 'Email can\'t be blank.',
+        ]);
+
+        $result = $this->userService->saveRegister($request,$type);
+       if(isset($result['error'])){
+        return redirect()->back()->with(['error'=>$result['error']]);
+       }
+       if(isset($result['nameerror'])){
+        return redirect()->back()->with(['nameerror'=>$request['nameerror']]);
+       }
+       
+       return view('user.register'); 
+      
+    }
     //show profile info
     public function profile($id){
         $user_data=User::find($id);
@@ -318,76 +154,9 @@ class UserController extends Controller
             'name.required'=>'Name can\'t blank.',
             'email.reqied'=>'Email can\'t blank.'
         ]);
-       //check type admin
-        if(auth()->user()->type == 0){
-            $type=$request->input('type');
-           
-            if($type == 'user'){
-                $type_value =1;
-            }
-            else{
-                $type_value=0;
-
-            }
-            if($request->new_profile){
-                $imageName=time().'.'.$request->new_profile->extension();
-                $success=$request->new_profile->move(public_path('uploads'),$imageName);
-                $imagePath = 'uploads/' . $imageName;
-                User::where('id',$id)->update([
-                    'name'=>$request->name,
-                    'email'=>$request->email,
-                    'phone'=>$request->phone,
-                    'dob'=>$request->dob,
-                    'address'=>$request->address,
-                    'type'=>$type_value,
-                    'profile'=>$imagePath,
-                    'updated_at'=>Carbon::now()
-                ]);
-            }
-            else{
-                User::where('id',$id)->update([
-                    'name'=>$request->name,
-                    'email'=>$request->email,
-                    'phone'=>$request->phone,
-                    'dob'=>$request->dob,
-                    'address'=>$request->address,
-                    'type'=>$type_value,
-                    'updated_at'=>Carbon::now()
-                ]);
-            }
-            Session::flash('profileedited',"Edit Profile Successfully");
-            return redirect()->route('profile',['id' => $id]);
-        }
-        else{
-            if($request->new_profile){
-                $imageName=time().'.'.$request->new_profile->extension();
-                $success=$request->new_profile->move(public_path('uploads'),$imageName);
-                $imagePath = 'uploads/' . $imageName;
-                User::where('id',$id)->update([
-                    'name'=>$request->name,
-                    'email'=>$request->email,
-                    'phone'=>$request->phone,
-                    'dob'=>$request->dob,
-                    'address'=>$request->address,
-                    'profile'=>$imagePath,
-                    'updated_at'=>Carbon::now()
-                ]);
-            }
-            else{
-                User::where('id',$id)->update([
-                    'name'=>$request->name,
-                    'email'=>$request->email,
-                    'phone'=>$request->phone,
-                    'dob'=>$request->dob,
-                    'address'=>$request->address,
-                    'updated_at'=>Carbon::now()
-                ]);
-            }
-            Session::flash('profileedited',"Edit Profile Successfully");
-            return redirect()->route('profile',['id' => $id]);
-        }
-       
-        
+        $type=$request->input('type');
+        $result=$this->userService->update_profile($request,$id,$type);
+        return redirect()->route('profile',['id'=>$result['id']]);
     }
     //forget password ui
     public function showforgetpassword(){
@@ -399,34 +168,14 @@ class UserController extends Controller
         $request->validate([
             'email'=>'required|email'
         ]);
-        //dd($request->email);
-        $user=User::where('email',$request->email)->first();
-        $userName=User::select('name')->where('email',$request->email)->first()->name;
-        //dd($userName);
-        if($user){
-            $userEmail=$request->email;
-            $token = Str::random(64);
-            DB::table('password_reset_tokens')->insert([
-                'email' => $request->email, 
-                'token' => $token, 
-                'created_at' => Carbon::now()
-            ]);
-           // dd($userEmail);
-          
-           $data = [
-           'token'=>$token,
-           'email' => $request->email,
-            'name'=>$userName,
-           ];
-         Mail::to($userEmail)->send(new SendMail($data));
-          // dd($bladeurl);
-            //return view('user.reset_password');
-            return redirect()->route('login')->with(['reset_pass'=>'Email sent with password reset instructions.']);
-        }
-        else{
-            return redirect()->route('forgetpassword')->with(['error'=>'Email does not exist.']);
-        }
-        
+        $result = $this->userService->submitforgetpassword($request);
+      if(isset($result['reset_pass'])){
+        return redirect()->route('login')->with(['reset_pass'=>$result['reset_pass']]);
+      }
+       if(isset($result['error'])){
+        return redirect()->route('forget.password.get')->with(['error'=>$result['error']]);
+       }
+       
     }
     //reset password ui
     public function reset_password(Request $request,$token){
@@ -445,21 +194,13 @@ class UserController extends Controller
             'password'=>'required',
             'password_confirm'=>'required'
         ]);
-        $check_token =DB::table('password_reset_tokens')
-                    ->where([
-                        'email'=>$request->email,
-                        'token'=>$request->token,
-                    ])->first();
-        if(!$check_token){
-            return redirect()->route('login')->with('error','Invalid Token');
+        $result =$this->userService->submit_reset_password($request);
+    
+        if(isset($result['error'])){
+            return redirect()->route('login')->with('error',$result['error']);
         }
-        User::where('email',$request->email)
-            ->update([
-                'password'=>Hash::make($request->password),
-                'updated_at'=>Carbon::now()
-            ]);
-        DB::table('password_reset_tokens')->where('email',$request->email)->delete();
-        return redirect('/login')->with('message', 'Your password has been changed!');
+      
+        return redirect('/login')->with('message', $result['message']);
     }
     //change password ui
     public function change_password(){
@@ -479,29 +220,17 @@ class UserController extends Controller
            'new_pass.min' => 'New Password must be at least 6 characters.',
             'con_new_pass.same' => 'New Password and Confirm New Password must match.',
         ]);
-       $current_pass=$request->cur_pass;
-       $new_password=$request->new_pass;
-       $confirm_pass=$request->con_new_pass;
-
-       $user = User::find(auth()->user()->id);
-       $hashedPassword = $user->password;
-       if (Hash::check($current_pass, $hashedPassword)) {
-            if ($new_password === $confirm_pass) {
-
-                $user->password = Hash::make($new_password);
-                $user->save();
-
-                return redirect()->route('user')->with('success', 'Password updated successfully.');
-            } else {
-                return redirect()->back()->withErrors(['error' => 'New passwords do not match.']);
-            }
-        } else {
+        $result = $this->userService->changed_password($request);
         
-            return redirect()->back()->withErrors(['error' => 'Current password is incorrect.']);
+        if(isset($result['success'])){
+
+            return redirect()->route('user')->with('success', $result['success']);
         }
-
-  
-
+        if(isset($result['error'])){
+           
+            return redirect()->route('changepassword')->with('error', $result['error']);
+            dd($result);
+        }
     }
 
 

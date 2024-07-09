@@ -39,9 +39,9 @@
                     <div class="d-flex align-items-center">
                         <label for="page_size" class="me-2">Page Size:</label>
                         <select name="page_size" id="page_size" onchange="this.form.submit()" class="form-select w-auto">
-                            <option value="10" {{ request('page_size') == 10 ? 'selected' : '' }}>10</option>
+                            <option value="9" {{ request('page_size') == 9 ? 'selected' : '' }}>9</option>
                             <option value="15" {{ request('page_size') == 15 ? 'selected' : '' }}>15</option>
-                            <option value="20" {{ request('page_size') == 20 ? 'selected' : '' }}>20</option>
+                            <option value="21" {{ request('page_size') == 21 ? 'selected' : '' }}>21</option>
                         </select>
                     </div>
                 </div>
@@ -100,10 +100,10 @@
                                     <h5 class="card-title">{{ $list->title }}</h5>
                                     <p class="card-text">{{ $list->description }}</p>
                                 </div>
-                                <div class="card-footer mt-auto d-flex justify-content-between"> 
-                                  <div class="text-start d-flex" id="{{$list->id}}">
+                                <div class="card-footer mt-auto d-flex justify-content-between align-items-center "> 
+                                  <div class="text-start pt-3 d-flex" id="{{$list->id}}">
                                       <div>
-                                        <p  id="likeButton" class="me-2">
+                                        <p  id="likeButton" class="me-2 align-middle">
                                             @if ($list->likes->contains('user_id', auth()->id()))
                                                 <i class="fa-solid fa-thumbs-up text-primary" ></i>
                                             @else
@@ -333,12 +333,14 @@
             $('#des').text(post.description)
 
             var created_at=new Date(post.created_at);
+            created_at.setMinutes(created_at.getMinutes() - created_at.getTimezoneOffset());
             var dateFormat=created_at.toISOString().split('T')[0];
             $('#created_date').text(dateFormat)
 
            $('#created_user').text(response.user[0])
 
            var updated_at=new Date(post.updated_at);
+           updated_at.setMinutes(updated_at.getMinutes() - updated_at.getTimezoneOffset());
            var updated_date_format=updated_at.toISOString().split('T')[0];
             $('#updated_date').text(updated_date_format)
             $('#updated_user').text(response.user)

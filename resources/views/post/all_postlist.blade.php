@@ -70,7 +70,7 @@
                 <tbody>    
                     @if($postlist->isEmpty()) 
                     <tr>
-                      <td colspan="5">
+                      <td colspan="6">
                         <h6 class="text-center">Post Not Found</h6>
                       </td>
                     </tr>
@@ -346,12 +346,14 @@
             $('#des').text(post.description)
 
             var created_at=new Date(post.created_at);
+            created_at.setMinutes(created_at.getMinutes() - created_at.getTimezoneOffset());
             var dateFormat=created_at.toISOString().split('T')[0];
             $('#created_date').text(dateFormat)
 
            $('#created_user').text(response.user[0])
 
            var updated_at=new Date(post.updated_at);
+           updated_at.setMinutes(updated_at.getMinutes() - updated_at.getTimezoneOffset());
            var updated_date_format=updated_at.toISOString().split('T')[0];
             $('#updated_date').text(updated_date_format)
             $('#updated_user').text(response.user)

@@ -17,105 +17,51 @@ use League\Csv\Reader;
 use League\Csv\Statement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Services\PostService;
 class PostListController extends Controller
 {
-    //    
+    //  
+        protected $postService;
+        public function __construct(PostService $postService)
+        {
+            $this->postService = $postService;
+        }  
         public function postlist(Request $request){
             $pageSize = $request->input('page_size', 10);
             session(['pagesize'=>$pageSize]);
-            
-            if(Auth::check()){
-                if(auth()->user()->type == 1){
-                    $postlist = Post::where('created_user_id', auth()->user()->id )
-                                    
-                                    ->paginate($pageSize);
-                    $users = User::all();
-                   
-                    return view('post.postlist', compact('postlist', 'users','pageSize'));
-                }else{
-                    
-                    $postlist=Post::with('user')->paginate($pageSize);
-                    $users = User::all();
-                    return view('post.postlist', compact('postlist', 'users','pageSize'));
-                }
-            }
-            else{
-                $postlist=Post::where('status',1)->paginate($pageSize);
-                $users = User::all();
-                return view('post.postlist', compact('postlist', 'users','pageSize'));
-               
-            }
+
+            $result=$this->postService->postlist($pageSize);
+            return view('post.postlist',['postlist'=>$result['postlist'],'users'=>$result['users'],'pageSize'=>$result['pageSize']]);
+         
         }
         public function cardView(Request $request){
           
-            $pageSize = $request->input('page_size', 10);
+            $pageSize = $request->input('page_size', 9);
             session(['pagesize'=>$pageSize]);
-            if(Auth::check()){
-                if(auth()->user()->type == 1){
-                    $postlist = Post::where('created_user_id', auth()->user()->id )
-                                    
-                                    ->paginate($pageSize);
-                    $users = User::all();
-                   
-                    return view('post.postlist_card', compact('postlist', 'users','pageSize'));
-                }else{
-                    
-                    $postlist=Post::with('user')->paginate($pageSize);
-                    $users = User::all();
-                    return view('post.postlist_card', compact('postlist', 'users','pageSize'));
-                }
-            }
-            else{
-                $postlist=Post::where('status',1)->paginate($pageSize);
-                $users = User::all();
-                return view('post.postlist_card', compact('postlist', 'users','pageSize'));
-            }
-    
 
+            $result =$this->postService->cardView($pageSize);
+            return view('post.postlist_card',['postlist'=>$result['postlist'],'users'=>$result['users'],'pageSize'=>$result['pageSize']]);
         }
         // all postlist for table
         public function all_postlist(Request $request){
             $pageSize = $request->input('page_size', 10);
             session(['pagesize'=>$pageSize]);
-            
-            if(Auth::check()){
-                if(auth()->user()->type == 1){
-                    $postlist = Post::with('user')->where('status','1')->paginate($pageSize);
-                    $users = User::all();
-                   
-                    return view('post.all_postlist', compact('postlist', 'users','pageSize'));
-                }else{
-                    
-                    $postlist=Post::with('user')->paginate($pageSize);
-                    $users = User::all();
-                    return view('post.all_postlist', compact('postlist', 'users','pageSize'));
-                }
-            }
-           
-           
+            $result = $this->postService->all_postlist($pageSize);
+
+            return view('post.all_postlist', ['postlist'=>$result['postlist'], 'users'=>$result['users'],'pageSize'=>$result['pageSize']]);
         }
         //all postlist for cardview
         public function all_postlist_card(Request $request){
             
-            $pageSize = $request->input('page_size', 10);
+            $pageSize = $request->input('page_size', 9);
             session(['pagesize'=>$pageSize]);
-            if(Auth::check()){
-                if(auth()->user()->type == 1){
-                    $postlist = Post::with('user')->where('status','1')->paginate($pageSize);
-                    $users = User::all();
-                   
-                    return view('post.all_postlist_card', compact('postlist', 'users','pageSize'));
-                }
-                else{
-                    
-                    $postlist=Post::with('user')->paginate($pageSize);
-                    $users = User::all();
-                    return view('post.all_postlist_card', compact('postlist', 'users','pageSize'));
-                }
-            }
+            $result = $this->postService->all_postlist_card($pageSize);
+            return view('post.all_postlist_card',['postlist'=>$result['postlist'],'users'=>$result['users'],'pageSize'=>$result['pageSize']]);
+       
            
     
         }
+
         //create post ui
         public function createpost(){
             return view('post.create_post');
@@ -145,35 +91,27 @@ class PostListController extends Controller
         }
         //post create store
         public function store(Request $request){
-        $request->validate([
-                'title' => 'required|unique:posts|max:255',
-                'description' => 'required|max:255',
-            ], [
-                'title.required' => 'Title can\'t be blank.',
-                'title.unique' => 'The title has already been taken.',
-                'description.required' => 'Description can\'t be blank.',
-                'description.max' => 'Description must not exceed 255 characters.',
-            ]);       
-            Post::create([
-                'title'=>$request->title,
-                'description'=>$request->description,
-                'created_user_id'=>Auth::user()->id,
-                'updated_user_id'=>Auth::user()->id,
-                'created_at'=>Carbon::now(),
-                'updated_at'=>Carbon::now(),
-                
-            ]);
-            //dd($data);
-            Session::flash('postcreated', 'Post created successfully.');
+            $request->validate([
+                    'title' => 'required|unique:posts|max:255',
+                    'description' => 'required|max:255',
+                ], [
+                    'title.required' => 'Title can\'t be blank.',
+                    'title.unique' => 'The title has already been taken.',
+                    'description.required' => 'Description can\'t be blank.',
+                    'description.max' => 'Description must not exceed 255 characters.',
+                ]); 
+         $this->postService->store($request);      
+   
             return view('post.create_post');
         }
         
         //post edit 
         public function edit($id){
-        
-            $post = Post::find($id);
+            
+            $result=$this->postService->edit($id);
+            
             //dd($post);
-            return view('post.edit_post',compact('post'));
+            return view('post.edit_post',['post'=>$result['post']]);
         }
         public function post_edit_confirm(Request $request,$id){
             $request->validate(
@@ -187,41 +125,28 @@ class PostListController extends Controller
                 'description.required'=>'Description can\'t be balnk' ,
                 'description.max' => 'Description must not exceed 255 characters.',
                 ]);
-                $status = $request->status ? 1 : 0;
-            // dd($status);
-                $post=$request;
-                $unique=Post::where('title',$request->title)->where('id',$id)->first();
-                if($unique){
-                    return view('post.post_edit_confirm',compact('post','status'));
+                $result=$this->postService->post_edit_confirm($request,$id);
+                
+                if(isset($result['unique'])){
+                    return view('post.post_edit_confirm',['post'=>$result['post'],'status'=>$result['status']]);
+                    
+                }else{
+                    return redirect()->route('postlist')->with('error', 'The title has already been taken.');
                 }
-                else{
-                    Session::flash('error','The title has already been taken.');
-                    return redirect()->route('postlist');
-                }
-            
         }
         //post updated from database
         public function update(Request $request ,$id){
            //dd($id);
-            $title=$request->title;
-            $des=$request->description;
-            $status = $request->status ? 1 : 0;
-            //dd($status);
-            $unique=Post::where('title',$title)->where('id',$id)->first();
-            //dd($unique);
-            if($unique){
-                $update =Post::where('id',$id)->update(['title'=>$title,
-                'description'=>$des,
-                'status'=>$status,
-                'updated_user_id'=>auth()->user()->id,'updated_at'=>Carbon::now()]);
-                Session::flash('postedites','Post Updated Successfully.');
-                return redirect()->route('postlist');
-            }
-            else{
-                Session::flash('error','Title already taken.');
-                return redirect()->route('postlist');
-            }
-            
+           $result = $this->postService->update($request,$id);
+           //dd($result);
+           if(isset($result['postedites'])){
+            return redirect()->route('postlist')->with(['postedites'=>$result['postedites']]);
+           }
+           else{
+            return redirect()->route('postlist')->with(['error'=>$result['error']]);
+           }
+           
+           
            
         }
         //upload_post ui
@@ -235,184 +160,65 @@ class PostListController extends Controller
                 'csvfile' => 'required|file'
             ]);
 
-            // Retrieve and process the uploaded file
-            $file = $request->file('csvfile');
-            $tempPath = sys_get_temp_dir().'/'.uniqid().'csv';
-
-            
-            $file_type= $request->file('csvfile')->getClientOriginalExtension();
-            if($file_type !== 'csv'){
-                return redirect()->back()->with('error', 'File must be csv type.')->withInput();
+            $result = $this->postService->upload_post($request);
+            if(isset($result['error'])){
+                return redirect()->back()->with('error', $result['error'])->withInput();
             }
-           
-            try {
-                // Move the uploaded file to a temporary location
-                $file->move(sys_get_temp_dir(), $tempPath);
-
-                // Read the content of the file
-                $csv = Reader::createFromPath($tempPath, 'r');
-                $csv->setHeaderOffset(0);
-                $records = $csv->getRecords();
-              
-                foreach ($records as $record) {
-                          // Validate the CSV data structure
-                          if (count($record) !== 3) {
-                            DB::rollBack();
-                            return redirect()->back()->with('error', 'Each row in the CSV must have exactly 3 columns.')->withInput();
-                        }
-                        $existingPost = Post::where('title', $record['title'])->first();
-                        if ($existingPost) {
-                            
-                            return redirect()->back()->with('error','Post title already exists:'.$record['title'])->withInput();
-                           
-                        }
-                }
-                foreach ($records as $record) {
-                            
-                    if (count($record) !== 3) {
-                        
-                        return redirect()->back()->with('error', 'Each row in the CSV must have exactly 3 columns.')->withInput();
-                    }
-                    
-                        // Create or update posts based on CSV data
-                        Post::create([
-                            'title' => $record['title'],
-                            'description' => $record['description'],
-                            'status' => $record['status'],
-                            'created_user_id' => Auth::id(),
-                            'updated_user_id' => Auth::id(),
-                            'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now(),
-                        ]);
-                }
-                 
-                    return redirect()->route('postlist')->with('success', 'CSV data imported successfully.'); 
-
-            }catch (\Exception $e) {
-                return back()->withInput()->withErrors(['error' => $e->getMessage()]);
-            } 
+            if(isset($result['success'])){
+                return redirect()->route('postlist')->with(['success'=>$result['success']]); 
+            }
+            
         }
         //post download with csv format
         public function export(Request $request)
         { 
-            if(auth()->user()->type == 0){
-                $text = $request->input('text', '');
-              // dd($text);
-               if($text == null){
-                return Excel::download(new PostsExport, 'posts.csv', \Maatwebsite\Excel\Excel::CSV);
+           $result = $this->postService->export($request);
+           $posts = $result['posts'];
+            return new StreamedResponse(function () use ($posts) {
+                $handle = fopen('php://output', 'w');
+               fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
+                                   'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
+               foreach ($posts as $post) {
+                    fputcsv($handle, [$post->id, $post->title, $post->description,
+                            $post->status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
+                           $post->created_at,$post->updated_at,$post->deleted_at]);
                }
-               else{
-
-                $posts = Post::where('title', 'like', '%'.$text.'%')
-                                ->orWhere('description', 'like', '%'.$text.'%')
-                                ->get();
-                return new StreamedResponse(function () use ($posts) {
-                         $handle = fopen('php://output', 'w');
-                        fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
-                                            'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
-                        foreach ($posts as $post) {
-                             fputcsv($handle, [$post->id, $post->title, $post->description,
-                                     $post->status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
-                                    $post->created_at,$post->updated_at,$post->deleted_at]);
-                        }
-                            fclose($handle);
-                        }, 200, [
-                             'Content-Type' => 'text/csv',
-                            'Content-Disposition' => 'attachment; filename="posts.csv"',
-                        ]);                                            
-               }
-               
-            }
-            else{
-               
-                $text = $request->input('text', '');
-                //dd($text);
-                $posts = Post::where('title', 'like', '%'.$text.'%')
-                        ->where('created_user_id',auth()->user()->id)
-                        ->orWhere('description', 'like', '%'.$text.'%')
-                        ->where('created_user_id',auth()->user()->id)
-                        ->get();
-        
-                return new StreamedResponse(function () use ($posts) {
-                    $handle = fopen('php://output', 'w');
-                    fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
-                                    'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
-                        foreach ($posts as $post) {
-                            fputcsv($handle, [$post->id, $post->title, $post->description,
-                                    $post->status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
-                                    $post->created_at,$post->updated_at,$post->deleted_at]);
-                        }
-                    fclose($handle);
-                }, 200, [
+                   fclose($handle);
+               }, 200, [
                     'Content-Type' => 'text/csv',
-                    'Content-Disposition' => 'attachment; filename="posts.csv"',
-                ]);
-            }
-            
+                   'Content-Disposition' => 'attachment; filename="posts.csv"',
+               ]);   
+
         }
           //post download with csv format
           public function download_allpost(Request $request)
           { 
-              if(auth()->user()->type == 0){
-                  $text = $request->input('text', '');
-                // dd($text);
-                 if($text == null){
-                  return Excel::download(new PostsExport, 'posts.csv', \Maatwebsite\Excel\Excel::CSV);
-                 }
-                 else{
-  
-                  $posts = Post::where('title', 'like', '%'.$text.'%')
-                                  ->orWhere('description', 'like', '%'.$text.'%')
-                                  ->get();
-                  return new StreamedResponse(function () use ($posts) {
-                           $handle = fopen('php://output', 'w');
-                          fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
-                                              'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
-                          foreach ($posts as $post) {
-                               fputcsv($handle, [$post->id, $post->title, $post->description,
-                                       $post->status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
-                                      $post->created_at,$post->updated_at,$post->deleted_at]);
-                          }
-                              fclose($handle);
-                          }, 200, [
-                               'Content-Type' => 'text/csv',
-                              'Content-Disposition' => 'attachment; filename="posts.csv"',
-                          ]);                                            
-                 }
-                 
-              }
-              else{
-                 
-                  $text = $request->input('text', '');
-                  //dd($text);
-                //  $posts = Post::where('status', 1)
-                //  ->orWhere('title', 'like', '%'.$text.'%')
-                //  ->orWhere('description', 'like', '%'.$text.'%')
-                //  ->get();
-                $posts = Post::where('status', 1)
-                ->where(function ($query) use ($text) {
-                    $query->where('title', 'like', '%'.$text.'%')
-                          ->orWhere('description', 'like', '%'.$text.'%');
-                })
-                ->get();
-   
-               // dd($posts);
-                  return new StreamedResponse(function () use ($posts) {
-                      $handle = fopen('php://output', 'w');
-                      fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
-                                      'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
-                          foreach ($posts as $post) {
-                              fputcsv($handle, [$post->id, $post->title, $post->description,
-                                      $post->status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
-                                      $post->created_at,$post->updated_at,$post->deleted_at]);
-                          }
-                      fclose($handle);
-                  }, 200, [
-                      'Content-Type' => 'text/csv',
-                      'Content-Disposition' => 'attachment; filename="posts.csv"',
-                  ]);
-              }
+            
+           $result = $this->postService->download_allpost($request);
+          // dd($result);
+           if(isset($result['null'])){
+            return Excel::download(new PostsExport, 'posts.csv', \Maatwebsite\Excel\Excel::CSV);
+           }
+           else{
+            $posts=$result['posts'];
+            return new StreamedResponse(function () use ($posts) {
+              $handle = fopen('php://output', 'w');
+             fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
+                                 'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
+             foreach ($posts as $post) {
+                  fputcsv($handle, [$post->id, $post->title, $post->description,
+                          $post->status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
+                         $post->created_at,$post->updated_at,$post->deleted_at]);
+             }
+                 fclose($handle);
+             }, 200, [
+                  'Content-Type' => 'text/csv',
+                 'Content-Disposition' => 'attachment; filename="posts.csv"',
+             ]);  
               
+           }
+          
+        
           }
         //search post for table
         public function search(Request $request){
@@ -424,23 +230,9 @@ class PostListController extends Controller
             if ($request->has('page_size')) {
                 session(['page_size' => $request->input('page_size')]);
             }
-            if(auth()->user()->type == 1){
-                $postlist = Post::where(function ($query) use ($text) {
-                                $query->where('title', 'like', '%' . $text . '%')
-                                      ->orWhere('description', 'like', '%' . $text . '%');
-                            })
-                            ->where('created_user_id', auth()->user()->id)
-                            ->paginate($pageSize);
-                           
-            }
-            
-            else{
-                $postlist = Post::where('title', 'like', '%'.$text.'%')
-                                ->orWhere('description', 'like', '%'.$text.'%')
-                                ->paginate($pageSize);
-            }
-            
-            return view('post.postlist', compact('postlist', 'pageSize'));
+            $result=$this->postService->search($text,$pageSize);
+          // dd($result);
+            return view('post.postlist')->with(['postlist'=>$result,'pageSize'=>$pageSize]);
         }
         //search psot for card
         public function search_card(Request $request){
@@ -452,23 +244,8 @@ class PostListController extends Controller
             if ($request->has('page_size')) {
                 session(['page_size' => $request->input('page_size')]);
             }
-            if(auth()->user()->type == 1){
-                $postlist = Post::where(function ($query) use ($text) {
-                                $query->where('title', 'like', '%' . $text . '%')
-                                      ->orWhere('description', 'like', '%' . $text . '%');
-                            })
-                            ->where('created_user_id', auth()->user()->id)
-                            ->paginate($pageSize);
-                           
-            }
-            
-            else{
-                $postlist = Post::where('title', 'like', '%'.$text.'%')
-                                ->orWhere('description', 'like', '%'.$text.'%')
-                                ->paginate($pageSize);
-            }
-            
-            return view('post.postlist_card', compact('postlist', 'pageSize'));
+            $result = $this->postService->search_card($text,$pageSize);
+           return view('post.postlist_card')->with(['postlist'=>$result,'pageSize'=>$pageSize]);
         }
         //search all postlist for table
         public function search_allpost_table(Request $request){
@@ -480,33 +257,10 @@ class PostListController extends Controller
             if ($request->has('page_size')) {
                 session(['page_size' => $request->input('page_size')]);
             }
-            if(Auth::check()){
-                if(auth()->user()->type == 1){
-                    //$postlist = Post::where(function ($query) use ($text) {
-                    //                $query->where('title', 'like', '%' . $text . '%')->where('status',1)
-                    //                    ->orWhere('description', 'like', '%' . $text . '%');
-                    //            })
-                    //        
-                    //            ->paginate($pageSize);
-                    $postlist = Post::where('status', 1)
-                    ->where(function ($query) use ($text) {
-                        $query->where('title', 'like', '%'.$text.'%')
-                              ->orWhere('description', 'like', '%'.$text.'%');
-                    })->paginate($pageSize);  
-                }
+            $result = $this->postService->search_allpost_table($text,$pageSize);
+           
             
-                else{
-                    $postlist = Post::where('title', 'like', '%'.$text.'%')
-                                    ->orWhere('description', 'like', '%'.$text.'%')
-                                    ->paginate($pageSize);
-                }
-            }else{
-                $postlist=Post::where('status',1)->paginate($pageSize);
-                $users = User::all();
-                
-            }
-            
-            return view('post.all_postlist', compact('postlist', 'pageSize'));
+            return view('post.all_postlist')->with(['postlist'=>$result,'pageSize'=>$pageSize]);
         }
           //search all postlist for card
           public function search_allpost_card(Request $request){
@@ -518,68 +272,28 @@ class PostListController extends Controller
             if ($request->has('page_size')) {
                 session(['page_size' => $request->input('page_size')]);
             }
-            if(auth()->user()->type == 1){
-                $postlist = Post::where('status',1)
-                            ->where(function ($query) use ($text) {
-                                $query->where('title', 'like', '%' . $text . '%')
-                                      ->orWhere('description', 'like', '%' . $text . '%');
-                            })
-                           
-                            ->paginate($pageSize);
-                           
-            } 
-            else{
-                $postlist = Post::where('title', 'like', '%'.$text.'%')
-                                ->orWhere('description', 'like', '%'.$text.'%')
-                                ->paginate($pageSize);
-            }
+            $result = $this->postService->search_allpost_card($text,$pageSize);
+       
 
-            return view('post.all_postlist_card', compact('postlist', 'pageSize'));
+            return view('post.all_postlist_card')->with(['postlist'=>$result,'pageSize'=>$pageSize]);
         }
 
         //barchart
         public function barchart(Request $request){
-            $users =User::count();
-            $posts = Post::count();
-            $active=Post::where('status',1)->count();
-            $inactive=Post::where('status',0)->count();
-            $postsPerMonth=Post::selectRaw('MONTH(created_at) as month,COUNT(*) as count')
-                        ->groupBy('month')
-                        ->orderBy('month')->get();
-            $userActivity = Post::select(
-                            'posts.created_user_id',
-                            DB::raw('COUNT(*) as post_count'),
-                            'users.name'
-                        )
-                        ->join('users', 'posts.created_user_id', '=', 'users.id')
-                        ->groupBy('posts.created_user_id', 'users.name')
-                        ->get();
+            $result = $this->postService->barchart($request);
+           //dd($result);
            // dd($userActivity);
-            return view('barchart',compact('users','posts','active','inactive','postsPerMonth','userActivity'));
+            return view('barchart')->with(['users'=>$result['users'],'posts'=>$result['posts'],
+                                            'active'=>$result['active'],'inactive'=>$result['inactive'],
+                                            'postsPerMonth'=>$result['postPerMonth'],'userActivity'=>$result['userActivity']]);
         }
 
         //likes
         public function toggle_Like(Request $request, Post $post)
         {
-            $user = $request->user();
-            $existingLike = Like::where('user_id', $user->id)
-                                ->where('post_id', $post->id)
-                                ->first();
-    
-            if ($existingLike) {
-                $existingLike->delete();
-                $count = $post->likes()->count();
-                return response()->json(['status' => 'unliked', 'count' => $count]);
+            $result = $this->postService->toggle_Like($request,$post);
 
-            } else {
-                $like = new Like();
-                $like->user_id = $user->id;
-                $like->post_id = $post->id;
-                $like->save();
-                $count = $post->likes()->count();
-                return response()->json(['status' => 'liked', 'count' => $count]);
-            }
-
+            return response()->json(['status' => $result['status'], 'count' => $result['count']]);
         }
 }
 

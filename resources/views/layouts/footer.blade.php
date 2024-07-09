@@ -1,6 +1,6 @@
 <div class="container">
   <footer class="footer">
-    <p><a href="" class="">METATEAM MYANMAR</a></p>
+    <p><a href="" >METATEAM MYANMAR</a></p>
     <p> 
     Copyright © 
     2024 All rights reserved</p>

@@ -14,11 +14,6 @@
                     <p class="card-text py-2">
                         Enter your email address and we'll send you an email with instructions to reset your password.
                     </p>
-                    @if(session('error'))
-                      <div class="alert alert-danger" id="alert">
-                        {{session('error')}}
-                      </div>
-                    @endif
                     <div data-mdb-input-init class="form-outline mt-3">
                         <label class="form-label" for="typeEmail">Email input</label>
                         <input type="email" id="typeEmail" name="email" class="form-control my-3" />
@@ -41,3 +36,16 @@
 </section>
 
 @endsection
+@if(Session::has('error'))
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.show({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom-danger',
+                   
+                    message: `{{ Session::get('error') }}`
+                });
+            });
+         </script>  
+@endif  

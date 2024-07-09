@@ -52,9 +52,9 @@
           </div>
           <div class="col-md-1">
             <select name="page_size" id="page_size" onchange="this.form.submit()" class="form-select">
-                <option value="10" {{ request('page_size') == 10 ? 'selected' : '' }}>10</option>
-                <option value="15" {{ request('page_size') == 15 ? 'selected' : '' }}>15</option>
-                <option value="20" {{ request('page_size') == 20 ? 'selected' : '' }}>20</option>
+                <option value="9" {{ request('page_size') == 9 ? 'selected' : '' }}>9</option>
+                <option value="15" {{ request('page_size') == 15? 'selected' : '' }}>15</option>
+                <option value="21" {{ request('page_size') == 21 ? 'selected' : '' }}>21</option>
             </select>
           </div>
         </div>
@@ -346,9 +346,11 @@
                     $('#dob').text(user.dob);
                     $('#address').text(user.address);
                     var created_at=new Date(user.created_at);
+                    created_at.setMinutes(created_at.getMinutes() - created_at.getTimezoneOffset());
                     var dateFormat=created_at.toISOString().split('T')[0];
                     $('#created_date').text(dateFormat);
                     var updated_at=new Date(user.updated_at);
+                    updated_at.setMinutes(updated_at.getMinutes() - updated_at.getTimezoneOffset());
                     var Updated_format = updated_at.toISOString().split('T')[0];
                     $('#updated_date').text(Updated_format);
                     $('#updated_user').text(response.created_user);

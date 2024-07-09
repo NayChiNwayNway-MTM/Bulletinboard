@@ -4,7 +4,8 @@
   <header><h3 class="px-5 py-5">Post List</h3></header> 
     <!--start container-->
     <div class="container">
-  
+
+
     @auth     
       <div class="row mb-3">
         <form action="" method="get" id="form" class="float-start">
@@ -39,9 +40,9 @@
                     <div class="d-flex align-items-center">
                         <label for="page_size" class="me-2">Page size:</label>
                         <select name="page_size" id="page_size" onchange="this.form.submit()" class="form-select w-auto">
-                            <option value="10" {{ request('page_size') == 10 ? 'selected' : '' }}>10</option>
+                            <option value="9" {{ request('page_size') == 10 ? 'selected' : '' }}>10</option>
                             <option value="15" {{ request('page_size') == 15 ? 'selected' : '' }}>15</option>
-                            <option value="20" {{ request('page_size') == 20 ? 'selected' : '' }}>20</option>
+                            <option value="21" {{ request('page_size') == 20 ? 'selected' : '' }}>20</option>
                         </select>
                     </div>
                 </div>
@@ -307,12 +308,14 @@
             $('#des').text(post.description)
 
             var created_at=new Date(post.created_at);
+            created_at.setMinutes(created_at.getMinutes() - created_at.getTimezoneOffset());
             var dateFormat=created_at.toISOString().split('T')[0];
             $('#created_date').text(dateFormat)
 
            $('#created_user').text(response.user[0])
 
            var updated_at=new Date(post.updated_at);
+         
            var updated_date_format=updated_at.toISOString().split('T')[0];
             $('#updated_date').text(updated_date_format)
             $('#updated_user').text(response.user)
@@ -361,8 +364,19 @@
 </script>
 
 @endsection
+@if(session('error'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.show({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom-danger',
+                    message: `{{ Session::get('error') }}`
+                });
+            });
+         </script>  
 
-@if(Session::has('success'))
+@elseif(Session::has('success'))
          <script>
             document.addEventListener('DOMContentLoaded', function () {
                 iziToast.success({
@@ -384,15 +398,5 @@
                 });
             });
          </script>     
-@elseif(Session::has('error'))
-         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                iziToast.danger({
-                    title: '',
-                    position: 'topRight',
-                    class: 'iziToast-custom',
-                    message: `{{ Session::get('error') }}`
-                });
-            });
-         </script>  
-@endif
+ @endif
+ 

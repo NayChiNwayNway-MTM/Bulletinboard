@@ -89,6 +89,7 @@
             });
          </script>
 @elseif(Session::has('message'))
+<!--password change come from modelusersubmit_reset_password-->
          <script>
             document.addEventListener('DOMContentLoaded', function () {
                 iziToast.success({

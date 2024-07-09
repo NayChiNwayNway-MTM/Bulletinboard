@@ -13,6 +13,7 @@
  font-size: 20px;
 
 }
+
 .nav_link:hover {
   transform: scale(1.05);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
@@ -22,6 +23,11 @@
 }
 .nav_link a.active {
   color:#007bff !important;
+}
+.dropdown{
+  color: #000;
+  text-align: center;
+  font-size: 20px;
 }
 
 /*start logo bulletinboard design*/
@@ -123,7 +129,7 @@ body {
 #profile{
   width: 50%;
   height: 70%;
-  margin-left: 80px;
+ 
   margin-top: 20px;
 }
 .custom-img-thumbnail {
@@ -159,6 +165,20 @@ body {
   transform: translateY(-50%); 
   cursor: pointer;
 }
+.registereyeicon{
+  position: absolute; 
+  top: 28%; 
+  right: 100px; 
+  transform: translateY(-28%); 
+  cursor: pointer;
+}
+.registerconeyeicon{
+  position: absolute; 
+  top: 35%; 
+  right: 100px; 
+  transform: translateY(-35%); 
+  cursor: pointer;
+}
 .password_new{
   position: relative;
 }
@@ -183,8 +203,8 @@ body {
 
 /*start footer*/
 .footer {
-  height: 50px; /* Set footer height */
-  background-color: #FFF; /* Example background color */
+  height: 70px; 
+  background-color: #FFF; 
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -192,14 +212,15 @@ body {
   left: 0;
   bottom: 0;
   width: 100%;
-  padding: 0 20px; /* Add padding if needed */
+  padding: 0 20px; 
   box-sizing: border-box;
 }
 .footer p{
   color: #000;
   font-size: 20px;
-  padding: 10px 5px;
-
+  padding-top: 10px;
+  padding-left: 20px; 
+  padding-right: 30px;
 }
 .footer p a{
   text-decoration: none;
@@ -355,7 +376,7 @@ body {
   width: 70px;
   height: 70px;
   position: fixed;
-  bottom: 60px;
+  bottom: 70px;
   right: 20px;
   z-index: 99;
   cursor: pointer;
@@ -365,7 +386,7 @@ body {
 }
 /*for iziToast*/
 .iziToast-custom {
-  top: 70px !important;
+  top: 80px !important;
 }
 .iziToast-custom .iziToast-message {
  font-weight: bold !important;
@@ -374,7 +395,7 @@ body {
 .iziToast-custom-danger {
   background: #f8d7da !important; 
   border-left: 5px solid #dc3545; 
-  top: 70px !important;
+  top: 80px !important;
 }
 .iziToast-custom-danger .iziToast-message {
   color: #dc3545 !important; 
@@ -382,3 +403,31 @@ body {
 .iziToast-custom-danger .iziToast-title {
   color: #dc3545 !important; 
 }
+/*for password error*/
+.error{
+  margin-left: 250px;
+}
+.changepasserror{
+  margin-left: 320px;
+}
+/*end password error*/
+.dropdown ul{
+  width: 100%;
+}
+.dropdown ul li{
+  text-align: center;
+  cursor: pointer;
+}
+.dropdown  ul li:hover{
+  background-color: #007bff  !important;
+  color: #fff;
+}
+/*for start user detail modal*/
+.modal-content {
+  width: 800px;
+}
+.modal {
+
+  --bs-modal-width: 800px !important;
+}
+/*for end user detail modal*/

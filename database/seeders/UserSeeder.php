@@ -19,11 +19,11 @@ class UserSeeder extends Seeder
         DB::table('users')->insert(
             [
                 [
-                    'name'=>"Nay Chi",
-                    'email'=>'naychi@gmail.com',
+                    'name'=>"Nay Chi Nway Nway",
+                    'email'=>'naychinwaynway256@gmail.com',
                     'password'=>Hash::make('123456'),
                     'type'=>'0',
-                    'phone'=>'912784615',
+                    'phone'=>'09755271231',
                     'address'=>'magway',
                     'dob'=>'12.3.2000',
                     'created_user_id'=>1,
