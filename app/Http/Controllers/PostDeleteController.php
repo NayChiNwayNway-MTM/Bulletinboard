@@ -3,32 +3,39 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Services\PostDeleteService;
 use Illuminate\Http\Request;
 class PostDeleteController extends Controller
 {   
+        protected $postDeleteService;
+        public function __construct(PostDeleteService $postDeleteService)
+        {
+            $this->postDeleteService=$postDeleteService;
+        }
         public function delete($id){
-            $postid=Post::find($id);
-            if($postid){
-                return response()->json(['success'=>true,'post'=>$postid]);
-            }       
+            $result = $this->postDeleteService->delete($id);
+            //dd($result);
+            if(isset($result)){
+                
+                return response()->json(['success'=>true,'post'=>$result['post']]);
+            }
+                
         }
         //post destory
-        public function destroy($id){    
-            $post = Post::find($id);       
-            if (!$post) {
-                return response()->json(['message' => 'Post not found'], 404);
-         }        
-       
-        $post->delete();
-            return response()->json(['message' => 'Post deleted successfully'], 200);
+        public function destroy($id){  
+             $result =$this->postDeleteService->destroy($id); 
+             if(isset($result)){
+                return response()->json(['message' => $result['message']]);
+             }
+           
         }
         //get post details
         public function postdetails($id){
-            $postdetail=Post::find($id);
-            $postcreated=Post::where('id',$id)->pluck('created_user_id');
-            $user=User::where('id',$postcreated)->pluck('name');
-            session(['user'=>$user]);
-            return response()->json(['postdetail'=>$postdetail,'user'=>$user]);
+            $result =$this->postDeleteService->postdetails($id);
+            if(isset($result)){
+                return response()->json(['postdetail'=>$result['postdetail'],'user'=>$result['user']]);
+            }
+           
         }
 
    

@@ -150,7 +150,11 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Delete Confirm</h5>
+                    <h5 class="modal-title text-danger" id="deleteModalLabel">Delete Confirm</h5>
+                    <div class="col-md-6"></div>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <p><strong>Are you sure you want to delete this post?</strong></p>
@@ -184,8 +188,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="postdetailModalLabel">Post Detail</h5>
-                    <div class="col-md-8"></div>
+                    <h5 class="modal-title text-primary" id="postdetailModalLabel">Post Detail</h5>
+                    <div class="col-md-7"></div>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>

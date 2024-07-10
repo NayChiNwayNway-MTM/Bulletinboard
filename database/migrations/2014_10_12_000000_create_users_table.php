@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->text('password');
             $table->string('profile',255)->default('uploads/profile.jpg');
-            $table->string('type')->default('1');
+            $table->string('type',1)->default(1);
             $table->string('phone',20)->nullable();
             $table->string('address',255)->nullable();
             $table->date('dob')->nullable();

@@ -17,7 +17,7 @@
                       <div class="col-8">
                         <input type="text" name="name" class="form-control" value="{{ old('name') }}">
                           <span class="text-danger ">
-                          {{session('nameerror')??''}}
+                          {{ $errors->first('nameerror') }}
                             @error('name')
                               {{$message}}
                             @enderror
@@ -29,7 +29,7 @@
                       <div class="col-8">
                         <input type="email" name="email" class="form-control" value="{{old('email')}}">
                           <span class="text-danger ">
-                          {{session('error')??''}}
+                          {{ $errors->first('error') }}
                             @error('email')
                               {{$message}}
                             @enderror

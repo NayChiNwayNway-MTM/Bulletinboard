@@ -6,20 +6,27 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Models\Post;
-
+use App\Services\UserDeleteService;
 class UserDeleteController extends Controller
 {
     //
+    protected $userDeleteService;
+    public function __construct(UserDeleteService $userDeleteService)
+    {
+        $this->userDeleteService=$userDeleteService;
+    }
     public function delete($id){
-        $userinfo=User::find($id);
-        if($userinfo){
-            return response()->json(['success'=>true,'userinfo'=>$userinfo]);
-        }    
+        $result=$this->userDeleteService->deleteuser($id);
+        if(isset($result)){
+            return response()->json(['success'=>true,'userinfo'=>$result['userinfo']]);
+        }
+         
     }
     public function confirm($id){
-        User::where('id',$id)->update(['deleted_at'=>Carbon::now(),'deleted_user_id'=>auth()->user()->id]);
-        Post::where('created_user_id',$id)->delete();
-       // $user_delete->delete();
-        return response()->json(['success'=>"User Successfully Deleted."]);
+        $result=$this->userDeleteService->confirm($id);
+        if(isset($result)){
+            return response()->json(['success'=>"User Successfully Deleted."]);
+        }
+       
     }
 }

@@ -92,27 +92,36 @@ class UserController extends Controller
         session(['image' => $imagePath]);
         
         $result=$this->userService->registration($request,$imagePath);
-        
-        if(isset($result['error'])){
-            return redirect()->back()->withInput()->with(['error'=>$result['error']]);
+       
+        //    if(isset($result['error'])){
+        //        return redirect()->back()->withInput()->with(['error'=>$result['error']]);
+        //    }
+        //    if(isset($result['nameerror'])){
+        //        return redirect()->back()->withInput()->with(['nameerror'=>$result['nameerror']]);
+        //    }
+        //  
+    
+        if(isset($result)){
+            $errors =$result['back'];
+            return back()->withErrors($errors)->withInput();
         }
-        if(isset($result['nameerror'])){
-            return redirect()->back()->withInput()->with(['nameerror'=>$result['nameerror']]);
-        }
-      
-        return view('user.confirm_register',
-        ['users'=>$request,
-        'imagePath'=>$imagePath]);
+            return view('user.confirm_register',
+            ['users'=>$request,
+            'imagePath'=>$imagePath]);
         
     }
-
     //register save to database
     public function saveregister(Request $request)
     {
         // Validate the input
-        session(['type' => $request->input('type')]);
-        $type =session('type');
-        //dd(session('type'));
+        if(auth()->user()->type == 0){
+            session(['type' => $request->input('type')]);
+            $type =session('type');
+        }
+        else{
+            $type='user';
+        }
+       // dd($request->input('type'));
         $request->validate([
             'name' => 'required',
             'email' => 'required|email',
@@ -124,12 +133,19 @@ class UserController extends Controller
         ]);
 
         $result = $this->userService->saveRegister($request,$type);
-       if(isset($result['error'])){
-        return redirect()->back()->with(['error'=>$result['error']]);
-       }
-       if(isset($result['nameerror'])){
-        return redirect()->back()->with(['nameerror'=>$request['nameerror']]);
-       }
+        
+       // dd($errors);
+        if(isset($result)){
+            $errors =$result['back'];
+            return back()->withErrors($errors)->withInput();
+        }
+        //   //dd($type);
+        //   if(isset($result['error'])){
+        //    return redirect()->back()->with(['error'=>$result['error']])->withInput();
+        //   }
+        //   if(isset($result['nameerror'])){
+        //    return redirect()->back()->with(['nameerror'=>$request['nameerror']])->withInput();
+        //   }
        
        return view('user.register'); 
       
@@ -232,7 +248,5 @@ class UserController extends Controller
             dd($result);
         }
     }
-
-
-    
+  
 }

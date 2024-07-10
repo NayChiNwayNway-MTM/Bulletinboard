@@ -430,4 +430,7 @@ body {
 
   --bs-modal-width: 800px !important;
 }
+.modal-header .close {
+ margin-left: 180px;
+}
 /*for end user detail modal*/

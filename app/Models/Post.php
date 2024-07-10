@@ -18,7 +18,7 @@ class Post extends Model
   
     use HasFactory;
     protected $fillable=[
-        'title','description','created_user_id','updated_user_id','created_at','updated_at','likes'
+        'title','description','status','created_user_id','updated_user_id','created_at','updated_at','likes'
     ];
     public function user(){
         return $this->belongsTo(User::class,'created_user_id');
@@ -207,7 +207,7 @@ class Post extends Model
                     
                     return ['error'=>'Each row in the CSV must have exactly 3 columns.'];
                 }
-                
+                    
                     // Create or update posts based on CSV data
                     Post::create([
                         'title' => $record['title'],
@@ -419,5 +419,33 @@ class Post extends Model
             $count = $post->likes()->count();
             return ['status' => 'liked', 'count' => $count];
         }
+    }
+
+    //for postdeletecontroller 
+    //delete post 
+    public static function deletepost($id){
+        $postid=Post::find($id);
+        if($postid){
+            return ['success'=>true,'post'=>$postid];
+        }   
+    }
+    //destroy post
+    public static function destroy($id)
+    {
+        $post = Post::find($id);       
+            if (!$post) {
+                return ['message' => 'Post not found'];
+            }        
+       
+            $post->delete();
+            return ['message' => 'Post deleted successfully'];
+    }
+    //postdetails
+    public static function postdetails($id){
+        $postdetail=Post::find($id);
+        $postcreated=Post::where('id',$id)->pluck('created_user_id');
+        $user=User::where('id',$postcreated)->pluck('name');
+        session(['user'=>$user]);
+        return ['postdetail'=>$postdetail,'user'=>$user];
     }
 }

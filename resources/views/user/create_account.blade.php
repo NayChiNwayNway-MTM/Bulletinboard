@@ -13,8 +13,9 @@
                 @csrf 
                 <div class="row mb-5">
                           <label for="" class="col-3 form-label">Name:<span class="text-danger">&#42;</span></label>
-                          <div class="col-sm-8"><input type="text" class="form-control" name="name">
+                          <div class="col-sm-8"><input type="text" class="form-control" name="name" value="{{  old('name') }}"  />
                             <span class="text-danger ">
+                            {{ $errors->first('nameerror') }}
                               @error('name')
                                 {{$message}}
                               @enderror
@@ -23,8 +24,9 @@
                 </div>
                 <div class="row mb-5">
                   <label class="col-3 form-label" for="">Email <span class="text-danger">&#42;</span></label>
-                  <div class="col-sm-8"><input type="email" name="email" id="" class="form-control" /> 
+                  <div class="col-sm-8"><input type="email" name="email" id="" class="form-control" value ="{{old('email')}}" /> 
                     <span class="text-danger ">
+                    {{ $errors->first('error') }}
                       @error('email')
                         {{$message}}
                       @enderror
@@ -35,7 +37,7 @@
                 <div  class="row mb-5">
                   <label class="col-3 form-label" for="">Password <span class="text-danger">&#42;</span></label>
                   <div class="col-sm-8 password">
-                    <input type="password" name="password" id="password" class="form-control" />
+                    <input type="password" name="password" id="password" class="form-control" value ="{{old('password')}}"/>
                     <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
                     <span class="text-danger ">
                       @error('password')
@@ -48,7 +50,7 @@
                 <div class="row mb-5">
                   <label class="col-3 form-label" for="">Confirm password <span class="text-danger">&#42;</span></label>
                   <div class="col-sm-8 password">
-                    <input type="password" name="confirm-password" id="con_password" class="form-control" />
+                    <input type="password" name="confirm-password" id="con_password" class="form-control" value ="{{old('confirm-password')}}" />
                     <i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
                     <span class="text-danger ">
                       @error('confirm-password')

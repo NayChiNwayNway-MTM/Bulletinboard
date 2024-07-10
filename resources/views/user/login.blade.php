@@ -24,12 +24,12 @@
                        
                         <div class="row mb-5">
                           <label for="" class="col-3 form-label">Email Address:<span class="text-danger">&#42;</span></label>
-                          <div class="col-sm-8"><input type="text" class="form-control" name="email"></div>
+                          <div class="col-sm-8"><input type="text" class="form-control" name="email" value="{{old('email')}}"></div>
                         </div>
                         <div class="row mb-5">
                               <label for="password" class="col-3 col-form-label">Password: <span class="text-danger">&#42;</span></label>
                               <div class="col-sm-8 password">
-                                  <input type="password" class="form-control" id="password" name="password">
+                                  <input type="password" class="form-control" id="password" name="password" value="{{old('password')}}">
                                   <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
                               </div>
 
