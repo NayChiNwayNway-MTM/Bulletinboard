@@ -70,14 +70,18 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:6',
-            'confirmpass' => 'required|same:password',
+            'pass' => 'required|min:6',
+            'confirmpass' => 'required|same:pass',
             'profile' => 'required|image|mimes:jpeg,jpg,png,svg|max:2048'
         ], [
             'name.required' => 'Name can\'t be blank.',
             'email.required' => 'Email can\'t be blank.',
+            'pass.required'=>'Password can\'t be blank.',
             'profile.required' => 'Profile can\'t be blank.',
-            'password.min'=>'Password at least six characer.',
+            'profile.image' => 'Profile must be an image.',
+            'profile.mimes' => 'Profile must be a file of type: jpeg, png, jpg.',
+            'profile.max' => 'Profile image must not exceed 2MB.',
+            'pass.min'=>'Password at least six characer.',
             'confirmpass.same' => 'Confirm Password must Same Password.',
         ]);
 
@@ -134,8 +138,8 @@ class UserController extends Controller
 
         $result = $this->userService->saveRegister($request,$type);
         
-       // dd($errors);
-        if(isset($result)){
+       // dd($result);
+        if(isset($result['back'])){
             $errors =$result['back'];
             return back()->withErrors($errors)->withInput();
         }
@@ -146,7 +150,9 @@ class UserController extends Controller
         //   if(isset($result['nameerror'])){
         //    return redirect()->back()->with(['nameerror'=>$request['nameerror']])->withInput();
         //   }
-       
+        if(isset($result['0'])){
+            return view('user.register'); 
+        }
        return view('user.register'); 
       
     }
@@ -199,9 +205,6 @@ class UserController extends Controller
         $email = $request->query('email');
         //dd($email);
         return view('user.reset_password',compact('user_token','email'));
-
-        //TDO::get id ,check validation,and save to database
-        //
     }
     //reset password and store new password
     public function submit_reset_password(Request $request){
@@ -240,7 +243,9 @@ class UserController extends Controller
         
         if(isset($result['success'])){
 
-            return redirect()->route('user')->with('success', $result['success']);
+            Auth::logout();
+            return redirect()->route('login')->with('success',$result['success']);
+           // return redirect()->route('user')->with('success', $result['success']);
         }
         if(isset($result['error'])){
            

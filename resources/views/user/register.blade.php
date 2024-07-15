@@ -39,11 +39,11 @@
                     <div class="row d-flex mb-5">
                       <div class="col-3 "><label for="" class="form-label float-end">Password<span class="text-danger">&#42;</span></label></div>
                       <div class="col-8 password">
-                        <input type="password" name="password" id="password" class="form-control password" value ="{{old('password')}}">
+                        <input type="password" name="pass" id="password" class="form-control password" value ="{{old('pass')}}">
                         <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
                       </div>
                       <span class="text-danger error">
-                              @error('password')
+                              @error('pass')
                                 {{$message}}
                               @enderror
                       </span>
@@ -75,7 +75,8 @@
                     </div>
                     <div class="row d-flex mb-5">
                       <div class="col-3 "><label for="" class="form-label float-end" style="right: 0;">Date of Birth</label></div>
-                      <div class="col-8"><input type="date" name="dob" class="form-control" value="{{old('dob')}}"></div>
+                      <div class="col-8"><input type="date" name="dob" id="datepicker" class="form-control"
+                       value="{{old('dob')}}" max="{{now()->format('Y-m-d')}}"></div>
                     </div>
                     <div class="row d-flex mb-5">
                       <div class="col-3 "><label for="" class="form-label float-end" style="right: 0;">Address</label></div>
@@ -86,10 +87,11 @@
                       <div class="col-8">
                         <input type="file" name="profile" class="form-control" value="{{old('profile')}}">
                           <span class="text-danger ">
-                                @error('profile')
-                                  {{$message}}
-                                @enderror
+                          @error('profile')
+                              <span class="text-danger">{{ $message }}</span>
+                          @enderror
                           </span>
+
                       </div>
                     </div>
                     <div class="row d-flex justify-content-around align-item-center mt-3 mb-5">

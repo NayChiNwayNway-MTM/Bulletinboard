@@ -33,7 +33,7 @@
             <div class="row d-flex mt-5">
               <div class="col-3"><label for="" class="form-label float-end">Password<span class="text-danger">&#42;</span></label></div>
               <div class="col-8">
-                <input type="password" name="password" id="password" class="form-control password" value="{{$users->password}}">
+                <input type="password" name="password" id="password" class="form-control password" value="{{$users->pass}}">
                 <i class="far fa-eye registereyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
                   <span class="text-danger ">
                     @error('password')

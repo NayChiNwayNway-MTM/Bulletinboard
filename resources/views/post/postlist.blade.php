@@ -50,7 +50,6 @@
 
         </form>
       </div>
-
     @endauth
     <div class="design_container">
       <div class="row d-block">
@@ -64,13 +63,14 @@
                     <th>Posted Date</th>
                     @auth
                     <th>Operation</th>
+                    <th>React</th>
                     @endauth
                   </tr>
                 </thead>        
                 <tbody>    
                     @if($postlist->isEmpty()) 
                     <tr>
-                      <td colspan="5">
+                      <td colspan="6">
                         <h6 class="text-center">Post Not Found</h6>
                       </td>
                     </tr>
@@ -91,12 +91,30 @@
                             <td>
                               <a href="{{route('post.edit',$list->id)}}" class="btn btn-warning">
                                 <i class="fa fa-edit"></i></a>
-                              <form action="" method="get" class="btn ">
+                              <form action="" method="get" class="btn">
                                 @csrf 
                                 @method('DELETE')
-                                <button class="btn btn-danger m-0 delete">
+                                <button  type="submit" class="btn btn-danger m-0 delete">
                                 <i class="fa fa-trash"></i> </button>
                               </form>
+                            </td>
+                            <td class="like-section">
+                                  <div class="text-start d-flex" id="{{$list->id}}">
+                                      <div>
+                                        <p  id="likeButton" class="me-2">
+                                            @if ($list->likes->contains('user_id', auth()->id()))
+                                                <i class="fa-solid fa-thumbs-up text-primary" ></i>
+                                            @else
+                                            <i class="fa-solid fa-thumbs-up"></i>
+                                            @endif
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p class="likeCount" id="likeCount{{ $list->id }}">
+                                                {{ $list->likes()->count() }} {{ Str::plural('like', $list->likes()->count()) }}
+                                        </p>
+                                      </div>
+                                  </div>
                             </td>
                             @endauth
                           </tr>
@@ -365,10 +383,28 @@
         }
     }
     //end for page top
+      //start like 
+        $(document).ready(function() {
+          $(document).on('click', '#likeButton', function(e) {
+                    e.preventDefault();
+                    let parent = $(this).closest('.text-start');
+                    let id = parent.attr('id');
+                    console.log(id);
+                    $.ajax({
+                        type: 'POST',
+                        url: `/posts/${id}/toggle_like`,                      
+                        success: function(response) {
+                          location.reload();
+                        }
+                    });
+                });
+        });
+      //end like
 </script>
 
 @endsection
 @if(session('error'))
+<!--postedit error-->
          <script>
             document.addEventListener('DOMContentLoaded', function () {
                 iziToast.show({

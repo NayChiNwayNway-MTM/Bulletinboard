@@ -39,12 +39,12 @@
                   <div class="col-sm-8 password">
                     <input type="password" name="password" id="password" class="form-control" value ="{{old('password')}}"/>
                     <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
-                    <span class="text-danger ">
+                  </div>
+                    <span class="text-danger error ">
                       @error('password')
                         {{$message}}
                       @enderror
-                    </span>  
-                  </div>               
+                    </span>         
                 </div>
 
                 <div class="row mb-5">
@@ -52,12 +52,13 @@
                   <div class="col-sm-8 password">
                     <input type="password" name="confirm-password" id="con_password" class="form-control" value ="{{old('confirm-password')}}" />
                     <i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
-                    <span class="text-danger ">
+                  </div>    
+                    <span class="text-danger error ">
                       @error('confirm-password')
                         {{$message}}
                       @enderror
                     </span>
-                  </div>                           
+                                        
                 </div>
                 <div class="row d-flex justify-content-around align-item-center mt-3 mb-3">
                     <div class="col-sm-6">

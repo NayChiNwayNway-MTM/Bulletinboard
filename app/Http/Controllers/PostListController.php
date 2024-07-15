@@ -191,8 +191,8 @@ class PostListController extends Controller
 
         }
           //post download with csv format
-          public function download_allpost(Request $request)
-          { 
+        public function download_allpost(Request $request)
+        { 
             
            $result = $this->postService->download_allpost($request);
           // dd($result);
@@ -219,7 +219,7 @@ class PostListController extends Controller
            }
           
         
-          }
+        }
         //search post for table
         public function search(Request $request){
             $text = $request->text;

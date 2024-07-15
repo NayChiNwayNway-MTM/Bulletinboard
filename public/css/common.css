@@ -407,6 +407,9 @@ body {
 .error{
   margin-left: 250px;
 }
+.loginerror{
+  margin-left: 200px;
+}
 .changepasserror{
   margin-left: 320px;
 }
@@ -434,3 +437,9 @@ body {
  margin-left: 180px;
 }
 /*for end user detail modal*/
+
+/* start postedit btn*/
+.btn{
+  margin-bottom: 0;
+}
+/*end postedit btn*/

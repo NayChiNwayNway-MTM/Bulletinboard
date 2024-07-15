@@ -421,21 +421,7 @@
                   });
               });
     });
-    //$(document).ready(function() {
-    //    $(document).on('click', '.like', function(e) {
-    //              e.preventDefault();
-    //              let parent = $(this).closest('.text-start');
-    //              let id = $(this).attr('id');
-    //              console.log(id);
-    //              $.ajax({
-    //                  type: 'POST',
-    //                  url: `/posts/${id}/toggle_like`,                      
-    //                  success: function(response) {
-    //                    location.reload();
-    //                  }
-    //              });
-    //          });
-    //  });
+ 
     //end like
 
 

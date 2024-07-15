@@ -50,10 +50,27 @@
     </div>
   </div>
 </section>
-
-
+<img src="{{asset('uploads/page_top.png')}}" alt="pagetop" class="pagetop" id="scrolltop" onclick="scrollToTop()">
 </div>
 @endsection
+<script>
+//start page top
+    function scrollToTop(){
+          window.scrollTo({
+            top:0,
+            behavior:'smooth'
+          })
+        }
+        window.onscroll = function(){
+          if(document.body.scrollTop > 20 || document.documentElement.scrollTop > 20 ){
+            document.getElementById('scrolltop').style.display = 'block'
+          }else{
+            document.getElementById('scrolltop').style.display = 'none'
+          }
+  }
+       //end page top
+</script>
+
 @if(Session::has('profileedited'))
           <script>
             document.addEventListener('DOMContentLoaded', function () {

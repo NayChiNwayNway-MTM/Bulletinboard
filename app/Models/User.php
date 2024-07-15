@@ -139,22 +139,22 @@ class User extends Authenticatable
     //for registration
     public static function registration($request,$imagePath){
         // Check for existing email and name
-//        $existingEmail = User::withTrashed()->where('email', $request->email)->first();
-//        $existingName = User::withTrashed()->where('name', $request->name)->first();
-//        // If email or name already exists and is not deleted
-//        if ($existingEmail && !$existingEmail->deleted_at) {
-//            return ['error' => 'The email already exists.'];
-//        }
-//
-//        if ($existingName && !$existingName->deleted_at) {
-//            return ['nameerror' => 'The name already exists.'];
-//        }
-//
-//        // If email or name exists and is soft-deleted
-//        if (($existingEmail && $existingEmail->deleted_at) || ($existingName && $existingName->deleted_at)) {
-//            return ['imagePath'=>$imagePath];
-//        }
-$existingEmail = User::where('email', $request->email)->first();
+        //        $existingEmail = User::withTrashed()->where('email', $request->email)->first();
+        //        $existingName = User::withTrashed()->where('name', $request->name)->first();
+        //        // If email or name already exists and is not deleted
+        //        if ($existingEmail && !$existingEmail->deleted_at) {
+        //            return ['error' => 'The email already exists.'];
+        //        }
+        //
+        //        if ($existingName && !$existingName->deleted_at) {
+        //            return ['nameerror' => 'The name already exists.'];
+        //        }
+        //
+        //        // If email or name exists and is soft-deleted
+        //        if (($existingEmail && $existingEmail->deleted_at) || ($existingName && $existingName->deleted_at)) {
+        //            return ['imagePath'=>$imagePath];
+        //        }
+     $existingEmail = User::where('email', $request->email)->first();
         if ($existingEmail && !$existingEmail->deleted_at) {
             $errors['error'] = 'The email already exists.';
         }
@@ -256,9 +256,6 @@ $existingEmail = User::where('email', $request->email)->first();
                 }
                // return ['nameerror' => 'The name already exists.'];
             }
-    
-            
-            
             // Create a new user if no existing user is found
             $user = new User();
             $user->name = $request->name;

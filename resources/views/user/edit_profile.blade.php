@@ -49,7 +49,8 @@
           </div>
           <div class="row d-flex mt-5">
             <div class="col-3 "><label for="" class="form-label float-end">Date of Birth</label></div>
-            <div class="col-8"><input type="date" name="dob" class="form-control" value="{{$user->dob}}"></div>
+            <div class="col-8"><input type="date" name="dob" class="form-control"
+             value="{{$user->dob}}" max="{{now()->format('Y-m-d')}}"></div>
           </div>
           <div class="row d-flex mt-5">
             <div class="col-3 "><label for="" class="form-label float-end">Address</label></div>
@@ -89,4 +90,22 @@
   </div>
 </section>
 
+<img src="{{asset('uploads/page_top.png')}}" alt="pagetop" class="pagetop" id="scrolltop" onclick="scrollToTop()">
 @endsection
+<script>
+//start page top
+    function scrollToTop(){
+          window.scrollTo({
+            top:0,
+            behavior:'smooth'
+          })
+        }
+        window.onscroll = function(){
+          if(document.body.scrollTop > 20 || document.documentElement.scrollTop > 20 ){
+            document.getElementById('scrolltop').style.display = 'block'
+          }else{
+            document.getElementById('scrolltop').style.display = 'none'
+          }
+  }
+       //end page top
+</script>

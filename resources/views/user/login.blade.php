@@ -24,24 +24,34 @@
                        
                         <div class="row mb-5">
                           <label for="" class="col-3 form-label">Email Address:<span class="text-danger">&#42;</span></label>
-                          <div class="col-sm-8"><input type="text" class="form-control" name="email" value="{{old('email')}}"></div>
+                          <div class="col-sm-8"><input type="text" id="email" class="form-control" name="email"/>
+                              <span class="text-danger">
+                                @error('email')
+                                {{$message}}
+                                @enderror
+                              </span>
+                           </div>
                         </div>
                         <div class="row mb-5">
                               <label for="password" class="col-3 col-form-label">Password: <span class="text-danger">&#42;</span></label>
                               <div class="col-sm-8 password">
-                                  <input type="password" class="form-control" id="password" name="password" value="{{old('password')}}">
-                                  <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
+                                  <input type="password" class="form-control" id="password" name="password"/>
+                                  <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" 
+                                  data-bs-placement="top" title="Show Password"></i>
                               </div>
-
+                                  <span class="text-danger loginerror">
+                                    @error('password')
+                                    {{$message}}
+                                    @enderror
+                                  </span>                            
                         </div>
-
                         <div class="row mb-5">
                           <div class="col-3"></div>
                           <div class="col-md-8">
                             <div class="d-flex justify-content-around align-items-center mb-4">
                               <div class="form-check">
-                                <input type="checkbox" class="form-check-input" value="">
-                                <label for="" class="form-check-label">Remember me</label>
+                                <input type="checkbox" id="rememberMe" class="form-check-input" value="" >
+                                <label for=""  class="form-check-label">Remember me</label>
                               </div>
                               <a href="{{route('forget.password.get')}}" class="link-underline link-underline-opacity-0">Forgot passwords?</a>
                             </div>
@@ -101,6 +111,19 @@
                 });
             });
          </script>
+@elseif(Session::has('error'))
+<!--password change error invalid token  come from modelusersubmit_reset_password-->
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.show({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom-danger',
+                   
+                    message: `{{ Session::get('error') }}`
+                });
+            });
+         </script>
 @elseif(Session::has('incorrect'))
          <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -113,5 +136,18 @@
                 });
             });
          </script>  
-        
-  @endif
+@elseif(Session::has('success'))
+<!--user change password from profile edited-->
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                   
+                    message: `{{ Session::get('success') }}`
+                });
+            });
+         </script>  
+@endif      
+

@@ -87,9 +87,29 @@
                                     <h5 class="card-title">{{ $list->title }}</h5>
                                     <p class="card-text">{{ $list->description }}</p>
                                 </div>
-                                <div class="card-footer mt-auto text-end"> 
-                                    <button class=" post_detail_card view" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="view"><i class="fa fa-eye fa-lg"></i></button>
+                                <div class="card-footer mt-auto d-flex justify-content-between align-items-center "> 
+                                  <div class="text-start pt-3 d-flex" id="{{$list->id}}">
+                                      <div>
+                                        <p  id="likeButton" class="me-2 align-middle">
+                                            @if ($list->likes->contains('user_id', auth()->id()))
+                                                <i class="fa-solid fa-thumbs-up text-primary" ></i>
+                                            @else
+                                            <i class="fa-solid fa-thumbs-up"></i>
+                                            @endif
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p class="likeCount" id="likeCount{{ $list->id }}">
+                                                {{ $list->likes()->count() }} {{ Str::plural('like', $list->likes()->count()) }}
+                                        </p>
+                                      </div>
+                                  </div>
+                                  <div class="text-end">
+                                    <button class=" post_detail_card view" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                     data-bs-title="view"><i class="fa fa-eye fa-lg"></i></button>
+                                  </div>
                                 </div>
+                               
                             </div>
                         </div>                    
                       @endforeach
@@ -354,8 +374,24 @@
           document.getElementById('scrolltop').style.display = 'none'
         }
       }
-    //enf page top
-
+    //end page top
+  //start like 
+    $(document).ready(function() {
+            $(document).on('click', '#likeButton', function(e) {
+                      e.preventDefault();
+                      let parent = $(this).closest('.text-start');
+                      let id = parent.attr('id');
+                      console.log(id);
+                      $.ajax({
+                          type: 'POST',
+                          url: `/posts/${id}/toggle_like`,                      
+                          success: function(response) {
+                            location.reload();
+                          }
+                      });
+                  });
+    });
+  //end like
 </script>
 
 @endsection

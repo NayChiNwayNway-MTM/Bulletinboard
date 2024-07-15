@@ -13,8 +13,10 @@
         <div class="row d-flex mt-3">
           <div class="col-4 "><label for="" class="form-label float-end">Current Password<span class="text-danger">&#42;</span></label></div>
           <div class="col-6 password">
-            <input type="password" name="cur_pass" id="password" class="form-control" value="">
-            <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
+            <input type="password" name="cur_pass" id="password" class="form-control"
+             value="{{old('cur_pass')}}">
+            <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip"
+             data-bs-placement="top" title="Show Password"></i>
           </div>  
           <span class="text-danger changepasserror">
                 @error('cur_pass')
@@ -26,8 +28,10 @@
         <div class="row d-flex mt-3">
           <div class="col-4 "><label for="" class="form-label float-end">New Password<span class="text-danger">&#42;</span></label></div>
           <div class="col-6 password">
-            <input type="password" name="new_pass" id="new_password" class="form-control" value="">
-            <i class="far fa-eye eyeicon" id="new_togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
+            <input type="password" name="new_pass" id="new_password" class="form-control"
+             value="{{old('new_pass')}}">
+            <i class="far fa-eye eyeicon" id="new_togglePassword" data-bs-toggle="tooltip"
+             data-bs-placement="top" title="Show Password"></i>
           </div>     
             <span class="text-danger changepasserror ">
                 @error('new_pass')
@@ -38,8 +42,10 @@
         <div class="row d-flex mt-3">
           <div class="col-4 "><label for="" class="form-label float-end">New Confirm Password<span class="text-danger">&#42;</span></label></div>
           <div class="col-6 password_new">
-          <input type="password" name="con_new_pass" id="con_password" class="form-control" value="">
-            <i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
+          <input type="password" name="con_new_pass" id="con_password" class="form-control"
+           value="{{old('con_new_pass')}}">
+            <i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip"
+             data-bs-placement="top" title="Show Password"></i>
             
           </div>   
               <span class="text-danger changepasserror">

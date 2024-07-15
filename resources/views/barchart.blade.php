@@ -171,8 +171,8 @@
       );
     //end barchart
 
-
-   const jsonuserdata = <?php echo json_encode($userActivity);?>;
+    //start for doughnut chart
+      const jsonuserdata = <?php echo json_encode($userActivity);?>;
    
       const labels = jsonuserdata.map(user => user.name);
       const data = jsonuserdata.map(user => user.post_count);
@@ -200,17 +200,16 @@
                 }
                 return colors;
       }
-
-            // Function to lighten a color
-            function lightenColor(color, percent) {
-                const num = parseInt(color.slice(1), 16),
-                    amt = Math.round(2.55 * percent),
-                    R = (num >> 16) + amt,
-                    G = (num >> 8 & 0x00FF) + amt,
-                    B = (num & 0x0000FF) + amt;
-                return `#${(0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1).toUpperCase()}`;
-            }
-  
+      // Function to lighten a color
+      function lightenColor(color, percent) {
+        const num = parseInt(color.slice(1), 16),
+        amt = Math.round(2.55 * percent),
+        R = (num >> 16) + amt,
+        G = (num >> 8 & 0x00FF) + amt,
+        B = (num & 0x0000FF) + amt;
+        return `#${(0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1).toUpperCase()}`;
+      }
+    //end for doughnut chart
   </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @endsection

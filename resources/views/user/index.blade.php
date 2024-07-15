@@ -389,16 +389,3 @@
     </script>
 </section>
 @endsection
-@if(Session::has('success'))
-          <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                iziToast.success({
-                    title: '',
-                    position: 'topRight',
-                    class: 'iziToast-custom',
-                   
-                    message: `{{ Session::get('success') }}`
-                });
-            });
-         </script>  
-@endif

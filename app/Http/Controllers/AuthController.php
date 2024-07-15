@@ -101,6 +101,9 @@ class AuthController extends Controller
         $request->validate([
             'email'=>'required',
             'password'=>'required'
+        ],[
+            'email.required'=>"Email can't be blank. ",
+            'password.required'=>"Password can't be blank"
         ]);
        $credential=$request->except('_token');
         if (Auth::attempt($credential)) {
