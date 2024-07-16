@@ -102,7 +102,8 @@ class PostListController extends Controller
                 ]); 
          $this->postService->store($request);      
    
-            return view('post.create_post');
+            //return view('post.postlist');
+            return redirect()->route('postlist');
         }
         
         //post edit 
@@ -172,22 +173,33 @@ class PostListController extends Controller
         //post download with csv format
         public function export(Request $request)
         { 
-           $result = $this->postService->export($request);
-           $posts = $result['posts'];
+            $result = $this->postService->export($request);
+            $posts = $result['posts'];
             return new StreamedResponse(function () use ($posts) {
                 $handle = fopen('php://output', 'w');
-               fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
-                                   'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
-               foreach ($posts as $post) {
-                    fputcsv($handle, [$post->id, $post->title, $post->description,
-                            $post->status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
-                           $post->created_at,$post->updated_at,$post->deleted_at]);
-               }
-                   fclose($handle);
-               }, 200, [
+                fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
+                                    'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
+                                    foreach ($posts as $post) {
+                                        $status = $post->status == 1 ? 'Active' : 'Inactive';
+                                        fputcsv($handle, [
+                                            $post->id, 
+                                            $post->title, 
+                                            $post->description,
+                                            $status, // Use the converted status here
+                                            $post->created_user_id, 
+                                            $post->updated_user_id, 
+                                            $post->deleted_user_id,
+                                            $post->created_at, 
+                                            $post->updated_at, 
+                                            $post->deleted_at
+                                        ]);
+                                    }
+                    fclose($handle);
+                }, 200, [
                     'Content-Type' => 'text/csv',
-                   'Content-Disposition' => 'attachment; filename="posts.csv"',
-               ]);   
+                    'Content-Disposition' => 'attachment; filename="posts.csv"',
+                ]);   
+
 
         }
           //post download with csv format
@@ -206,8 +218,9 @@ class PostListController extends Controller
              fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
                                  'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
              foreach ($posts as $post) {
+                $status = $post->status == 1 ? 'Active' : 'Inactive';
                   fputcsv($handle, [$post->id, $post->title, $post->description,
-                          $post->status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
+                        $status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
                          $post->created_at,$post->updated_at,$post->deleted_at]);
              }
                  fclose($handle);

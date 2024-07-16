@@ -13,7 +13,8 @@
                 @csrf 
                 <div class="row mb-5">
                           <label for="" class="col-3 form-label">Name:<span class="text-danger">&#42;</span></label>
-                          <div class="col-sm-8"><input type="text" class="form-control" name="name" value="{{  old('name') }}"  />
+                          <div class="col-sm-8"><input type="text" class="form-control" name="name" 
+                          value="{{  old('name') }}"  autofocus/>
                             <span class="text-danger ">
                             {{ $errors->first('nameerror') }}
                               @error('name')

@@ -69,7 +69,13 @@
             </div>
             <div class="row d-flex mt-5">
               <div class="col-3"><label for="" class="form-label float-end">Phone</label></div>
-              <div class="col-8"><input type="text" name="phone" class="form-control" value="{{$users->phone}}"></div>
+              <div class="col-8"><input type="text" name="phone" class="form-control" value="{{$users->phone}}">
+              <span class="text-danger ">
+                    @error('phone')
+                      {{$message}}
+                    @enderror
+              </span>
+            </div>
             </div>
             <div class="row d-flex mt-5">
               <div class="col-3"><label for="" class="form-label float-end">Date of Birth</label></div>

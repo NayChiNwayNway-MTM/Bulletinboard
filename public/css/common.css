@@ -443,3 +443,8 @@ body {
   margin-bottom: 0;
 }
 /*end postedit btn*/
+
+.active>.page-link, .page-link.active {
+  z-index: 0;
+  
+}

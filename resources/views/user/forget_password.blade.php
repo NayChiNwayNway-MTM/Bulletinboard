@@ -16,7 +16,7 @@
                     </p>
                     <div data-mdb-input-init class="form-outline mt-3">
                         <label class="form-label" for="typeEmail">Email input</label>
-                        <input type="email" id="typeEmail" name="email" class="form-control my-3" />
+                        <input type="email" id="typeEmail" name="email" class="form-control my-3" autofocus />
                         <span class="text-danger ">
                           @error('email')
                             {{$message}}

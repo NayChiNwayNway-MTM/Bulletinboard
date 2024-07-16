@@ -438,5 +438,18 @@
                 });
             });
          </script>     
- @endif
+
+ @elseif(Session::has('postcreated'))
+         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.success({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom',
+                   
+                    message: `{{ Session::get('postcreated') }}`
+                });
+            });
+         </script>       
+  @endif
  

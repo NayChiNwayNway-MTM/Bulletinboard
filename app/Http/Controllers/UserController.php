@@ -72,7 +72,9 @@ class UserController extends Controller
             'email' => 'required|email',
             'pass' => 'required|min:6',
             'confirmpass' => 'required|same:pass',
-            'profile' => 'required|image|mimes:jpeg,jpg,png,svg|max:2048'
+            'profile' => 'required|image|mimes:jpeg,jpg,png,svg|max:2048',
+            'phone' => 'nullable|numeric|digits_between:5,11',
+           
         ], [
             'name.required' => 'Name can\'t be blank.',
             'email.required' => 'Email can\'t be blank.',
@@ -131,6 +133,8 @@ class UserController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:6',
             'confirmpass' => 'required|same:password',
+            'phone' => 'nullable|numeric|digits_between:5,11',
+            
         ], [
             'name.required' => 'Name can\'t be blank.',
             'email.required' => 'Email can\'t be blank.',
@@ -142,6 +146,9 @@ class UserController extends Controller
         if(isset($result['back'])){
             $errors =$result['back'];
             return back()->withErrors($errors)->withInput();
+        }
+        if(isset($result['error'])){
+            return back()->withErrors($result['error'])->withInput();
         }
         //   //dd($type);
         //   if(isset($result['error'])){

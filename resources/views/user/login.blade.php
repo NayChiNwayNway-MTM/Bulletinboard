@@ -24,7 +24,8 @@
                        
                         <div class="row mb-5">
                           <label for="" class="col-3 form-label">Email Address:<span class="text-danger">&#42;</span></label>
-                          <div class="col-sm-8"><input type="text" id="email" class="form-control" name="email"/>
+                          <div class="col-sm-8"><input type="text" id="email" class="form-control"
+                           name="email" value="{{old('email')}}" autofocus/>
                               <span class="text-danger">
                                 @error('email')
                                 {{$message}}
@@ -35,9 +36,10 @@
                         <div class="row mb-5">
                               <label for="password" class="col-3 col-form-label">Password: <span class="text-danger">&#42;</span></label>
                               <div class="col-sm-8 password">
-                                  <input type="password" class="form-control" id="password" name="password"/>
+                                  <input type="password" class="form-control" id="password" name="password"
+                                   value="{{old('password')}}"/>
                                   <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" 
-                                  data-bs-placement="top" title="Show Password"></i>
+                                  data-bs-placement="bottom" title="Show Password"></i>
                               </div>
                                   <span class="text-danger loginerror">
                                     @error('password')
@@ -50,8 +52,8 @@
                           <div class="col-md-8">
                             <div class="d-flex justify-content-around align-items-center mb-4">
                               <div class="form-check">
-                                <input type="checkbox" id="rememberMe" class="form-check-input" value="" >
-                                <label for=""  class="form-check-label">Remember me</label>
+                                <input type="checkbox" id="rememberMe" name="rememberMe" class="form-check-input" value="remember">
+                                <label for="rememberMe"  class="form-check-label">Remember me</label>
                               </div>
                               <a href="{{route('forget.password.get')}}" class="link-underline link-underline-opacity-0">Forgot passwords?</a>
                             </div>
@@ -60,7 +62,7 @@
                         <div class="row mb-5 justify-content-center align-items-center">
                           <div class="col-4"></div>
                             <div class="col-sm-7 justify-content-center align-items-center">
-                                <button class="btn btn-primary col-md-6">Login</button>
+                                <button class="btn btn-primary col-md-6" onclick="lsRememberMe()">Login</button>
                             </div>
                         </div>
                         <div class="row text-center mt-5">
@@ -70,7 +72,7 @@
                             </svg>
                           </a>
                         </div>
-                    `</form> 
+                    </form> 
                     </div>
                   </div>
                 
@@ -83,9 +85,36 @@
   </div>
     
 </section>
-   
+
 
 @endsection
+
+<script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const rmCheck = document.getElementById("rememberMe"),
+                emailInput = document.getElementById("email");
+
+            // Check if localStorage has saved data for remember me
+            if (localStorage.getItem("checkbox") === "remember") {
+                rmCheck.checked = true;
+                emailInput.value = localStorage.getItem("username");
+            } else {
+                rmCheck.checked = false;
+                emailInput.value = "";
+            }
+
+            window.lsRememberMe = function() {
+                if (rmCheck.checked && emailInput.value !== "") {
+                    localStorage.setItem("username", emailInput.value);
+                    localStorage.setItem("checkbox", "remember");
+                } else {
+                    localStorage.removeItem("username");
+                    localStorage.removeItem("checkbox");
+                }
+            }
+        });
+</script>
+
 @if(Session::has('reset_pass'))
          <script>
             document.addEventListener('DOMContentLoaded', function () {

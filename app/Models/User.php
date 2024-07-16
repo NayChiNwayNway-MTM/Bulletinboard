@@ -65,7 +65,7 @@ class User extends Authenticatable
     public static function getUsersWithCreators($pageSize)
     {
         // Get paginated users
-        $users = self::whereNull('deleted_at')->paginate($pageSize);
+        $users = self::whereNull('deleted_at')->latest()->paginate($pageSize);
         
         // Fetch the created users' names using a single query
         $createdUserIds = $users->pluck('created_user_id')->filter()->unique()->toArray();
@@ -89,6 +89,7 @@ class User extends Authenticatable
         $users = self::whereNull('deleted_at')
                      ->where('created_user_id', $authUserId)
                      ->with('createdBy')
+                     ->latest()
                      ->paginate($pageSize);
 
         // Initialize names array
@@ -103,7 +104,7 @@ class User extends Authenticatable
     }
     //userlist cardview for admin
     public static function getUserswithCreatorsCard($pageSize){
-        $users = User::whereNull('deleted_at')->paginate($pageSize);
+        $users = User::whereNull('deleted_at')->latest()->paginate($pageSize);
                 
                 // Fetch the created users' names using a single query
                 $createdUserIds = $users->pluck('created_user_id')->filter()->unique()->toArray();
@@ -125,6 +126,7 @@ class User extends Authenticatable
         $users = User::whereNull('deleted_at')
         ->where('created_user_id', auth()->user()->id)
         ->with('createdBy')
+        ->latest()
         ->paginate($pageSize);
 
             // Initialize names array
@@ -138,22 +140,7 @@ class User extends Authenticatable
     }
     //for registration
     public static function registration($request,$imagePath){
-        // Check for existing email and name
-        //        $existingEmail = User::withTrashed()->where('email', $request->email)->first();
-        //        $existingName = User::withTrashed()->where('name', $request->name)->first();
-        //        // If email or name already exists and is not deleted
-        //        if ($existingEmail && !$existingEmail->deleted_at) {
-        //            return ['error' => 'The email already exists.'];
-        //        }
-        //
-        //        if ($existingName && !$existingName->deleted_at) {
-        //            return ['nameerror' => 'The name already exists.'];
-        //        }
-        //
-        //        // If email or name exists and is soft-deleted
-        //        if (($existingEmail && $existingEmail->deleted_at) || ($existingName && $existingName->deleted_at)) {
-        //            return ['imagePath'=>$imagePath];
-        //        }
+       
      $existingEmail = User::where('email', $request->email)->first();
         if ($existingEmail && !$existingEmail->deleted_at) {
             $errors['error'] = 'The email already exists.';
@@ -202,34 +189,41 @@ class User extends Authenticatable
             // Check for existing email and name, including soft-deleted users
             $existingEmail = User::withTrashed()->where('email', $request->email)->first();
             $existingName = User::withTrashed()->where('name', $request->name)->first();
-            
+           // dd($existingName);
             // Restore or update user if email exists and is soft-deleted
-            if ($existingEmail) {
-                if ($existingEmail->deleted_at) {
-                    $existingEmail->restore();
-                    $existingEmail->update([
-                        'name' => $request->name,
-                        'email' => $request->email,
-                        'password' => Hash::make($request->password),
-                        'profile' => $imagePath,
-                        'type' => $typeValue,
-                        'phone' => $request->phone,
-                        'address' => $request->address,
-                        'dob' => $request->dob,
-                        'created_at'=>Carbon::now(),
-                        'updated_at'=>Carbon::now(),
-                        'created_user_id' => auth()->user()->id,
-                        'updated_user_id' => auth()->user()->id,
-                    ]);
-                    
-                    Session::flash('register', 'Registered successfully.');
-                    //return redirect()->route('user.register');
-                   // return ['back'];
-                    return ['existingEmail'=>$existingEmail];
-                }
-                //return ['error' => 'The email already exists.'];
+            try{
+                DB::transaction(function () use ($existingEmail, $existingName, $request, $typeValue, $imagePath) {
+                    if ($existingEmail) {
+                        if ($existingEmail->deleted_at ) {
+                            $existingEmail->restore();
+                            $existingEmail->update([
+                                'name' => $request->name,
+                                'email' => $request->email,
+                                'password' => Hash::make($request->password),
+                                'profile' => $imagePath,
+                                'type' => $typeValue,
+                                'phone' => $request->phone,
+                                'address' => $request->address,
+                                'dob' => $request->dob,
+                                'created_at'=>Carbon::now(),
+                                'updated_at'=>Carbon::now(),
+                                'created_user_id' => auth()->user()->id,
+                                'updated_user_id' => auth()->user()->id,
+                            ]);
+                            
+                            Session::flash('register', 'Registered successfully.');
+                            //return redirect()->route('user.register');
+                        // return ['back'];
+                            return ['existingEmail'=>$existingEmail];
+                        }
+                        //return ['error' => 'The email already exists.'];
+                    }
+                });
+            }catch (\Illuminate\Database\QueryException $e) {
+
+                    Session::flash('fill', 'Registered Unsuccessful.');
+                    return ['error' => 'Register Unsuccessful.'];
             }
-    
             // Restore or update user if name exists and is soft-deleted
             if ($existingName) {
                 if ($existingName->deleted_at) {
@@ -446,15 +440,21 @@ class User extends Authenticatable
             // Check for existing email and name, including soft-deleted users
             $existingEmail = User::withTrashed()->where('email', $request->email)->first();
             $existingName = User::withTrashed()->where('name', $request->name)->first();
-
+            $phone='';
+            $address='';
+            $dob=null;
             if ($existingEmail ) {
                 if ($existingEmail->deleted_at) {
                     $existingEmail->restore();
-                    
+                    $profile='uploads/profile.jpg';
                     // Update existing user data
                     $existingEmail->name = $request->name;
                     $existingEmail->email = $request->email;
                     $existingEmail->password = Hash::make($request->password);
+                    $existingEmail->profile =$profile;
+                    $existingEmail->phone=$phone;
+                    $existingEmail->address=$address;
+                    $existingEmail->dob=$dob;
                     $existingEmail->created_at = Carbon::now();
                     $existingEmail->updated_at = Carbon::now();
                     $existingEmail->created_user_id = 1; // Assuming default user ID
@@ -471,12 +471,16 @@ class User extends Authenticatable
             if ($existingName) {
                 if ($existingName->deleted_at) {
                     $existingName->restore();
-            
+                    $profile='uploads/profile.jpg';
                     // Create a new user instance
                     $newUser = new User();
                     $newUser->name = $request->name;
                     $newUser->email = $request->email;
                     $newUser->password = Hash::make($request->password);
+                    $existingEmail->profile =$profile;
+                    $existingEmail->phone=$phone;
+                    $existingEmail->address=$address;
+                    $existingEmail->dob=$dob;
                     $newUser->created_at = Carbon::now();
                     $newUser->updated_at = Carbon::now();
                     $newUser->created_user_id = 1; // Assuming default user ID
@@ -492,7 +496,7 @@ class User extends Authenticatable
             $data = new User();
             $data->name=$request->name;
             $data->email=$request->email;
-            $data->password= Hash::make($request->password);
+            $data->password= Hash::make($request->password);            
             $data->created_at=Carbon::now();
             $data->updated_at=Carbon::now();
             $data->created_user_id=1;

@@ -248,12 +248,12 @@
             }
         });
         $(document).ready(function(){
-      var form=$('#search_form');
-      
-      $('#search_user').on('click',function(){
-        form.attr('action','{{url("/search")}}');
-      })
-    });
+            var form=$('#search_form');
+            
+            $('#search_user').on('click',function(){
+              form.attr('action','{{url("/search")}}');
+            })
+        });
         // start delete user 
         $(document).ready(function(){
          

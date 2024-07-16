@@ -14,7 +14,7 @@
           <div class="col-4 "><label for="" class="form-label float-end">Current Password<span class="text-danger">&#42;</span></label></div>
           <div class="col-6 password">
             <input type="password" name="cur_pass" id="password" class="form-control"
-             value="{{old('cur_pass')}}">
+             value="{{old('cur_pass')}}" autofocus>
             <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip"
              data-bs-placement="top" title="Show Password"></i>
           </div>  

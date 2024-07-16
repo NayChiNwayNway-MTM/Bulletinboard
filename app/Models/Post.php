@@ -35,20 +35,20 @@ class Post extends Model
         if(Auth::check()){
             if(auth()->user()->type == 1){
                 $postlist = Post::where('created_user_id', auth()->user()->id )
-                                
+                                ->latest()
                                 ->paginate($pageSize);
                 $users = User::all();
                
                 return ['postlist'=>$postlist ,'users'=>$users,'pageSize'=>$pageSize];
             }else{
                 
-                $postlist=Post::with('user')->paginate($pageSize);
+                $postlist=Post::with('user')->latest()->paginate($pageSize);
                 $users = User::all();
                 return ['postlist'=>$postlist, 'users'=>$users,'pageSize'=>$pageSize];
             }
         }
         else{
-            $postlist=Post::where('status',1)->paginate($pageSize);
+            $postlist=Post::where('status',1)->latest()->paginate($pageSize);
             $users = User::all();
             return ['postlist'=>$postlist,'users'=>$users,'pageSize'=>$pageSize];
            
@@ -59,20 +59,20 @@ class Post extends Model
         if(Auth::check()){
             if(auth()->user()->type == 1){
                 $postlist = Post::where('created_user_id', auth()->user()->id )
-                                
+                                ->latest()
                                 ->paginate($pageSize);
                 $users = User::all();
                
                 return ['postlist'=>$postlist, 'users'=>$users,'pageSize'=>$pageSize];
             }else{
                 
-                $postlist=Post::with('user')->paginate($pageSize);
+                $postlist=Post::with('user')->latest()->paginate($pageSize);
                 $users = User::all();
                 return ['postlist'=>$postlist, 'users'=>$users,'pageSize'=>$pageSize];
             }
         }
         else{
-            $postlist=Post::where('status',1)->paginate($pageSize);
+            $postlist=Post::where('status',1)->latest()->paginate($pageSize);
             $users = User::all();
             return ['postlist'=>$postlist, 'users'=>$users,'pageSize'=>$pageSize];
         }
@@ -81,13 +81,13 @@ class Post extends Model
     public static function all_postlist($pageSize){
         if(Auth::check()){
             if(auth()->user()->type == 1){
-                $postlist = Post::with('user')->where('status','1')->paginate($pageSize);
+                $postlist = Post::with('user')->where('status','1')->latest()->paginate($pageSize);
                 $users = User::all();
                
                 return ['postlist'=> $postlist, 'users'=>$users,'pageSize'=>$pageSize];
             }else{
                 
-                $postlist=Post::with('user')->paginate($pageSize);
+                $postlist=Post::with('user')->latest()->paginate($pageSize);
                 $users = User::all();
                 return ['postlist'=> $postlist, 'users'=>$users,'pageSize'=>$pageSize];
             }
@@ -97,14 +97,14 @@ class Post extends Model
     public static function all_postlist_card($pageSize){
         if(Auth::check()){
             if(auth()->user()->type == 1){
-                $postlist = Post::with('user')->where('status','1')->paginate($pageSize);
+                $postlist = Post::with('user')->where('status','1')->latest()->paginate($pageSize);
                 $users = User::all();
                
                 return ['postlist'=>$postlist, 'users'=>$users,'pageSize'=>$pageSize];
             }
             else{
                 
-                $postlist=Post::with('user')->paginate($pageSize);
+                $postlist=Post::with('user')->latest()->paginate($pageSize);
                 $users = User::all();
                 return ['postlist'=>$postlist, 'users'=>$users,'pageSize'=>$pageSize];
             }
@@ -307,6 +307,7 @@ class Post extends Model
                                       ->orWhere('description', 'like', '%' . $text . '%');
                             })
                             ->where('created_user_id', auth()->user()->id)
+                            ->latest()
                             ->paginate($pageSize);
                            
             }
@@ -314,6 +315,7 @@ class Post extends Model
             else{
                return  Post::where('title', 'like', '%'.$text.'%')
                                 ->orWhere('description', 'like', '%'.$text.'%')
+                                ->latest()
                                 ->paginate($pageSize);
             }
            
@@ -326,6 +328,7 @@ class Post extends Model
                                   ->orWhere('description', 'like', '%' . $text . '%');
                         })
                         ->where('created_user_id', auth()->user()->id)
+                        ->latest()
                         ->paginate($pageSize);
                        
         }
@@ -333,6 +336,7 @@ class Post extends Model
         else{
             return Post::where('title', 'like', '%'.$text.'%')
                             ->orWhere('description', 'like', '%'.$text.'%')
+                            ->latest()
                             ->paginate($pageSize);
         }
         
@@ -347,12 +351,14 @@ class Post extends Model
                 ->where(function ($query) use ($text) {
                     $query->where('title', 'like', '%'.$text.'%')
                           ->orWhere('description', 'like', '%'.$text.'%');
-                })->paginate($pageSize);  
+                })->latest()
+                ->paginate($pageSize);  
             }
         
             else{
                 return Post::where('title', 'like', '%'.$text.'%')
                                 ->orWhere('description', 'like', '%'.$text.'%')
+                                ->latest()
                                 ->paginate($pageSize);
             }
         }else{
@@ -369,13 +375,14 @@ class Post extends Model
                             $query->where('title', 'like', '%' . $text . '%')
                                   ->orWhere('description', 'like', '%' . $text . '%');
                         })
-                       
+                        ->latest()
                         ->paginate($pageSize);
                        
         } 
         else{
             return Post::where('title', 'like', '%'.$text.'%')
                             ->orWhere('description', 'like', '%'.$text.'%')
+                            ->latest()
                             ->paginate($pageSize);
         }
     }

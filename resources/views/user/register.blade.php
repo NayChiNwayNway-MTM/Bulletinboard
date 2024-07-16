@@ -15,8 +15,9 @@
                   <div class="row d-flex mb-5">
                     <div class="col-3 "><label for="" class="form-label float-end">Name<span class="text-danger">&#42;</span></label></div>
                       <div class="col-8">
-                        <input type="text" name="name" class="form-control" value="{{ old('name') }}">
+                        <input type="text" name="name" class="form-control" value="{{ old('name') }}" autofocus>
                           <span class="text-danger ">
+                          
                           {{ $errors->first('nameerror') }}
                             @error('name')
                               {{$message}}
@@ -71,7 +72,13 @@
                     </div>
                     <div class="row d-flex mb-5">
                       <div class="col-3 "><label for="" class="form-label float-end">Phone</label></div>
-                      <div class="col-8"><input type="text" name="phone" class="form-control" value="{{old('phone')}}"></div>
+                      <div class="col-8"><input type="text" name="phone" class="form-control" value="{{old('phone')}}">
+                      <span class="text-danger ">
+                          @error('phone')
+                              <span class="text-danger">{{ $message }}</span>
+                          @enderror
+                          </span>
+                    </div>
                     </div>
                     <div class="row d-flex mb-5">
                       <div class="col-3 "><label for="" class="form-label float-end" style="right: 0;">Date of Birth</label></div>
@@ -141,6 +148,18 @@
                     class: 'iziToast-custom',
                    
                     message: `{{ Session::get('register') }}`
+                });
+            });
+         </script>  
+@elseif(Session::has('fill'))
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                iziToast.show({
+                    title: '',
+                    position: 'topRight',
+                    class: 'iziToast-custom-danger',
+                   
+                    message: `{{ Session::get('fill') }}`
                 });
             });
          </script>  

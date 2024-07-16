@@ -105,7 +105,8 @@ class AuthController extends Controller
             'email.required'=>"Email can't be blank. ",
             'password.required'=>"Password can't be blank"
         ]);
-       $credential=$request->except('_token');
+       $credential=$request->except('_token','rememberMe');
+      
         if (Auth::attempt($credential)) {
             if(auth()->user()->type == 0){
                 return redirect()->route('all_postlist'); 

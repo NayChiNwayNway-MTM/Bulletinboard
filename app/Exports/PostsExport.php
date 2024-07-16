@@ -5,7 +5,9 @@ namespace App\Exports;
 use App\Models\Post;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-class PostsExport implements FromCollection, WithHeadings
+use Maatwebsite\Excel\Concerns\WithMapping;
+
+class PostsExport implements FromCollection, WithHeadings,WithMapping
 {
     /**
     * @return \Illuminate\Support\Collection
@@ -28,6 +30,21 @@ class PostsExport implements FromCollection, WithHeadings
             'deleted_at',
             'created_at',
             'updated_at'
+        ];
+    }
+    public function map($post): array
+    {
+        return [
+            $post->id,
+            $post->title,
+            $post->description,
+            $post->status == 1 ? 'Active' : 'Inactive',
+            $post->created_user_id,
+            $post->updated_user_id,
+            $post->deleted_user_id,
+            $post->created_at,
+            $post->updated_at,
+            $post->deleted_at,
         ];
     }
 }
