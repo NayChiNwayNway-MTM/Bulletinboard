@@ -436,9 +436,13 @@
                     class: 'iziToast-custom',
                     message: `{{ Session::get('postedites') }}`
                 });
-            });
-         </script>     
 
+            });
+        
+         </script>   
+@php
+        Session::forget('postedites');
+@endphp
  @elseif(Session::has('postcreated'))
          <script>
             document.addEventListener('DOMContentLoaded', function () {

@@ -187,8 +187,12 @@ class Post extends Model
             $csv = Reader::createFromPath($tempPath, 'r');
             $csv->setHeaderOffset(0);
             $records = $csv->getRecords();
-          
-            foreach ($records as $record) {
+            if (empty(iterator_to_array($records))) {
+                return ['error' => 'CSV file does not contain data rows. Please fill data before uploading.'];
+            }
+        foreach ($records as $record) {
+                    
+                    
                       // Validate the CSV data structure
                       if (count($record) !== 3) {
                         DB::rollBack();
@@ -201,8 +205,12 @@ class Post extends Model
                        
                     }
             }
+            if (empty(iterator_to_array($records))) {
+                return ['error' => 'CSV file does not contain data rows. Please fill data before uploading.'];
+            }
+            
             foreach ($records as $record) {
-                        
+                 
                 if (count($record) !== 3) {
                     
                     return ['error'=>'Each row in the CSV must have exactly 3 columns.'];

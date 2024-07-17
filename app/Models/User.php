@@ -196,6 +196,9 @@ class User extends Authenticatable
                     if ($existingEmail) {
                         if ($existingEmail->deleted_at ) {
                             $existingEmail->restore();
+                            //
+                            
+                            //
                             $existingEmail->update([
                                 'name' => $request->name,
                                 'email' => $request->email,
@@ -228,6 +231,7 @@ class User extends Authenticatable
             if ($existingName) {
                 if ($existingName->deleted_at) {
                     $existingName->restore();
+                  
                     $existingName->update([
                         'name' => $request->name,
                         'email' => $request->email,

@@ -361,8 +361,9 @@
                     updated_at.setMinutes(updated_at.getMinutes() - updated_at.getTimezoneOffset());
                     var Updated_format = updated_at.toISOString().split('T')[0];
                     $('#updated_date').text(Updated_format);
-                    $('#updated_user').text(response.created_user);
-                    $('#created_user').text(response.created_user);
+                    var createdUser = (response.created_user && response.created_user.length > 0) ? response.created_user : 'unknown';
+                    $('#updated_user').text(createdUser);
+                    $('#created_user').text(createdUser);
                   }
                
                 }
