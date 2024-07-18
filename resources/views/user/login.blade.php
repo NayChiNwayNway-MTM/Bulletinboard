@@ -100,7 +100,7 @@
                 emailInput.value = localStorage.getItem("username");
             } else {
                 rmCheck.checked = false;
-                emailInput.value = "";
+               
             }
 
             window.lsRememberMe = function() {
