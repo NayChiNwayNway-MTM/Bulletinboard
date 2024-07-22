@@ -18,6 +18,8 @@ use League\Csv\Statement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Services\PostService;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 class PostListController extends Controller
 {
     //  
@@ -173,65 +175,175 @@ class PostListController extends Controller
         //post download with csv format
         public function export(Request $request)
         { 
+            //$result = $this->postService->export($request);
+            //$posts = $result['posts'];
+            //return new StreamedResponse(function () use ($posts) {
+            //    $handle = fopen('php://output', 'w');
+            //    fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
+            //                        'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
+            //                        foreach ($posts as $post) {
+            //                            $status = $post->status == 1 ? 'Active' : 'Inactive';
+            //                            fputcsv($handle, [
+            //                                $post->id, 
+            //                                $post->title, 
+            //                                $post->description,
+            //                                $status, // Use the converted status here
+            //                                $post->created_user_id, 
+            //                                $post->updated_user_id, 
+            //                                $post->deleted_user_id,
+            //                                $post->created_at, 
+            //                                $post->updated_at, 
+            //                                $post->deleted_at
+            //                            ]);
+            //                        }
+            //        fclose($handle);
+            //    }, 200, [
+            //        'Content-Type' => 'text/csv',
+            //        'Content-Disposition' => 'attachment; filename="posts.csv"',
+            //    ]);   
+            /////////////////////////////////////
             $result = $this->postService->export($request);
             $posts = $result['posts'];
-            return new StreamedResponse(function () use ($posts) {
-                $handle = fopen('php://output', 'w');
-                fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
-                                    'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
-                                    foreach ($posts as $post) {
-                                        $status = $post->status == 1 ? 'Active' : 'Inactive';
-                                        fputcsv($handle, [
-                                            $post->id, 
-                                            $post->title, 
-                                            $post->description,
-                                            $status, // Use the converted status here
-                                            $post->created_user_id, 
-                                            $post->updated_user_id, 
-                                            $post->deleted_user_id,
-                                            $post->created_at, 
-                                            $post->updated_at, 
-                                            $post->deleted_at
-                                        ]);
-                                    }
-                    fclose($handle);
-                }, 200, [
-                    'Content-Type' => 'text/csv',
-                    'Content-Disposition' => 'attachment; filename="posts.csv"',
-                ]);   
-
+        
+            // Create a new Spreadsheet object
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+        
+            // Set header row
+            $headers = ['ID', 'Title', 'Description', 'Status', 'Created User ID', 'Updated User ID', 'Deleted User ID', 'Created At', 'Updated At', 'Deleted At'];
+            $sheet->fromArray($headers, NULL, 'A1');
+        
+            // Populate data rows
+            $rowNumber = 2;
+            foreach ($posts as $post) {
+                $status = $post->status == 1 ? 'Active' : 'Inactive';
+                $sheet->fromArray([
+                    $post->id,
+                    $post->title,
+                    $post->description,
+                    $status,
+                    $post->created_user_id,
+                    $post->updated_user_id,
+                    $post->deleted_user_id,
+                    $post->created_at,
+                    $post->updated_at,
+                    $post->deleted_at,
+                ], NULL, 'A' . $rowNumber);
+                $rowNumber++;
+            }
+        
+            // Create Xlsx writer
+            $writer = new Xlsx($spreadsheet);
+        
+            // Set the filename and download
+            $filename = 'posts.xlsx';
+        
+            return response()->stream(
+                function () use ($writer) {
+                    $writer->save('php://output');
+                },
+                200,
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                ]
+            );
 
         }
           //post download with csv format
         public function download_allpost(Request $request)
         { 
+                //    
+                //   $result = $this->postService->download_allpost($request);
+                //  // dd($result);
+                //   if(isset($result['null'])){
+                //    return Excel::download(new PostsExport, 'posts.csv', \Maatwebsite\Excel\Excel::CSV);
+                //   } 
+                //   else{
+                //    $posts=$result['posts'];
+                //    return new StreamedResponse(function () use ($posts) {
+                //      $handle = fopen('php://output', 'w');
+                //     fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
+                //                         'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
+                //     foreach ($posts as $post) {
+                //        $status = $post->status == 1 ? 'Active' : 'Inactive';
+                //          fputcsv($handle, [$post->id, $post->title, $post->description,
+                //                $status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
+                //                 $post->created_at,$post->updated_at,$post->deleted_at]);
+                //     }
+                //         fclose($handle);
+                //     }, 200, [
+                //          'Content-Type' => 'text/csv',
+                //         'Content-Disposition' => 'attachment; filename="posts.csv"',
+                //     ]);  
+                //      
+                //   }
+                //////////////////////////////////////
+
+            // Fetch data from the service
+            $result = $this->postService->download_allpost($request);
+
+            // Get all posts, if the result is null, ensure you handle that case
+            $posts = $result['posts'] ?? $this->getAllPosts();
+
+            // Create a new Spreadsheet object
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            if (empty($posts)) {
+                // If no posts are available
+                $sheet->setCellValue('A1', 'No posts available');
+                // Optionally, you can format the cell to make it look better
+                $sheet->getStyle('A1')->getFont()->setBold(true);
+                $sheet->getColumnDimension('A')->setWidth(30);
+            } else {
+                // Set header row
+                $headers = ['ID', 'Title', 'Description', 'Status', 'Created User ID', 'Updated User ID', 'Deleted User ID', 'Created At', 'Updated At', 'Deleted At'];
+                $sheet->fromArray($headers, NULL, 'A1');
+
+                // Populate data rows
+                $rowNumber = 2;
+                foreach ($posts as $post) {
+                    $status = $post->status == 1 ? 'Active' : 'Inactive';
+                    $sheet->fromArray([
+                        $post->id,
+                        $post->title,
+                        $post->description,
+                        $status,
+                        $post->created_user_id,
+                        $post->updated_user_id,
+                        $post->deleted_user_id,
+                        $post->created_at,
+                        $post->updated_at,
+                        $post->deleted_at,
+                    ], NULL, 'A' . $rowNumber);
+                    $rowNumber++;
+                }
+            }
+
+            // Create Xlsx writer
+            $writer = new Xlsx($spreadsheet);
+
+            // Set the filename and download
+            $filename = 'posts.xlsx';
+
+            return response()->stream(
+                function () use ($writer) {
+                    $writer->save('php://output');
+                },
+                200,
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                ]
+            );
             
-           $result = $this->postService->download_allpost($request);
-          // dd($result);
-           if(isset($result['null'])){
-            return Excel::download(new PostsExport, 'posts.csv', \Maatwebsite\Excel\Excel::CSV);
-           }
-           else{
-            $posts=$result['posts'];
-            return new StreamedResponse(function () use ($posts) {
-              $handle = fopen('php://output', 'w');
-             fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
-                                 'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
-             foreach ($posts as $post) {
-                $status = $post->status == 1 ? 'Active' : 'Inactive';
-                  fputcsv($handle, [$post->id, $post->title, $post->description,
-                        $status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
-                         $post->created_at,$post->updated_at,$post->deleted_at]);
-             }
-                 fclose($handle);
-             }, 200, [
-                  'Content-Type' => 'text/csv',
-                 'Content-Disposition' => 'attachment; filename="posts.csv"',
-             ]);  
-              
-           }
-          
         
+        }
+        private function getAllPosts()
+        {
+            // Assuming you have a Post model to get all posts
+            return \App\Models\Post::all();
         }
         //search post for table
         public function search(Request $request){
