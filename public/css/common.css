@@ -164,13 +164,40 @@ body {
   right: 20px; 
   transform: translateY(-50%); 
   cursor: pointer;
+  width: 25px;
+  height: 25px;
 }
+.reset_eyeicon{
+  position: absolute; 
+  top: 10%; 
+  right: 20px; 
+  transform: translateY(-50%); 
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+}
+/*delete icon*/
+.edit_icon{
+  width: 18px;
+  height: 18px;
+}
+.delete_icon{
+  width: 18px;
+  height: 18px;
+}
+.eye_icon{
+  width: 30px;
+  height: 30px;
+}
+/*end delete icon*/
 .registereyeicon{
   position: absolute; 
   top: 28%; 
   right: 100px; 
   transform: translateY(-28%); 
   cursor: pointer;
+  width: 25px;
+  height: 25px;
 }
 .registerconeyeicon{
   position: absolute; 
@@ -178,6 +205,8 @@ body {
   right: 100px; 
   transform: translateY(-35%); 
   cursor: pointer;
+  width: 25px;
+  height: 25px;
 }
 .password_new{
   position: relative;

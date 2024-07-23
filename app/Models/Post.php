@@ -242,6 +242,7 @@ class Post extends Model
           // dd($text);
            if($text == null){
             return Excel::download(new PostsExport, 'posts.csv', \Maatwebsite\Excel\Excel::CSV);
+            //return['null'=>'null'];
            }
            else{
 

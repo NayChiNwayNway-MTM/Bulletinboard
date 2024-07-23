@@ -38,8 +38,15 @@
                               <div class="col-sm-8 password">
                                   <input type="password" class="form-control" id="password" name="password"
                                    value="{{old('password')}}"/>
-                                  <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" 
-                                  data-bs-placement="bottom" title="Show Password"></i>
+                                  <!--<i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" 
+                                  data-bs-placement="bottom" title="Show Password"></i>-->
+                                  <!--<img src="{{asset('uploads/password.png')}}" alt="password" class="eyeicon"
+                                    id="togglePassword" data-bs-toggle="tooltip" 
+                                    data-bs-placement="bottom" title="Show Password">-->
+                                    <img src="{{ asset('uploads/closed_eye.png') }}" alt="password" class="eyeicon" id="togglePassword" 
+                                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Show Password" 
+                                        data-open-eye="{{ asset('uploads/open_eye.png') }}"
+                                         data-closed-eye="{{ asset('uploads/closed_eye.png') }}">
                               </div>
                                   <span class="text-danger loginerror">
                                     @error('password')

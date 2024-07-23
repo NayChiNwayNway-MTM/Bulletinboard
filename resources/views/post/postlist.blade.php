@@ -90,12 +90,13 @@
                             @auth
                             <td>
                               <a href="{{route('post.edit',$list->id)}}" class="btn btn-warning">
-                                <i class="fa fa-edit"></i></a>
+                              <img src="{{asset('uploads/edit.png')}}" alt="edit" class="edit_icon"></a>
                               <form action="" method="get" class="btn">
                                 @csrf 
                                 @method('DELETE')
                                 <button  type="submit" class="btn btn-danger m-0 delete">
-                                <i class="fa fa-trash"></i> </button>
+                                <img src="{{asset('uploads/trash.png')}}" alt="delete" class="delete_icon">
+                               </button>
                               </form>
                             </td>
                             <td class="like-section">
@@ -103,9 +104,9 @@
                                       <div>
                                         <p  id="likeButton" class="me-2">
                                             @if ($list->likes->contains('user_id', auth()->id()))
-                                                <i class="fa-solid fa-thumbs-up text-primary" ></i>
+                                            <img src="{{asset('uploads/liked.png')}}" alt="like" class="edit_icon">
                                             @else
-                                            <i class="fa-solid fa-thumbs-up"></i>
+                                            <img src="{{asset('uploads/like.png')}}" alt="like" class="edit_icon">
                                             @endif
                                         </p>
                                       </div>

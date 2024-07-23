@@ -34,7 +34,11 @@
               <div class="col-3"><label for="" class="form-label float-end">Password<span class="text-danger">&#42;</span></label></div>
               <div class="col-8">
                 <input type="password" name="password" id="password" class="form-control password" value="{{$users->pass}}">
-                <i class="far fa-eye registereyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
+                <!--<i class="far fa-eye registereyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>-->
+                <img src="{{ asset('uploads/closed_eye.png') }}" alt="password" class="registereyeicon" id="togglePassword" 
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password" 
+                                        data-open-eye="{{ asset('uploads/open_eye.png') }}"
+                                         data-closed-eye="{{ asset('uploads/closed_eye.png') }}">
                   <span class="text-danger ">
                     @error('password')
                       {{$message}}
@@ -47,7 +51,11 @@
               <div class="col-3"><label for="" class="form-label float-end">Confirm Password<span class="text-danger">&#42;</span></label></div>
               <div class="col-8">
                 <input type="password" name="confirmpass" id="con_password" class="form-control password" value="{{$users->confirmpass}}">
-                <i class="far fa-eye registerconeyeicon" id="con_togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>
+                <!--<i class="far fa-eye registerconeyeicon" id="con_togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>-->
+                <img src="{{ asset('uploads/closed_eye.png') }}" alt="password" class="registerconeyeicon" id="con_togglePassword" 
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password" 
+                                        data-open-eye="{{ asset('uploads/open_eye.png') }}"
+                                         data-closed-eye="{{ asset('uploads/closed_eye.png') }}">
                 <span class="text-danger ">
                   @error('confirmpass')
                     {{$message}}

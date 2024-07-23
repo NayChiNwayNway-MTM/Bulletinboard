@@ -91,7 +91,7 @@
                     <td>{{$user->phone}}</td>
                     <td>{{$user->dob}}</td>
                     <td>{{$user->address}}</td>
-                    <td><a href="#" class="btn btn-sm btn-danger userdelete" data-id="{{ $user->id }}"><i class="fa fa-trash"></i></a></td>
+                    <td><a href="#" class="btn btn-sm btn-danger userdelete" data-id="{{ $user->id }}"><img src="{{asset('uploads/trash.png')}}" alt="delete" class="delete_icon"></a></td>
                   </tr>
                 @endforeach
               @endif

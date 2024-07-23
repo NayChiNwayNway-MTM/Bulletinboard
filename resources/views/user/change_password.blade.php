@@ -15,8 +15,12 @@
           <div class="col-6 password">
             <input type="password" name="cur_pass" id="password" class="form-control"
              value="{{old('cur_pass')}}" autofocus>
-            <i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip"
-             data-bs-placement="top" title="Show Password"></i>
+            <!--<i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip"
+             data-bs-placement="top" title="Show Password"></i>-->
+             <img src="{{ asset('uploads/closed_eye.png') }}" alt="password" class="eyeicon" id="togglePassword" 
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password" 
+                                        data-open-eye="{{ asset('uploads/open_eye.png') }}"
+                                         data-closed-eye="{{ asset('uploads/closed_eye.png') }}">
           </div>  
           <span class="text-danger changepasserror">
                 @error('cur_pass')
@@ -30,8 +34,12 @@
           <div class="col-6 password">
             <input type="password" name="new_pass" id="new_password" class="form-control"
              value="{{old('new_pass')}}">
-            <i class="far fa-eye eyeicon" id="new_togglePassword" data-bs-toggle="tooltip"
-             data-bs-placement="top" title="Show Password"></i>
+            <!--<i class="far fa-eye eyeicon" id="new_togglePassword" data-bs-toggle="tooltip"
+             data-bs-placement="top" title="Show Password"></i>-->
+             <img src="{{ asset('uploads/closed_eye.png') }}" alt="password" class="eyeicon" id="new_togglePassword" 
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password" 
+                                        data-open-eye="{{ asset('uploads/open_eye.png') }}"
+                                         data-closed-eye="{{ asset('uploads/closed_eye.png') }}">
           </div>     
             <span class="text-danger changepasserror ">
                 @error('new_pass')
@@ -44,9 +52,12 @@
           <div class="col-6 password_new">
           <input type="password" name="con_new_pass" id="con_password" class="form-control"
            value="{{old('con_new_pass')}}">
-            <i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip"
-             data-bs-placement="top" title="Show Password"></i>
-            
+            <!--<i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip"
+             data-bs-placement="top" title="Show Password"></i>-->
+             <img src="{{ asset('uploads/closed_eye.png') }}" alt="password" class="eyeicon" id="con_togglePassword" 
+                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password" 
+                                        data-open-eye="{{ asset('uploads/open_eye.png') }}"
+                                         data-closed-eye="{{ asset('uploads/closed_eye.png') }}">
           </div>   
               <span class="text-danger changepasserror">
                 @error('con_new_pass')

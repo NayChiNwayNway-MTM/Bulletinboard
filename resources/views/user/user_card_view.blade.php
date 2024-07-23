@@ -81,7 +81,7 @@
                                           </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                               <li>
-                                                <button class="userdelete dropdown-item" data-id="{{ $user->id }}"><i class="fa fa-trash me-2"></i>Delete</button>
+                                                <button class="userdelete dropdown-item" data-id="{{ $user->id }}"><img src="{{asset('uploads/trash_card.png')}}" alt="delete" class="delete_icon me-2">Delete</button>
                                               </li>
                                             </ul>
                                         </div>
@@ -109,7 +109,9 @@
                                     <div class="ms-3"></div>
                               </div>
                               <div class="card-footer mt-auto text-end"> 
-                                  <button class=" user_detail_card view" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="view"><i class="fa fa-eye fa-lg"></i></button>
+                                  <button class=" user_detail_card view" data-bs-toggle="tooltip" 
+                                  data-bs-placement="bottom" data-bs-title="view">
+                                  <img src="{{asset('uploads/eye.png')}}" alt="delete" class="eye_icon"></button>
                                   
                               </div>
                           </div>

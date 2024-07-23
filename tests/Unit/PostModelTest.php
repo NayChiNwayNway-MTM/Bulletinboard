@@ -131,7 +131,7 @@ class PostModelTest extends TestCase
     public function testDownloadFile()
     {
       
-                     $post = new Post();
+                    $post = new Post();
                     $post->title = 'Test Post';
                     $post->description = 'This is a test post content.';
                     $post->created_user_id = 1;
@@ -157,9 +157,6 @@ class PostModelTest extends TestCase
                     // Assert the content is correct
                     $response->assertSee('Test Post');
                     $response->assertSee('This is a test post content.');
-
-            
-       
     }
     
 }

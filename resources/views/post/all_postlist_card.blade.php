@@ -80,8 +80,8 @@
                                                   <i class="fa fa-ellipsis-h" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="edit and delete"></i>
                                               </button>
                                                 <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="{{ route('post.edit', $list->id) }}"><i class="fa fa-edit me-2"></i>Edit</a></li>
-                                                    <li><button class="dropdown-item delete_card" href="#"><i class="fa fa-trash me-2"></i>Delete</button></li>
+                                                    <li><a class="dropdown-item" href="{{ route('post.edit', $list->id) }}"><img src="{{asset('uploads/edit.png')}}" alt="edit" class="edit_icon">&nbsp; Edit</a></li>
+                                                    <li><button class="dropdown-item delete_card" href="#"><img src="{{asset('uploads/trash_card.png')}}" alt="delete" class="delete_icon">&nbsp; Delete</button></button></li>
                                                 </ul>
                                             </div>
                                           @endif
@@ -91,8 +91,8 @@
                                                   <i class="fa fa-ellipsis-h" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="edit and delete"></i>
                                               </button>
                                                 <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li><a class="dropdown-item" href="{{ route('post.edit', $list->id) }}"><i class="fa fa-edit me-2"></i>Edit</a></li>
-                                                    <li><button class="dropdown-item delete_card" href="#"><i class="fa fa-trash me-2"></i>Delete</button></li>
+                                                    <li><a class="dropdown-item" href="{{ route('post.edit', $list->id) }}"><img src="{{asset('uploads/edit.png')}}" alt="edit" class="edit_icon">&nbsp; Edit</a></li>
+                                                    <li><button class="dropdown-item delete_card" href="#"><img src="{{asset('uploads/trash_card.png')}}" alt="delete" class="delete_icon">&nbsp; Delete</button></li>
                                                 </ul>
                                             </div>
                                         @endif
@@ -105,9 +105,9 @@
                                       <div>
                                         <p  id="likeButton" class="me-2 align-middle">
                                             @if ($list->likes->contains('user_id', auth()->id()))
-                                                <i class="fa-solid fa-thumbs-up text-primary" ></i>
+                                            <img src="{{asset('uploads/liked.png')}}" alt="like" class="edit_icon">
                                             @else
-                                            <i class="fa-solid fa-thumbs-up"></i>
+                                            <img src="{{asset('uploads/like.png')}}" alt="like" class="edit_icon">
                                             @endif
                                         </p>
                                       </div>
@@ -119,7 +119,7 @@
                                   </div>
                                   <div class="text-end">
                                     <button class=" post_detail_card view" data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                     data-bs-title="view"><i class="fa fa-eye fa-lg"></i></button>
+                                     data-bs-title="view"><img src="{{asset('uploads/eye.png')}}" alt="eye" class="eye_icon"></button>
                                   </div>
                                 </div>
                             </div>
