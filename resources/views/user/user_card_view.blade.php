@@ -89,20 +89,26 @@
                                   <h5 class="text-center">{{$user->name}}</h5>
                                   <div class="mb-3">
                                       <div class="d-flex align-items-center">
-                                          <i class="fa fa-envelope me-2"></i>
-                                          <div>{{ $user->email }}</div>
+                                          <!--<i class="fa fa-envelope me-2"></i>-->
+                                          <img src="{{asset('uploads/email.png')}}" alt="email" class="common">
+                                          <!--&nbsp;&nbsp;<div>{{ $user->email }}</div>-->
+                                          &nbsp;&nbsp;<a href="mailto:{{ $user->email }}">{{ $user->email }}</a>
                                       </div>
                                       <div class="d-flex align-items-center mt-2">
-                                          <i class="fa fa-phone me-2"></i>
-                                          <div>{{ $user->phone }}</div>
+                                          <!--<i class="fa fa-phone me-2"></i>-->
+                                          <img src="{{asset('uploads/phone.png')}}" alt="phone" class="phone">
+                                          <!--&nbsp;&nbsp;<div>{{ $user->phone }}</div>-->
+                                          &nbsp;&nbsp;<a href="tel:{{ $user->phone }}">{{ $user->phone }}</a>
                                       </div>
                                       <div class="d-flex align-items-center mt-3">
-                                            <i class="fa fa-birthday-cake me-2"></i>
-                                            <div>{{ $user->dob }}</div>
+                                            <!--<i class="fa fa-birthday-cake me-2"></i>-->
+                                            <img src="{{asset('uploads/birthday.png')}}" alt="birthday" class="common">
+                                            &nbsp;&nbsp;<div>{{ $user->dob }}</div>
                                       </div>
                                       <div class="d-flex align-items-center mt-3">
-                                            <i class="fa fa-address-card-o me-2"></i>
-                                            <div>{{$user->address}}</div>
+                                            <!--<i class="fa fa-address-card-o me-2"></i>-->
+                                            <img src="{{asset('uploads/address.png')}}" alt="address" class="common">
+                                            &nbsp;&nbsp;<div>{{$user->address}}</div>
                                       </div>
 
                                   </div>

@@ -52,8 +52,6 @@
           <div class="col-6 password_new">
           <input type="password" name="con_new_pass" id="con_password" class="form-control"
            value="{{old('con_new_pass')}}">
-            <!--<i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip"
-             data-bs-placement="top" title="Show Password"></i>-->
              <img src="{{ asset('uploads/closed_eye.png') }}" alt="password" class="eyeicon" id="con_togglePassword" 
                                         data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password" 
                                         data-open-eye="{{ asset('uploads/open_eye.png') }}"

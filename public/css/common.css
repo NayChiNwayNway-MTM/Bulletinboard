@@ -41,7 +41,7 @@
   font-weight: bold; 
   transition: transform 0.3s; 
   position: relative;
-  animation: shake 5s; 
+  /*animation: shake 5s; */
   transform: translateY(-2px);
 }
 
@@ -52,14 +52,14 @@
 }
 
 /* Keyframes for Shaking Animation */
-@keyframes shake {
+/*@keyframes shake {
   0% { transform: translateX(0); }
   20% { transform: translateX(-5px); }
   40% { transform: translateX(5px); }
   60% { transform: translateX(-5px); }
   80% { transform: translateX(5px); }
   100% { transform: translateX(0); }
-}
+}*/
 
 /*end logo bulletinboard design*/
 .sign_up{
@@ -177,7 +177,7 @@ body {
   height: 25px;
 }
 /*delete icon*/
-.edit_icon{
+.edit_icon,.common{
   width: 18px;
   height: 18px;
 }
@@ -188,6 +188,13 @@ body {
 .eye_icon{
   width: 30px;
   height: 30px;
+}
+.phone{
+  width: 23px;
+  height: 23px;
+}
+a{
+  text-decoration: none;
 }
 /*end delete icon*/
 .registereyeicon{

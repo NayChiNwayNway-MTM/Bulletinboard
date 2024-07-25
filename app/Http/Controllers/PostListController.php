@@ -253,32 +253,7 @@ class PostListController extends Controller
           //post download with csv format
         public function download_allpost(Request $request)
         { 
-                //    
-                //   $result = $this->postService->download_allpost($request);
-                //  // dd($result);
-                //   if(isset($result['null'])){
-                //    return Excel::download(new PostsExport, 'posts.csv', \Maatwebsite\Excel\Excel::CSV);
-                //   } 
-                //   else{
-                //    $posts=$result['posts'];
-                //    return new StreamedResponse(function () use ($posts) {
-                //      $handle = fopen('php://output', 'w');
-                //     fputcsv($handle, ['ID', 'Title', 'Description','Status','created_user_id',
-                //                         'updated_user_id','deleted_user_id','created_at','updated_at','deleted_at']);
-                //     foreach ($posts as $post) {
-                //        $status = $post->status == 1 ? 'Active' : 'Inactive';
-                //          fputcsv($handle, [$post->id, $post->title, $post->description,
-                //                $status,$post->created_user_id,$post->updated_user_id,$post->deleted_user_id,
-                //                 $post->created_at,$post->updated_at,$post->deleted_at]);
-                //     }
-                //         fclose($handle);
-                //     }, 200, [
-                //          'Content-Type' => 'text/csv',
-                //         'Content-Disposition' => 'attachment; filename="posts.csv"',
-                //     ]);  
-                //      
-                //   }
-                //////////////////////////////////////
+                
 
             // Fetch data from the service
             $result = $this->postService->download_allpost($request);

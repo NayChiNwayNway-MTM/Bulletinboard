@@ -41,7 +41,6 @@
                       <div class="col-3 "><label for="" class="form-label float-end">Password<span class="text-danger">&#42;</span></label></div>
                       <div class="col-8 password">
                         <input type="password" name="pass" id="password" class="form-control password" value ="{{old('pass')}}">
-                        <!--<i class="far fa-eye eyeicon" id="togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>-->
                         <img src="{{ asset('uploads/closed_eye.png') }}" alt="password" class="eyeicon" id="togglePassword" 
                                         data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password" 
                                         data-open-eye="{{ asset('uploads/open_eye.png') }}"
@@ -57,7 +56,6 @@
                       <div class="col-3 "><label for="" class="form-label float-end">Confirm Password<span class="text-danger">&#42;</span></label></div>
                       <div class="col-8 password">
                         <input type="password" name="confirmpass" id="con_password" class="form-control" value="{{old('confirmpass')}}">
-                        <!--<i class="far fa-eye eyeicon" id="con_togglePassword" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password"></i>-->
                         <img src="{{ asset('uploads/closed_eye.png') }}" alt="password" class="eyeicon" id="con_togglePassword" 
                                         data-bs-toggle="tooltip" data-bs-placement="top" title="Show Password" 
                                         data-open-eye="{{ asset('uploads/open_eye.png') }}"

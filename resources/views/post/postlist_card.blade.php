@@ -66,11 +66,8 @@
                                     <div class="d-flex align-items-center mb-3">
                                         <img src="{{$list->user->profile}}" alt="profile" class="rounded-circle img-thumbnail @if($list->status == 1) custom-img-thumbnail @endif" style="width:60px; height: 60px;">
                                         <div class="ms-3">
-                                            @if($list->user->type == 1)
-                                                <p class="mb-0">User</p>
-                                            @else
-                                                <p class="mb-0">Admin</p>
-                                            @endif
+                                           
+                                            <p class="mb-0">{{$list->user->name}}</p>
                                             <p>{{$list->created_at->format('Y-m-d')}}</p>
                                         </div>
                                           <div class="dropdown custom-dropdown ms-auto">
@@ -88,20 +85,31 @@
                                     <p class="card-text">{{ $list->description }}</p>
                                 </div>
                                 <div class="card-footer mt-auto d-flex justify-content-between align-items-center "> 
-                                  <div class="text-start pt-3 d-flex" id="{{$list->id}}">
+                                  
+                                  <div class="text-start pt-3 d-flex" id="{{ $list->id }}">
                                       <div>
-                                        <p  id="likeButton" class="me-2 align-middle">
-                                            @if ($list->likes->contains('user_id', auth()->id()))
-                                            <img src="{{asset('uploads/liked.png')}}" alt="like" class="edit_icon">
-                                            @else
-                                            <img src="{{asset('uploads/like.png')}}" alt="like" class="edit_icon">
-                                            @endif
-                                        </p>
+                                          <p id="likeButton" class="me-2 align-middle">
+                                              @if ($list->likes->contains('user_id', auth()->id()))
+                                                  <img src="{{ asset('uploads/liked.png') }}" alt="like" class="edit_icon">
+                                              @else
+                                                  <img src="{{ asset('uploads/like.png') }}" alt="like" class="edit_icon">
+                                              @endif
+                                          </p>
                                       </div>
                                       <div>
-                                        <p class="likeCount" id="likeCount{{ $list->id }}">
-                                                {{ $list->likes()->count() }} {{ Str::plural('like', $list->likes()->count()) }}
-                                        </p>
+                                          <p class="likeCount" id="likeCount{{ $list->id }}">
+                                              @php
+                                                  $likeCount = $list->likes()->count();
+                                              @endphp
+                                              {{ $likeCount }} 
+                                              @if ($likeCount == 1)
+                                                  like
+                                              @elseif($likeCount ==0)
+                                                  like
+                                              @else
+                                                likes
+                                              @endif
+                                          </p>
                                       </div>
                                   </div>
                                   <div class="text-end">

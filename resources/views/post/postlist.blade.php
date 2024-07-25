@@ -81,11 +81,7 @@
                             <td><label class="form-label text-primary" id="post_detail_table" data-bs-toggle="tooltip"
                                   data-bs-placement="bottom" data-bs-title="view detail" >{{$list->title}}</label></td>
                             <td style="width: 300px;">{{$list->description}}</td>
-                            @if($list->user->type == 0)
-                              <td>Admin</td>
-                            @else
-                                <td>User</td>                    
-                            @endif
+                           <td>{{$list->user->name}}</td>
                             <td>{{$list->created_at->format('Y-m-d')}}</td>
                             @auth
                             <td>
@@ -100,20 +96,30 @@
                               </form>
                             </td>
                             <td class="like-section">
-                                  <div class="text-start d-flex" id="{{$list->id}}">
+                                  <div class="text-start pt-3 d-flex" id="{{ $list->id }}">
                                       <div>
-                                        <p  id="likeButton" class="me-2">
-                                            @if ($list->likes->contains('user_id', auth()->id()))
-                                            <img src="{{asset('uploads/liked.png')}}" alt="like" class="edit_icon">
-                                            @else
-                                            <img src="{{asset('uploads/like.png')}}" alt="like" class="edit_icon">
-                                            @endif
-                                        </p>
+                                          <p id="likeButton" class="me-2 align-middle">
+                                              @if ($list->likes->contains('user_id', auth()->id()))
+                                                  <img src="{{ asset('uploads/liked.png') }}" alt="like" class="edit_icon">
+                                              @else
+                                                  <img src="{{ asset('uploads/like.png') }}" alt="like" class="edit_icon">
+                                              @endif
+                                          </p>
                                       </div>
                                       <div>
-                                        <p class="likeCount" id="likeCount{{ $list->id }}">
-                                                {{ $list->likes()->count() }} {{ Str::plural('like', $list->likes()->count()) }}
-                                        </p>
+                                          <p class="likeCount" id="likeCount{{ $list->id }}">
+                                              @php
+                                                  $likeCount = $list->likes()->count();
+                                              @endphp
+                                              {{ $likeCount }} 
+                                              @if ($likeCount == 1)
+                                                  like
+                                              @elseif($likeCount ==0)
+                                                  like
+                                              @else
+                                                likes
+                                              @endif
+                                          </p>
                                       </div>
                                   </div>
                             </td>

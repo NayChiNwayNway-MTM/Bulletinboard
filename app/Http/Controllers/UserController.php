@@ -99,13 +99,7 @@ class UserController extends Controller
         
         $result=$this->userService->registration($request,$imagePath);
        
-        //    if(isset($result['error'])){
-        //        return redirect()->back()->withInput()->with(['error'=>$result['error']]);
-        //    }
-        //    if(isset($result['nameerror'])){
-        //        return redirect()->back()->withInput()->with(['nameerror'=>$result['nameerror']]);
-        //    }
-        //  
+    
     
         if(isset($result)){
             $errors =$result['back'];
@@ -150,13 +144,7 @@ class UserController extends Controller
         if(isset($result['error'])){
             return back()->withErrors($result['error'])->withInput();
         }
-        //   //dd($type);
-        //   if(isset($result['error'])){
-        //    return redirect()->back()->with(['error'=>$result['error']])->withInput();
-        //   }
-        //   if(isset($result['nameerror'])){
-        //    return redirect()->back()->with(['nameerror'=>$request['nameerror']])->withInput();
-        //   }
+    
         if(isset($result['0'])){
             return view('user.register'); 
         }

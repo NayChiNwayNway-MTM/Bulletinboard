@@ -96,15 +96,17 @@
 
 @endsection
 
-<script>
+<!--<script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const rmCheck = document.getElementById("rememberMe"),
-                emailInput = document.getElementById("email");
+                emailInput = document.getElementById("email"),
+                passwordInput= document.getElementById('password');
 
             // Check if localStorage has saved data for remember me
             if (localStorage.getItem("checkbox") === "remember") {
                 rmCheck.checked = true;
                 emailInput.value = localStorage.getItem("username");
+                passwordInput.value = localStorage.getItem('password')
             } else {
                 rmCheck.checked = false;
                
@@ -113,14 +115,48 @@
             window.lsRememberMe = function() {
                 if (rmCheck.checked && emailInput.value !== "") {
                     localStorage.setItem("username", emailInput.value);
+                    localStorage.setItem('password',passwordInput.value);
                     localStorage.setItem("checkbox", "remember");
                 } else {
                     localStorage.removeItem("username");
+                    localStorage.removeItem('password');
                     localStorage.removeItem("checkbox");
                 }
             }
         });
+</script>-->
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const rmCheck = document.getElementById("rememberMe"),
+            emailInput = document.getElementById("email"),
+            passwordInput = document.getElementById('password');
+
+        // Check if localStorage has saved data for remember me
+        if (localStorage.getItem("checkbox") === "remember") {
+            rmCheck.checked = true;
+            emailInput.value = localStorage.getItem("username");
+            // Use setTimeout to ensure the value is applied after DOM is fully updated
+            setTimeout(() => {
+                passwordInput.value = localStorage.getItem('password');
+            }, 100);
+        } else {
+            rmCheck.checked = false;
+        }
+
+        window.lsRememberMe = function() {
+            if (rmCheck.checked && emailInput.value !== "") {
+                localStorage.setItem("username", emailInput.value);
+                localStorage.setItem('password', passwordInput.value);
+                localStorage.setItem("checkbox", "remember");
+            } else {
+                localStorage.removeItem("username");
+                localStorage.removeItem('password');
+                localStorage.removeItem("checkbox");
+            }
+        }
+    });
 </script>
+
 
 @if(Session::has('reset_pass'))
          <script>
