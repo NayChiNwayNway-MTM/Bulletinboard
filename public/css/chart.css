@@ -1,0 +1,13 @@
+#chart-container {
+  width: 100%;
+  max-width: 800px; 
+  margin: auto; 
+  background-color: #fff;
+}
+.card-body {
+  overflow: hidden; 
+}
+#userActivityChart{
+  width: 500px !important;
+  height: 500px !important;
+}

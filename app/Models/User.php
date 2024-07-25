@@ -3,25 +3,37 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendMail;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
-
+   
+    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
+    public $timestamps = false;
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'name', 'email', 'password', 'profile', 'type', 'phone', 'address', 'dob',
+        'created_at', 'updated_at', 'created_user_id', 'updated_user_id'
     ];
+    
 
     /**
      * The attributes that should be hidden for serialization.
@@ -41,4 +53,575 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function posts(){
+        return $this->hasMany(Post::class.'created_user_id');
+    }
+
+    public function createdBy() {
+        return $this->belongsTo(User::class, 'created_user_id');
+    }
+   //userlist with type is admin
+    public static function getUsersWithCreators($pageSize)
+    {
+        // Get paginated users
+        $users = self::whereNull('deleted_at')->latest()->paginate($pageSize);
+        
+        // Fetch the created users' names using a single query
+        $createdUserIds = $users->pluck('created_user_id')->filter()->unique()->toArray();
+        $createdUsers = self::whereIn('id', $createdUserIds)
+                            ->whereNull('deleted_at')
+                            ->pluck('name', 'id')
+                            ->toArray();
+        
+        // Map names to the users' created_user_ids
+        $names = [];
+        foreach ($users as $user) {
+            $names[$user->id] = $createdUsers[$user->created_user_id] ?? 'Unknown';
+        }
+
+        return ['users' => $users, 'names' => $names];
+    }
+
+    //userlist with type is user
+    public static function getUsersCreatedByAuthUser($pageSize, $authUserId)
+    {
+        $users = self::whereNull('deleted_at')
+                     ->where('created_user_id', $authUserId)
+                     ->with('createdBy')
+                     ->latest()
+                     ->paginate($pageSize);
+
+        // Initialize names array
+        $names = [];
+
+        // Collect names of creators
+        foreach ($users as $user) {
+            $names[$user->id] = $user->createdBy ? $user->createdBy->name : 'Unknown';
+        }
+
+        return ['users' => $users, 'names' => $names];
+    }
+    //userlist cardview for admin
+    public static function getUserswithCreatorsCard($pageSize){
+        $users = User::whereNull('deleted_at')->latest()->paginate($pageSize);
+                
+                // Fetch the created users' names using a single query
+                $createdUserIds = $users->pluck('created_user_id')->filter()->unique()->toArray();
+                
+                $createdUsers = User::whereIn('id', $createdUserIds)
+                                    ->whereNull('deleted_at')
+                                    ->pluck('name', 'id')
+                                    ->toArray();
+            
+                // Map names to the users' created_user_ids
+                $names = [];
+                foreach ($users as $user) {
+                    $names[$user->id] = $createdUsers[$user->created_user_id] ?? 'Unknown';
+                }
+        return ['users'=>$users,'names'=>$names];
+    }
+    //userlist cardview for user
+    public static function getUsersCreatedByAuthUserCard($pageSize){
+        $users = User::whereNull('deleted_at')
+        ->where('created_user_id', auth()->user()->id)
+        ->with('createdBy')
+        ->latest()
+        ->paginate($pageSize);
+
+            // Initialize names array
+            $names = [];
+
+            // Collect names of creators
+            foreach ($users as $user) {
+                $names[$user->id] = $user->createdBy ? $user->createdBy->name : 'Unknown';
+            }
+        return ['users'=>$users,'names'=>$names];
+    }
+    //for registration
+    public static function registration($request,$imagePath){
+       
+     $existingEmail = User::where('email', $request->email)->first();
+        if ($existingEmail && !$existingEmail->deleted_at) {
+            $errors['error'] = 'The email already exists.';
+        }
+        
+        // Check if name already exists and is not soft-deleted
+        $existingName = User::where('name', $request->name)->first();
+        if ($existingName && !$existingName->deleted_at) {
+            $errors['nameerror'] = 'The name already exists.';
+        }
+        if (!empty($errors)) {
+            return ['back'=>$errors];
+        }
+        if (($existingEmail && $existingEmail->deleted_at) || ($existingName && $existingName->deleted_at)) {
+                        return ['imagePath'=>$imagePath];
+                    }
+        
+    }
+    //for saveRegister
+    public static function saveRegister($request,$type){
+         // Retrieve session data
+         $imagePath = session('image');
+         //$type = session('type');
+        // dd($type);
+         $typeValue = ($type === 'user') ? 1 : 0;
+        //dd($typeValue);
+       // $typeValue=0;
+        //dd($typeValue);
+
+        $errors = [];
+
+        // Check if email already exists and is not soft-deleted
+        $existingEmail = User::where('email', $request->email)->first();
+        if ($existingEmail && !$existingEmail->deleted_at) {
+            $errors['error'] = 'The email already exists.';
+        }
+        
+        // Check if name already exists and is not soft-deleted
+        $existingName = User::where('name', $request->name)->first();
+        if ($existingName && !$existingName->deleted_at) {
+            $errors['nameerror'] = 'The name already exists.';
+        }
+        if (!empty($errors)) {
+            return ['back'=>$errors];
+        }else{
+            // Check for existing email and name, including soft-deleted users
+            $existingEmail = User::withTrashed()->where('email', $request->email)->first();
+            $existingName = User::withTrashed()->where('name', $request->name)->first();
+           // dd($existingName);
+            // Restore or update user if email exists and is soft-deleted
+            try{
+                DB::transaction(function () use ($existingEmail, $existingName, $request, $typeValue, $imagePath) {
+                    if ($existingEmail) {
+                        if ($existingEmail->deleted_at ) {
+                            $existingEmail->restore();
+                            //
+                            
+                            //
+                            $existingEmail->update([
+                                'name' => $request->name,
+                                'email' => $request->email,
+                                'password' => Hash::make($request->password),
+                                'profile' => $imagePath,
+                                'type' => $typeValue,
+                                'phone' => $request->phone,
+                                'address' => $request->address,
+                                'dob' => $request->dob,
+                                'created_at'=>Carbon::now(),
+                                'updated_at'=>Carbon::now(),
+                                'created_user_id' => auth()->user()->id,
+                                'updated_user_id' => auth()->user()->id,
+                            ]);
+                            
+                            Session::flash('register', 'Registered successfully.');
+                            //return redirect()->route('user.register');
+                        // return ['back'];
+                            return ['existingEmail'=>$existingEmail];
+                        }
+                        //return ['error' => 'The email already exists.'];
+                    }
+                });
+            }catch (\Illuminate\Database\QueryException $e) {
+
+                    Session::flash('fill', 'Registered Unsuccessful.');
+                    return ['error' => 'Register Unsuccessful.'];
+            }
+            // Restore or update user if name exists and is soft-deleted
+            if ($existingName) {
+                if ($existingName->deleted_at) {
+                    $existingName->restore();
+                  
+                    $existingName->update([
+                        'name' => $request->name,
+                        'email' => $request->email,
+                        'password' => Hash::make($request->password),
+                        'profile' => $imagePath,
+                        'type' => $typeValue,
+                        'phone' => $request->phone,
+                        'address' => $request->address,
+                        'dob' => $request->dob,
+                        'created_at'=>Carbon::now(),
+                        'updated_at'=>Carbon::now(),
+                        'created_user_id' => auth()->user()->id,
+                        'updated_user_id' => auth()->user()->id,
+                    ]);
+                    
+                    Session::flash('register', 'Registered successfully.');
+                    //return redirect()->route('user.register'); 
+                   // return ['back'];
+                   return ['existingName'=>$existingName];
+                }
+               // return ['nameerror' => 'The name already exists.'];
+            }
+            // Create a new user if no existing user is found
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+            $user->profile = $imagePath;
+            $user->type = $typeValue;
+            $user->phone = $request->phone;
+            $user->address = $request->address;
+            $user->dob = $request->dob;
+            $user->created_at = Carbon::now();
+            $user->updated_at = Carbon::now();
+            $user->created_user_id = auth()->user()->id;
+            $user->updated_user_id = auth()->user()->id;
+            
+            $user->save();
+        
+            Session::flash('register', 'Registered successfully.');
+            //return redirect()->route('user.register'); 
+            return ['back'];
+        }
+    }
+    //for update_profile_admin
+    public static function update_profile_admin($request,$id,$type){
+        
+        if($type == 'user'){
+            $type_value =1;
+        }
+        else{
+            $type_value=0;
+
+        }
+        if($request->new_profile){
+            $imageName=time().'.'.$request->new_profile->extension();
+            $success=$request->new_profile->move(public_path('uploads'),$imageName);
+            $imagePath = 'uploads/' . $imageName;
+            User::where('id',$id)->update([
+                'name'=>$request->name,
+                'email'=>$request->email,
+                'phone'=>$request->phone,
+                'dob'=>$request->dob,
+                'address'=>$request->address,
+                'type'=>$type_value,
+                'profile'=>$imagePath,
+                'updated_at'=>Carbon::now()
+            ]);
+        }
+        else{
+            User::where('id',$id)->update([
+                'name'=>$request->name,
+                'email'=>$request->email,
+                'phone'=>$request->phone,
+                'dob'=>$request->dob,
+                'address'=>$request->address,
+                'type'=>$type_value,
+                'updated_at'=>Carbon::now()
+            ]);
+        }
+        Session::flash('profileedited',"Edit Profile Successfully");
+        return ['id' => $id];
+    }
+    //for update_profile_user
+    public static function update_profile_user($request,$id){
+         if($request->new_profile){
+                $imageName=time().'.'.$request->new_profile->extension();
+                $success=$request->new_profile->move(public_path('uploads'),$imageName);
+                $imagePath = 'uploads/' . $imageName;
+                User::where('id',$id)->update([
+                    'name'=>$request->name,
+                    'email'=>$request->email,
+                    'phone'=>$request->phone,
+                    'dob'=>$request->dob,
+                    'address'=>$request->address,
+                    'profile'=>$imagePath,
+                    'updated_at'=>Carbon::now()
+                ]);
+            }
+            else{
+                User::where('id',$id)->update([
+                    'name'=>$request->name,
+                    'email'=>$request->email,
+                    'phone'=>$request->phone,
+                    'dob'=>$request->dob,
+                    'address'=>$request->address,
+                    'updated_at'=>Carbon::now()
+                ]);
+            }
+            Session::flash('profileedited',"Edit Profile Successfully");
+            return ['id' => $id];
+    }
+    //for submitforgetpassword
+    public static function submitforgetpassword($request){
+          
+        $user=User::where('email',$request->email)->first();
+        if (!$user) {
+            // Handle case where user is not found
+            return ['error' => 'User  email does not exist.'];
+        }
+        $userName=User::select('name')->where('email',$request->email)->first()->name;
+        //dd($userName);
+        if($user){
+            $userEmail=$request->email;
+            $token = Str::random(64);
+            DB::table('password_reset_tokens')->insert([
+                'email' => $request->email, 
+                'token' => $token, 
+                'created_at' => Carbon::now()
+            ]);
+           // dd($userEmail);
+          
+           $data = [
+           'token'=>$token,
+           'email' => $request->email,
+            'name'=>$userName,
+           ];
+         Mail::to($userEmail)->send(new SendMail($data));
+          // dd($bladeurl);
+            //return view('user.reset_password');
+            return ['reset_pass'=>'Email sent with password reset instructions.'];
+        }
+        else{
+            return ['error'=>'Email does not exist.'];
+        }
+    }
+    //for submit_reset_password
+    public static function submit_reset_password($request){
+        $check_token =DB::table('password_reset_tokens')
+                    ->where([
+                        'email'=>$request->email,
+                        'token'=>$request->token,
+                    ])->first();
+        if(!$check_token){
+            return ['error'=>'Invalid Token'];
+        }
+        User::where('email',$request->email)
+            ->update([
+                'password'=>Hash::make($request->password),
+                'updated_at'=>Carbon::now()
+            ]);
+        DB::table('password_reset_tokens')->where('email',$request->email)->delete();
+        return ['message'=>'Your password has been changed!'];
+    }
+    //for changed_password
+    public static function changed_password($request){
+        $current_pass=$request->cur_pass;
+       $new_password=$request->new_pass;
+       $confirm_pass=$request->con_new_pass;
+
+       $user = User::find(auth()->user()->id);
+       $hashedPassword = $user->password;
+       if (Hash::check($current_pass, $hashedPassword)) {
+            if ($new_password === $confirm_pass) {
+
+                $user->password = Hash::make($new_password);
+                $user->save();
+
+                return ['success'=>'Password updated successfully.'];
+            } else {
+                return ['error' => 'New passwords do not match.'];
+            }
+        } else {
+        
+            return ['error' => 'Current password is incorrect.'];
+        }
+
+    }
+
+    //authcontroller create
+    public static function create($request){
+        $errors = [];
+
+        // Check if email already exists and is not soft-deleted
+        $existingEmail = User::where('email', $request->email)->first();
+        if ($existingEmail && !$existingEmail->deleted_at) {
+            $errors['error'] = 'The email already exists.';
+        }
+        
+        // Check if name already exists and is not soft-deleted
+        $existingName = User::where('name', $request->name)->first();
+        if ($existingName && !$existingName->deleted_at) {
+            $errors['nameerror'] = 'The name already exists.';
+        }
+        
+        // If both email and name exist and are not soft-deleted, return with errors
+        if (!empty($errors)) {
+            return ['back'=>$errors];
+        }else{
+            // Check for existing email and name, including soft-deleted users
+            $existingEmail = User::withTrashed()->where('email', $request->email)->first();
+            $existingName = User::withTrashed()->where('name', $request->name)->first();
+            $phone='';
+            $address='';
+            $dob=null;
+            if ($existingEmail ) {
+                if ($existingEmail->deleted_at) {
+                    $existingEmail->restore();
+                    $profile='uploads/profile.jpg';
+                    // Update existing user data
+                    $existingEmail->name = $request->name;
+                    $existingEmail->email = $request->email;
+                    $existingEmail->password = Hash::make($request->password);
+                    $existingEmail->profile =$profile;
+                    $existingEmail->phone=$phone;
+                    $existingEmail->address=$address;
+                    $existingEmail->dob=$dob;
+                    $existingEmail->created_at = Carbon::now();
+                    $existingEmail->updated_at = Carbon::now();
+                    $existingEmail->created_user_id = 1; // Assuming default user ID
+                    $existingEmail->updated_user_id = 1; // Assuming default user ID
+                    $existingEmail->save();
+
+                    return ['existingEmail'=>$existingEmail];
+                
+                    
+                }
+                //return back()->with('error', 'The email already exists.');
+            }
+
+            if ($existingName) {
+                if ($existingName->deleted_at) {
+                    $existingName->restore();
+                    $profile='uploads/profile.jpg';
+                    // Create a new user instance
+                    $newUser = new User();
+                    $newUser->name = $request->name;
+                    $newUser->email = $request->email;
+                    $newUser->password = Hash::make($request->password);
+                    $existingEmail->profile =$profile;
+                    $existingEmail->phone=$phone;
+                    $existingEmail->address=$address;
+                    $existingEmail->dob=$dob;
+                    $newUser->created_at = Carbon::now();
+                    $newUser->updated_at = Carbon::now();
+                    $newUser->created_user_id = 1; // Assuming default user ID
+                    $newUser->updated_user_id = 1; // Assuming default user ID
+                    $newUser->save();
+                    return ['newUser'=>$newUser];
+                }
+                //return back()->with('nameerror', 'The name already exists.');
+            }
+
+
+            // Create the user
+            $data = new User();
+            $data->name=$request->name;
+            $data->email=$request->email;
+            $data->password= Hash::make($request->password);            
+            $data->created_at=Carbon::now();
+            $data->updated_at=Carbon::now();
+            $data->created_user_id=1;
+            $data->updated_user_id=1;
+            $data->save();
+            return ['data'=>$data];
+        }
+
+       
+    }
+
+    //for userdeletecontroller
+    //deleteuser
+    public static function deleteuser($id){
+        $userinfo=User::find($id);
+        if($userinfo){
+            return ['success'=>true,'userinfo'=>$userinfo];
+        }   
+    }
+    //delete confirm
+    public static function confirm($id){
+        User::where('id',$id)->update(['deleted_at'=>Carbon::now(),'deleted_user_id'=>auth()->user()->id]);
+        Post::where('created_user_id',$id)->delete();
+       // $user_delete->delete();
+        return ['success'=>"User Successfully Deleted."];
+    }
+    //for userdetailcontroller
+    //showdetails user
+    public static function showdetail($id){
+        $user=User::find($id);
+       
+        $created=User::where('id',$user->created_user_id)->pluck('name');
+        return ['detail'=>$user,'created_user'=>$created];
+    }
+    //search user table
+    public static function search_user($name,$email,$start_date,$end_date,$pageSize){
+        $users = User::whereNull('deleted_at')
+            ->when($name, function ($query) use ($name) {
+                return $query->where('name', 'like', '%' . $name . '%');
+            })
+            ->when($email, function ($query) use ($email) {
+                return $query->where('email', 'like', '%' . $email . '%');
+            })
+            ->when($start_date, function ($query) use ($start_date) {
+                return $query->whereDate('created_at', '>=', $start_date);
+            })
+            ->when($end_date, function ($query) use ($end_date) {
+                return $query->whereDate('created_at', '<=', $end_date);
+            })
+            ->paginate($pageSize);
+            return ['users'=>$users];
+    }
+    public static function search_user_admin($name,$email,$start_date,$end_date,$pageSize){
+        $users = User::where('created_user_id', Auth::id())
+        ->whereNull('deleted_at')
+        ->when($name, function ($query, $name) {
+            return $query->where('name', 'like', '%' . $name . '%');
+        })
+        ->when($email, function ($query) use ($email) {
+            return $query->where('email', 'like', '%' . $email . '%');
+        })
+        ->when($start_date, function ($query) use ($start_date) {
+            return $query->whereDate('created_at', '>=', $start_date);
+        })
+        ->when($end_date, function ($query) use ($end_date) {
+            return $query->whereDate('created_at', '<=', $end_date);
+        })
+       
+        ->paginate($pageSize);
+        return ['users'=>$users];
+    }
+    public static function getcreated_user($pageSize){
+        $created_user = User::whereNull('deleted_at')
+        ->where('created_user_id', auth()->user()->id)
+        ->with('createdBy') // Eager load the createdBy relationship
+        ->paginate($pageSize);
+        return ['created_user'=>$created_user];
+    }
+    //search user card
+    public static function search_card_user($name,$email,$start_date,$end_date,$pageSize){
+        $users = User::whereNull('deleted_at')
+                     ->when($name, function ($query) use ($name) {
+                         return $query->where('name', 'like', '%' . $name . '%');
+                     })
+                     ->when($email, function ($query) use ($email) {
+                         return $query->where('email', 'like', '%' . $email . '%');
+                     })
+                     ->when($start_date, function ($query) use ($start_date) {
+                         return $query->whereDate('created_at', '>=', $start_date);
+                     })
+                     ->when($end_date, function ($query) use ($end_date) {
+                         return $query->whereDate('created_at', '<=', $end_date);
+                     })
+                     ->paginate($pageSize);
+                    return ['users'=>$users];
+    }
+    public static function search_card_admin($name,$email,$start_date,$end_date,$pageSize){
+        $users = User::where('created_user_id', Auth::id())
+        ->whereNull('deleted_at')
+        ->when($name, function ($query, $name) {
+            return $query->where('name', 'like', '%' . $name . '%');
+        })
+        ->when($email, function ($query) use ($email) {
+            return $query->where('email', 'like', '%' . $email . '%');
+        })
+        ->when($start_date, function ($query) use ($start_date) {
+            return $query->whereDate('created_at', '>=', $start_date);
+        })
+        ->when($end_date, function ($query) use ($end_date) {
+            return $query->whereDate('created_at', '<=', $end_date);
+        })
+       
+        ->paginate($pageSize);
+        return ['users'=>$users];
+    }
+    public static function created_user($pageSize){
+        $created_user = User::whereNull('deleted_at')
+        ->where('created_user_id', auth()->user()->id)
+        ->with('createdBy') // Eager load the createdBy relationship
+        ->paginate($pageSize);
+        return ['created_user'=>$created_user];
+    }
 }
+
