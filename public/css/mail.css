@@ -1,0 +1,23 @@
+table{
+    width: 100%;
+    max-width: 600px; 
+    margin: auto;
+    border-collapse: collapse; 
+    font-family: Arial, sans-serif; 
+    color: #39b5e3;
+}
+.td1{
+  background-color: #f8f8f8; 
+  padding: 20px; 
+  text-align: center;
+}
+.td2{
+  padding: 20px; 
+  background-color: #fff;
+   text-align: center;
+}
+.td3{
+  padding: 20px; 
+  background-color: #f8f8f8; 
+  text-align: center;
+}
