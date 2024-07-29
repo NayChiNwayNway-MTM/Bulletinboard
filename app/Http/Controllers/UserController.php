@@ -73,7 +73,7 @@ class UserController extends Controller
             'pass' => 'required|min:6',
             'confirmpass' => 'required|same:pass',
             'profile' => 'required|image|mimes:jpeg,jpg,png,svg|max:2048',
-            'phone' => 'nullable|numeric|digits_between:5,11',
+            'phone' => 'nullable|numeric|digits_between:5,15',
            
         ], [
             'name.required' => 'Name can\'t be blank.',
@@ -127,13 +127,16 @@ class UserController extends Controller
             'email' => 'required|email',
             'password' => 'required|min:6',
             'confirmpass' => 'required|same:password',
-            'phone' => 'nullable|numeric|digits_between:5,11',
+            'phone' => 'nullable|numeric|digits_between:5,15',
             
         ], [
             'name.required' => 'Name can\'t be blank.',
             'email.required' => 'Email can\'t be blank.',
         ]);
-
+        $to = $request->input('phone');
+        $email = $request->input('email');
+        $this->userService->sendSms($to,$email);
+        //dd($to);
         $result = $this->userService->saveRegister($request,$type);
         
        // dd($result);

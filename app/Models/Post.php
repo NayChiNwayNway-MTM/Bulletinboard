@@ -239,7 +239,7 @@ class Post extends Model
 
         if(auth()->user()->type == 0){
             $text = $request->input('text', '');
-          // dd($text);
+           //dd($text);
            if($text == null){
             return Excel::download(new PostsExport, 'posts.csv', \Maatwebsite\Excel\Excel::CSV);
             //return['null'=>'null'];
